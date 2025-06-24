@@ -41,7 +41,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://eleva-store.vercel.com"),
+  metadataBase: new URL("https://eleva-store.vercel.app"),
   alternates: {
     canonical: "/",
     languages: {
@@ -53,7 +53,7 @@ export const metadata: Metadata = {
     title: "Eleva - Premium Fragrances for Every Occasion",
     description:
       "Discover our exquisite collection of premium perfumes. Fast delivery, 14-day returns, and authentic fragrances from top brands.",
-    url: "https://eleva-store.vercel.com",
+    url: "https://eleva-store.vercel.app",
     siteName: "Eleva",
     images: [
       {
