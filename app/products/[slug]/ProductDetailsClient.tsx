@@ -28,6 +28,7 @@ import { useCart } from "@/components/_core/providers/cart-provider";
 import { useFavorites } from "@/components/_core/providers/favorites-provider";
 import { getProductImageUrl } from "@/lib/constants/supabase-storage";
 import Image from "next/image";
+import { addReview } from "@/app/_actions/add-review";
 
 interface ProductDetailsClientProps {
   product: ProductWithUserData;
@@ -42,6 +43,7 @@ export default function ProductDetailsClient({
   const locale = useLocale();
   const { user } = useSupabase();
   const { cart, addItem, updateQuantity, removeItem } = useCart();
+  const [showReviewForm, setShowReviewForm] = useState(true);
   const { addFavorite, removeFavorite } = useFavorites();
 
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
@@ -277,6 +279,50 @@ export default function ProductDetailsClient({
         "",
         `/products/${newSlug}${window.location.search}`
       );
+    }
+  };
+
+  const handleReviewSubmit = async (
+    rating: number,
+    comment: string,
+    fullName?: string,
+    id?: number
+  ) => {
+    // "use server";
+    const productId = product.id;
+    // const rating = Number(formData.get("rating"));
+    // const comment = formData.get("reviewComment") as string;
+
+    // Client-side validation (additional to server-side)
+    if (!rating || rating < 1 || rating > 5) {
+      return toast.error(t("reviews.invalidRating"));
+    }
+    if (!comment || comment.trim().length === 0) {
+      return toast.error(t("reviews.emptyComment"));
+    }
+
+    // Call the server action to add the review
+    try {
+      await addReview({
+        productId,
+        rating,
+        comment,
+        fullName,
+        user: {
+          id: user?.id,
+          firstName: user?.user_metadata?.first_name,
+          lastName: user?.user_metadata?.last_name,
+          email: user?.email,
+        },
+      });
+
+      // Optimistically update the UI
+      // toast.success(t("reviews.submitted"), {
+      //   description: t("reviews.approvalInfo"),
+      // });
+    } catch (error) {
+      toast.error(t("reviews.submitError"));
+      console.error("Error submitting review:", error);
     }
   };
 
@@ -813,127 +859,146 @@ export default function ProductDetailsClient({
           )}
 
           {/* Add Review Form */}
-          <div className="bg-white rounded-lg p-6 shadow-sm mb-8">
-            <h3 className="text-xl font-semibold text-gray-900 mb-4">
-              Write a Review
-            </h3>
-            <form className="space-y-4">
-              {!user && (
+          {showReviewForm && (
+            <div className="bg-white rounded-lg p-6 shadow-sm mb-8">
+              <h3 className="text-xl font-semibold text-gray-900 mb-4">
+                Write a Review
+              </h3>
+
+              <form className="space-y-4">
+                {!user && (
+                  <div>
+                    <label
+                      htmlFor="reviewerName"
+                      className="block text-sm font-medium text-gray-700 mb-2"
+                    >
+                      Full Name *
+                    </label>
+                    <input
+                      type="text"
+                      id="reviewerName"
+                      name="reviewerName"
+                      required
+                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary-500 focus:border-secondary-500"
+                      placeholder="Enter your full name"
+                    />
+                  </div>
+                )}
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    Rating *
+                  </label>
+                  <div className="flex items-center gap-2">
+                    {[1, 2, 3, 4, 5].map((rating) => (
+                      <button
+                        key={rating}
+                        type="button"
+                        className="p-1 hover:scale-110 transition-transform"
+                        onClick={(e) => {
+                          e.preventDefault();
+                          // Handle rating selection
+                          const stars =
+                            e.currentTarget.parentElement?.querySelectorAll(
+                              "button"
+                            );
+                          stars?.forEach((star, index) => {
+                            const starIcon = star.querySelector("svg");
+                            if (starIcon) {
+                              if (index < rating) {
+                                starIcon.classList.add(
+                                  "text-yellow-400",
+                                  "fill-current"
+                                );
+                                starIcon.classList.remove("text-gray-300");
+                              } else {
+                                starIcon.classList.remove(
+                                  "text-yellow-400",
+                                  "fill-current"
+                                );
+                                starIcon.classList.add("text-gray-300");
+                              }
+                            }
+                          });
+                          // Set hidden input value
+                          const hiddenInput =
+                            e.currentTarget.parentElement?.parentElement?.querySelector(
+                              'input[name="rating"]'
+                            ) as HTMLInputElement;
+                          if (hiddenInput) {
+                            hiddenInput.value = rating.toString();
+                          }
+                        }}
+                      >
+                        <Star className="h-6 w-6 text-gray-300 hover:text-yellow-400 transition-colors" />
+                      </button>
+                    ))}
+                    <input type="hidden" name="rating" required />
+                  </div>
+                </div>
+
                 <div>
                   <label
-                    htmlFor="reviewerName"
+                    htmlFor="reviewComment"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Full Name *
+                    Comment *
                   </label>
-                  <input
-                    type="text"
-                    id="reviewerName"
-                    name="reviewerName"
+                  <textarea
+                    id="reviewComment"
+                    name="reviewComment"
+                    rows={4}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary-500 focus:border-secondary-500"
-                    placeholder="Enter your full name"
+                    placeholder="Share your experience with this product..."
                   />
                 </div>
-              )}
 
-              <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Rating *
-                </label>
-                <div className="flex items-center gap-2">
-                  {[1, 2, 3, 4, 5].map((rating) => (
-                    <button
-                      key={rating}
-                      type="button"
-                      className="p-1 hover:scale-110 transition-transform"
-                      onClick={(e) => {
-                        e.preventDefault();
-                        // Handle rating selection
-                        const stars =
-                          e.currentTarget.parentElement?.querySelectorAll(
-                            "button"
-                          );
-                        stars?.forEach((star, index) => {
-                          const starIcon = star.querySelector("svg");
-                          if (starIcon) {
-                            if (index < rating) {
-                              starIcon.classList.add(
-                                "text-yellow-400",
-                                "fill-current"
-                              );
-                              starIcon.classList.remove("text-gray-300");
-                            } else {
-                              starIcon.classList.remove(
-                                "text-yellow-400",
-                                "fill-current"
-                              );
-                              starIcon.classList.add("text-gray-300");
-                            }
-                          }
-                        });
-                        // Set hidden input value
-                        const hiddenInput =
-                          e.currentTarget.parentElement?.parentElement?.querySelector(
-                            'input[name="rating"]'
-                          ) as HTMLInputElement;
-                        if (hiddenInput) {
-                          hiddenInput.value = rating.toString();
-                        }
-                      }}
-                    >
-                      <Star className="h-6 w-6 text-gray-300 hover:text-yellow-400 transition-colors" />
-                    </button>
-                  ))}
-                  <input type="hidden" name="rating" required />
+                <div className="flex items-center gap-4">
+                  <Button
+                    type="submit"
+                    className="bg-secondary-600 hover:bg-secondary-700"
+                    onClick={async (e) => {
+                      e.preventDefault();
+                      // Handle form submission
+                      const reviewerName = user
+                        ? `${user.user_metadata?.first_name || ""} ${
+                            user.user_metadata?.last_name || ""
+                          }`.trim() || user.email
+                        : (
+                            e.currentTarget.form
+                              ?.reviewerName as HTMLInputElement
+                          )?.value;
+
+                      const comment = (
+                        e.currentTarget.form
+                          ?.reviewComment as HTMLTextAreaElement
+                      ).value;
+                      const ratingInput = (
+                        e.currentTarget.form?.rating as HTMLInputElement
+                      ).value;
+                      await handleReviewSubmit(
+                        +ratingInput,
+                        comment,
+                        reviewerName,
+                        user?.user_metadata?.id
+                      );
+                      setShowReviewForm(false);
+                      toast.success("Review submitted successfully!", {
+                        description:
+                          "Your review will be published after admin approval.",
+                      });
+                    }}
+                  >
+                    Submit Review
+                  </Button>
+                  <p className="text-sm text-gray-500">
+                    * Your review will be published after admin approval
+                  </p>
                 </div>
-              </div>
-
-              <div>
-                <label
-                  htmlFor="reviewComment"
-                  className="block text-sm font-medium text-gray-700 mb-2"
-                >
-                  Comment *
-                </label>
-                <textarea
-                  id="reviewComment"
-                  name="reviewComment"
-                  rows={4}
-                  required
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary-500 focus:border-secondary-500"
-                  placeholder="Share your experience with this product..."
-                />
-              </div>
-
-              <div className="flex items-center gap-4">
-                <Button
-                  type="submit"
-                  className="bg-secondary-600 hover:bg-secondary-700"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    // Handle form submission
-                    const reviewerName = user
-                      ? `${user.user_metadata?.first_name || ""} ${
-                          user.user_metadata?.last_name || ""
-                        }`.trim() || user.email
-                      : (e.currentTarget.form?.reviewerName as HTMLInputElement)
-                          ?.value;
-
-                    toast.success("Review submitted successfully!", {
-                      description:
-                        "Your review will be published after admin approval.",
-                    });
-                  }}
-                >
-                  Submit Review
-                </Button>
-                <p className="text-sm text-gray-500">
-                  * Your review will be published after admin approval
-                </p>
-              </div>
-            </form>
-          </div>
+              </form>
+            </div>
+          )}
 
           {/* Existing Reviews */}
           {reviews.length > 0 ? (

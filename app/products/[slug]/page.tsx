@@ -84,7 +84,7 @@ export async function generateMetadata({
       description:
         metaDescription || `Discover our premium product ${metaTitle}`,
       url: `/products/${slug}${locale !== "en" ? `?lang=${locale}` : ""}`,
-      type: "product",
+      type: "website",
       locale: locale === "ar" ? "ar_SA" : "en_US",
       images: images,
       ...(product.price && {
@@ -109,7 +109,7 @@ export async function generateMetadata({
       index: true,
       follow: true,
     },
-  } as any;
+  };
 }
 
 export default async function Page({ params, searchParams }: PageProps) {
