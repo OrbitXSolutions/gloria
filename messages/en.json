@@ -58,6 +58,11 @@
     "viewDeals": "View All Deals"
   },
   "products": {
+    "categories": {
+      "all": "All Categories",
+      "title": "Choose a Category"
+    },
+    "search": "Search for products...",
     "title": "Our Products",
     "description": "Discover our complete collection of premium fragrances",
     "addToCart": "Add to Cart",
@@ -232,7 +237,17 @@
     "processing": "Processing...",
     "checkoutSuccess": "Redirecting to checkout...",
     "secureCheckout": "Secure checkout with SSL encryption",
-    "shippingCalculated": "Shipping fees are calculated at checkout based on your delivery location."
+    "shippingCalculated": "Shipping fees are calculated at checkout based on your delivery location.",
+    "summary": {
+      "title": "Order Summary",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "free": "Free",
+      "tax": "Tax",
+      "total": "Total"
+    },
+    "checkout": "Checkout",
+    "clear": "Clear Cart"
   },
   "common": {
     "back": "Back"

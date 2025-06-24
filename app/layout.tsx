@@ -5,6 +5,8 @@ import { ThemeProvider } from "@/lib/theme-provider";
 import AppHeader from "@/components/organisms/layout/app-header.component";
 import { getLocale } from "next-intl/server";
 import { RootWrapper } from "@/components/_core/wrappers/root-wrapper";
+import { Footer } from "react-day-picker";
+import AppFooter from "@/components/organisms/layout/app-footer";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -107,7 +109,8 @@ export default async function RootLayout({
       >
         <RootWrapper>
           <AppHeader />
-          {children}
+          <main>{children}</main>
+          <AppFooter />
         </RootWrapper>
       </body>
     </html>

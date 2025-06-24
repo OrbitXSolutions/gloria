@@ -26,7 +26,7 @@ export default function Contact() {
               </h3>
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
-                  <div className="bg-purple-100 rounded-full p-3">
+                  <div className="bg-secondary-100 rounded-full p-3">
                     <MapPin className="h-6 w-6 text-secondary" />
                   </div>
                   <div>
@@ -40,7 +40,7 @@ export default function Contact() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="bg-purple-100 rounded-full p-3">
+                  <div className="bg-secondary-100 rounded-full p-3">
                     <Phone className="h-6 w-6 text-secondary" />
                   </div>
                   <div>
@@ -50,7 +50,7 @@ export default function Contact() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="bg-purple-100 rounded-full p-3">
+                  <div className="bg-secondary-100 rounded-full p-3">
                     <Mail className="h-6 w-6 text-secondary" />
                   </div>
                   <div>
@@ -60,7 +60,7 @@ export default function Contact() {
                 </div>
 
                 <div className="flex items-start space-x-4">
-                  <div className="bg-purple-100 rounded-full p-3">
+                  <div className="bg-secondary-100 rounded-full p-3">
                     <Clock className="h-6 w-6 text-secondary" />
                   </div>
                   <div>
@@ -142,7 +142,7 @@ export default function Contact() {
               </div>
 
               <Button
-                className="w-full bg-secondary hover:bg-purple-700"
+                className="w-full bg-secondary hover:bg-secondary-700"
                 size="lg"
               >
                 Send Message
