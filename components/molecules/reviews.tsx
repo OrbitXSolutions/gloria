@@ -3,10 +3,9 @@
 import { useState, useEffect } from "react";
 import { Star, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { useTranslations } from "next-intl";
+import { useLocale, useTranslations } from "next-intl";
 import { getUserAvatarUrl } from "@/lib/constants/supabase-storage";
 import SafeImage from "../_common/safe-image";
-
 
 const reviews = [
   {
@@ -65,7 +64,7 @@ export default function Reviews() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isAutoPlaying, setIsAutoPlaying] = useState(true);
   const t = useTranslations("reviews");
-  const locale = t("locale");
+  const locale = useLocale();
 
   const getProductName = (review: (typeof reviews)[0]) => {
     return locale === "ar" ? review.product_ar : review.product_en;
@@ -107,9 +106,7 @@ export default function Reviews() {
           <h2 className="text-3xl lg:text-4xl font-bold text-primary-800 mb-4">
             {t("title")}
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            {t("description")}
-          </p>
+          <p className="text-gray-600 max-w-2xl mx-auto">{t("description")}</p>
         </div>
 
         <div className="relative max-w-4xl mx-auto">
@@ -135,9 +132,7 @@ export default function Reviews() {
               </blockquote>
 
               {/* Customer Info */}
-              <div
-                className={`flex items-center justify-center space-x-4 `}
-              >
+              <div className={`flex items-center justify-center space-x-4 `}>
                 <div className="relative">
                   <SafeImage
                     src={getUserAvatarUrl(reviews[currentIndex].avatar)}
@@ -156,8 +151,7 @@ export default function Reviews() {
                     {reviews[currentIndex].name}
                   </div>
                   <div className="text-sm text-gray-600">
-                    {t("purchased")}:{" "}
-                    {getProductName(reviews[currentIndex])}
+                    {t("purchased")}: {getProductName(reviews[currentIndex])}
                   </div>
                 </div>
               </div>
