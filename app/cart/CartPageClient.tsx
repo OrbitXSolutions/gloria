@@ -44,9 +44,9 @@ export default function CartPageClient() {
     setIsCheckingOut(true);
 
     try {
+      clear();
       await redirectToCheckout(cart.items);
       // Clear cart after successful redirect
-      clear();
     } catch (error) {
       console.error("Checkout error:", error);
       toast.error("Failed to proceed to checkout. Please try again.");

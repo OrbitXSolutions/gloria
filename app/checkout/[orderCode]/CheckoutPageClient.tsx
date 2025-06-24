@@ -52,13 +52,14 @@ import {
   getFirstImageUrl,
 } from "@/lib/constants/supabase-storage";
 import Image from "next/image";
+import { useCart } from "@/components/_core/providers/cart-provider";
 
 type UserProfile = Database["public"]["Tables"]["users"]["Row"];
 type Order = OrderWithItems;
 type Address = Database["public"]["Tables"]["addresses"]["Row"];
 type State = Database["public"]["Tables"]["states"]["Row"];
 interface CheckoutPageClientProps {
-  user: UserProfile;
+  user?: UserProfile | null;
   order: Order;
   userAddresses: Address[];
   states: State[];
@@ -71,12 +72,13 @@ export default function CheckoutPageClient({
   states,
 }: CheckoutPageClientProps) {
   const t = useTranslations();
+  const { clear } = useCart();
   const locale = useLocale();
   const router = useRouter();
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-
+  debugger;
   const form = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
     defaultValues: {
@@ -136,6 +138,7 @@ export default function CheckoutPageClient({
       const result = await completeCheckout(order.code, data);
 
       if (result.success) {
+        clear();
         toast.success("Order placed successfully!", {
           description: `Order ${result.orderCode} has been confirmed`,
           duration: 5000,

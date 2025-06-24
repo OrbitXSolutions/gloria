@@ -1,8 +1,8 @@
 import { notFound } from "next/navigation";
 import CheckoutPageClient from "./CheckoutPageClient";
 import { createSsrClient } from "@/lib/supabase/server";
-import { getUAEStates, getUserAddresses } from "@/lib/common/checkout";
 import { Database } from "@/lib/types/database.types";
+import { getUAEStates, getUserAddresses } from "@/lib/common/checkout";
 
 interface CheckoutPageProps {
   params: Promise<{ orderCode: string }>;
@@ -11,23 +11,20 @@ interface CheckoutPageProps {
 export default async function Page({ params }: CheckoutPageProps) {
   const { orderCode } = await params;
   const supabase = await createSsrClient();
-
+  debugger;
   // Get current user
   const {
     data: { user: supaUser },
   } = await supabase.auth.getUser();
-  if (!supaUser) {
-    notFound();
-  }
-  const { data: user } = await supabase
-    .from("users")
-    .select("*")
-    .eq("user_id", supaUser.id)
-    .single();
 
-  if (!user) {
-    notFound();
-  }
+  const { data: user } = !supaUser
+    ? { data: null }
+    : await supabase
+        .from("users")
+        .select("*")
+        .eq("user_id", supaUser.id)
+        .single();
+
   // Get order details
   const { data: order, error: orderError } = await supabase
     .from("orders")

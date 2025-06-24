@@ -7,7 +7,7 @@ import { CartItem } from "@/lib/common/cart";
 import { createSsrClient } from "@/lib/supabase/server";
 
 // Create pending order from cart
-export async function createPendingOrder(cartItems: CartItem[]) {
+export async function createDraftOrder(cartItems: CartItem[]) {
   try {
     const supabase = await createSsrClient();
 
@@ -34,7 +34,7 @@ export async function createPendingOrder(cartItems: CartItem[]) {
       .from("orders")
       .insert({
         code: orderCode,
-        status: "pending", // Draft status until checkout is completed
+        status: "draft", // Draft status until checkout is completed
         total_price: total,
         payment_method: "cash",
       })
@@ -236,7 +236,7 @@ export async function completeCheckout(
 
 // Redirect to checkout
 export async function redirectToCheckout(cartItems: CartItem[]) {
-  const result = await createPendingOrder(cartItems);
+  const result = await createDraftOrder(cartItems);
 
   if (result.success && result.orderCode) {
     redirect(`/checkout/${result.orderCode}`);
