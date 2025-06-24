@@ -58,6 +58,11 @@
     "viewDeals": "View All Deals"
   },
   "products": {
+    "categories": {
+      "all": "All Categories",
+      "title": "Choose a Category"
+    },
+    "search": "Search for products...",
     "title": "Our Products",
     "description": "Discover our complete collection of premium fragrances",
     "addToCart": "Add to Cart",

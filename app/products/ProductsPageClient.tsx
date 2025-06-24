@@ -309,7 +309,7 @@ export default function ProductsPageClient({
                 <Input
                   type="text"
                   name="q"
-                  placeholder={t("header.search") || "Search perfumes..."}
+                  placeholder={t("search") || "Search perfumes..."}
                   defaultValue={searchQuery}
                   className={`ps-10 h-12`}
                   disabled={searchAction.isExecuting}

@@ -11,6 +11,7 @@ import LoadingIndicator from "@/components/atoms/LoadingIndicator";
 import { useTranslations } from "next-intl";
 import { useCart } from "@/components/_core/providers/cart-provider";
 import LanguageSwitcher from "@/components/atoms/langauge-switcher";
+import Form from "next/form";
 // import AuthButton from "./AuthButton";
 
 export default function AppHeader() {
@@ -115,14 +116,17 @@ export default function AppHeader() {
             {/* Search and Actions */}
             <div className={`flex items-center space-x-4`}>
               {/* Search */}
-              <div className="hidden md:flex items-center bg-gray-100 rounded-full px-4 py-2">
-                <Search className={`h-4 w-4 text-gray-500 mx-2`} />
-                <input
-                  type="text"
-                  placeholder={t("search")}
-                  className="bg-transparent outline-none text-sm w-48"
-                />
-              </div>
+              <Form action={"/products"}>
+                <div className="hidden md:flex items-center bg-gray-100 rounded-full text-primary px-4 py-2">
+                  <Search className={`h-4 w-4 text-gray-500 mx-2`} />
+                  <input
+                    name="q"
+                    type="text"
+                    placeholder={t("search")}
+                    className="bg-transparent outline-none text-sm w-48"
+                  />
+                </div>
+              </Form>
 
               {/* Language Switcher */}
               <LanguageSwitcher />
@@ -163,12 +167,12 @@ export default function AppHeader() {
           {isMenuOpen && (
             <div className="lg:hidden border-t py-4">
               <div className="flex flex-col space-y-4">
-                <div className="flex items-center bg-gray-100 rounded-full px-4 py-2 mb-4">
+                <div className="flex items-center bg-gray-100 rounded-full px-4 py-2 mb-4 text-primary">
                   <Search className={`h-4 w-4 text-gray-500 mx-2`} />
                   <input
                     type="text"
                     placeholder={t("search")}
-                    className="bg-transparent outline-none text-sm flex-1"
+                    className="bg-transparent outline-none text-sm flex-1 text-primary"
                   />
                 </div>
                 <Link
