@@ -327,7 +327,7 @@ export default function CheckoutPageClient({
                   <div className="w-8 h-8 bg-secondary-100 rounded-full flex items-center justify-center">
                     <User className="h-4 w-4 text-secondary-600" />
                   </div>
-                  <h2 className="text-xl font-bold text-gray-900">
+                  <h2 className="text-xl mx-3 font-bold text-gray-900">
                     Account Information
                   </h2>
                 </div>

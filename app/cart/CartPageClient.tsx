@@ -44,7 +44,7 @@ export default function CartPageClient() {
     setIsCheckingOut(true);
 
     try {
-      clear();
+      // clear();
       await redirectToCheckout(cart.items);
       // Clear cart after successful redirect
     } catch (error) {

@@ -234,7 +234,7 @@ export default function CheckoutPageClient({
                       <div className="w-8 h-8 bg-secondary-100 rounded-full flex items-center justify-center">
                         <User className="h-4 w-4 text-secondary-600" />
                       </div>
-                      Account Information
+                      <div className="px-3">Account Information</div>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
