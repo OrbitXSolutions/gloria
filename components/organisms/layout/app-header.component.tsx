@@ -13,18 +13,16 @@ import { useCart } from "@/components/_core/providers/cart-provider";
 import LanguageSwitcher from "@/components/atoms/langauge-switcher";
 // import AuthButton from "./AuthButton";
 
-
-
 export default function AppHeader() {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const {cart} = useCart();
+  const { cart } = useCart();
 
   const t = useTranslations("header");
-  
-//   const { t, isRTL } = {
-// 	t: (key: string) => key, // Placeholder for translation function
-// 	isRTL: false, // Placeholder for RTL check
-//   };
+
+  //   const { t, isRTL } = {
+  // 	t: (key: string) => key, // Placeholder for translation function
+  // 	isRTL: false, // Placeholder for RTL check
+  //   };
   const pathname = usePathname();
 
   const isActiveLink = (href: string) => {
@@ -138,10 +136,10 @@ export default function AppHeader() {
                 <Button variant="ghost" size="sm" className="relative">
                   <ShoppingBag className="h-5 w-5" />
                   {cart.itemCount > 0 && (
-                  <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                    {cart.items.length}
-                  </span>
-                )}
+                    <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
+                      {cart.items.length}
+                    </span>
+                  )}
                 </Button>
               </Link>
 
@@ -177,7 +175,7 @@ export default function AppHeader() {
                   href="/"
                   className={`font-medium transition-colors flex items-center gap-2 ${
                     isActiveLink("/")
-                      ? "text-secondary bg-purple-50 px-3 py-2 rounded-lg"
+                      ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
                       : "hover:text-secondary/40"
                   }`}
                 >
@@ -188,7 +186,7 @@ export default function AppHeader() {
                   href="/products"
                   className={`font-medium transition-colors flex items-center gap-2 ${
                     isActiveLink("/products")
-                      ? "text-secondary bg-purple-50 px-3 py-2 rounded-lg"
+                      ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
                       : "hover:text-secondary/40"
                   }`}
                 >
@@ -199,7 +197,7 @@ export default function AppHeader() {
                   href="/gifts"
                   className={`font-medium transition-colors flex items-center gap-2 ${
                     isActiveLink("/gifts")
-                      ? "text-secondary bg-purple-50 px-3 py-2 rounded-lg"
+                      ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
                       : "hover:text-secondary/40"
                   }`}
                 >
@@ -210,7 +208,7 @@ export default function AppHeader() {
                   href="/about"
                   className={`font-medium transition-colors flex items-center gap-2 ${
                     isActiveLink("/about")
-                      ? "text-secondary bg-purple-50 px-3 py-2 rounded-lg"
+                      ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
                       : "hover:text-secondary/40"
                   }`}
                 >

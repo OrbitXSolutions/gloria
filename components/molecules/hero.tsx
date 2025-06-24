@@ -8,7 +8,7 @@ import SafeImage from "../_common/safe-image";
 import Image from "next/image";
 
 export default function Hero() {
-const t = useTranslations("hero");
+  const t = useTranslations("hero");
   // You can store the hero image path in your database or use a static path
   const heroImagePath = "/images/home-cover.png";
   const heroImageUrl = heroImagePath;
@@ -19,12 +19,18 @@ const t = useTranslations("hero");
 
   return (
     <>
-      <Image src={heroImageUrl} className="h-full w-full" priority width={1200} height={600} alt="" />
-   
+      <Image
+        src={heroImageUrl}
+        className="h-full w-full"
+        priority
+        width={1200}
+        height={600}
+        alt=""
+      />
     </>
   );
   return (
-    <section className="relative bg-gradient-to-r from-pink-50 to-purple-50 overflow-hidden">
+    <section className="relative bg-gradient-to-r from-pink-50 to-secondary-50 overflow-hidden">
       <div className="container mx-auto px-4 py-16 lg:py-24">
         <div className="grid lg:grid-cols-2 gap-12 items-center">
           {/* Content */}
@@ -44,14 +50,14 @@ const t = useTranslations("hero");
             <div className={`flex flex-col sm:flex-row gap-4`}>
               <Button
                 size="lg"
-                className="bg-secondary hover:bg-purple-700 text-white px-8"
+                className="bg-secondary hover:bg-secondary-700 text-white px-8"
               >
                 {t("shopNow")}
               </Button>
               <Button
                 variant="outline"
                 size="lg"
-                className="border-secondary text-secondary hover:bg-purple-50"
+                className="border-secondary text-secondary hover:bg-secondary-50"
               >
                 {t("exploreCollections")}
               </Button>
@@ -95,7 +101,7 @@ const t = useTranslations("hero");
               />
             </div>
             {/* Decorative elements */}
-            <div className="absolute -top-4 -right-4 w-72 h-72 bg-purple-200 rounded-full opacity-20 blur-3xl"></div>
+            <div className="absolute -top-4 -right-4 w-72 h-72 bg-secondary-200 rounded-full opacity-20 blur-3xl"></div>
             <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-pink-200 rounded-full opacity-20 blur-3xl"></div>
           </div>
         </div>

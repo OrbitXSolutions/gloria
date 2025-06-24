@@ -8,7 +8,6 @@ interface Props {
 }
 
 export function RootWrapper({ children }: Props) {
-    
   return (
     <ThemeProvider
       attribute="class"
@@ -16,13 +15,10 @@ export function RootWrapper({ children }: Props) {
       enableSystem
       disableTransitionOnChange
     >
-      <NextIntlClientProvider >
+      <NextIntlClientProvider>
         <ClientWrapper>{children}</ClientWrapper>
-        <Toaster
-          richColors
-          closeButton
-        />
+        <Toaster closeButton />
       </NextIntlClientProvider>
     </ThemeProvider>
-  ); 
+  );
 }

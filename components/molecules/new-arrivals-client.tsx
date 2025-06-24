@@ -9,10 +9,8 @@ interface Props {
   products: ProductWithUserData[];
 }
 
-export default function NewArrivalsClient({
-  products,
-}: Props) {
-  const t = useTranslations('newArrivals');
+export default function NewArrivalsClient({ products }: Props) {
+  const t = useTranslations("newArrivals");
 
   return (
     <section className="py-16 bg-gray-50">
@@ -40,7 +38,7 @@ export default function NewArrivalsClient({
               <Button
                 variant="outline"
                 size="lg"
-                className="border-secondary text-secondary hover:bg-purple-50"
+                className="border-secondary text-secondary hover:bg-secondary-50"
               >
                 {t("viewAll")}
               </Button>

@@ -19,9 +19,7 @@ export default function ProductsClient({ products }: ProductsClientProps) {
           <h2 className="text-3xl lg:text-4xl font-bold text-primary-800 mb-4">
             {t("title")}
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">
-            {t("description")}
-          </p>
+          <p className="text-gray-600 max-w-2xl mx-auto">{t("description")}</p>
         </div>
 
         {products.length > 0 ? (
@@ -36,7 +34,7 @@ export default function ProductsClient({ products }: ProductsClientProps) {
               <Button
                 variant="outline"
                 size="lg"
-                className="border-secondary text-secondary hover:bg-purple-50"
+                className="border-secondary text-secondary hover:bg-secondary-50"
               >
                 {t("viewAll")}
               </Button>
