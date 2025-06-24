@@ -6,6 +6,7 @@ import { searchProducts, getCategories } from "@/lib/common/supabase-queries";
 
 import { createSsrClient } from "@/lib/supabase/server";
 import { getLocale } from "next-intl/server";
+import { revalidatePath } from "next/cache";
 
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -70,10 +71,9 @@ export default async function Page({ searchParams }: PageProps) {
   } = await supabase.auth.getUser();
 
   // Fetch products and categories
-  const [products, categories] = await Promise.all([
-    searchProducts(query, categoryId, limit, offset),
-    getCategories(),
-  ]);
+  const [categories] = await Promise.all([getCategories()]);
+
+  const products = await searchProducts(query, categoryId, limit, offset);
 
   return (
     <ProductsPageClient

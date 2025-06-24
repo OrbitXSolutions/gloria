@@ -121,7 +121,9 @@ export default function ProductsPageClient({
       setSortBy(sortParam);
     }
   }, [searchParams]);
-
+  useEffect(() => {
+    setProducts(initialProducts);
+  }, [initialProducts]);
   const getCategoryName = (category: Category) => {
     return locale === "ar"
       ? category.name_ar || category.name_en
@@ -168,7 +170,7 @@ export default function ProductsPageClient({
     },
     {
       onSuccess: (data: any) => {
-        setProducts(data.products || []);
+        setProducts(data.products);
         setPage(data.page || 1);
         setTotalPages(data.totalPages || 1);
         setTotalProducts(data.total || 0);
