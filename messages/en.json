@@ -1,0 +1,240 @@
+{
+  "header": {
+    "brand": "Eleva",
+    "nav": {
+      "home": "Home",
+      "products": "Products",
+      "gifts": "Gifts",
+      "about": "About"
+    },
+    "search": "Search perfumes...",
+    "topBar": {
+      "freeShipping": "Free shipping on orders over $100",
+      "trackOrder": "Track Order",
+      "help": "Help"
+    }
+  },
+  "hero": {
+    "title": "Discover Your",
+    "titleHighlight": "Perfect Scent",
+    "description": "Explore our curated collection of premium fragrances from the world's most prestigious brands. Find your signature scent today.",
+    "shopNow": "Shop Now",
+    "exploreCollections": "Explore Collections",
+    "stats": {
+      "brands": "Premium Brands",
+      "customers": "Happy Customers",
+      "support": "Customer Support"
+    }
+  },
+  "categories": {
+    "title": "Shop by Categories",
+    "description": "Discover fragrances tailored to your style and personality",
+    "all": "All Categories",
+    "items": {
+      "women": "Women",
+      "men": "Men",
+      "unisex": "Unisex",
+      "luxury": "Luxury",
+      "fresh": "Fresh",
+      "oriental": "Oriental",
+      "woody": "Woody",
+      "floral": "Floral"
+    }
+  },
+  "newArrivals": {
+    "title": "New Arrivals",
+    "description": "Be the first to experience our latest fragrance collections",
+    "new": "New",
+    "addToCart": "Add to Cart",
+    "viewAll": "View All New Arrivals",
+    "noProducts": "No new arrivals available at the moment."
+  },
+  "banner": {
+    "limitedOffer": "Limited Time Offer",
+    "title": "Summer Sale",
+    "subtitle": "Up to 40% Off",
+    "description": "Discover amazing deals on your favorite fragrances. Limited time only!",
+    "shopSale": "Shop Sale Now",
+    "viewDeals": "View All Deals"
+  },
+  "products": {
+    "title": "Our Products",
+    "description": "Discover our complete collection of premium fragrances",
+    "addToCart": "Add to Cart",
+    "addedToCart": "Added to cart",
+    "outOfStock": "Out of Stock",
+    "inStock": "in stock",
+    "new": "New",
+    "viewAll": "View All Products",
+    "noProducts": "No products available at the moment.",
+    "activeFilters": "Active filters",
+    "clearAll": "Clear All",
+    "resultsCount": "Showing",
+    "results": "results",
+    "for": "for",
+    "of": "of",
+    "page": "Page",
+    "loading": "Loading...",
+    "loadMore": "Load More Products",
+    "noResults": "No products found",
+    "noResultsDescription": "Try adjusting your search or filters to find what you're looking for.",
+    "clearFilters": "Clear Filters",
+    "sort": {
+      "newest": "Newest First",
+      "oldest": "Oldest First",
+      "priceLow": "Price: Low to High",
+      "priceHigh": "Price: High to Low",
+      "nameAZ": "Name: A to Z",
+      "nameZA": "Name: Z to A",
+      "ratingHigh": "Rating: High to Low",
+      "ratingLow": "Rating: Low to High"
+    },
+    "auth": {
+      "login": "Login",
+      "loginRequired": "Login Required",
+      "loginToAddFavorites": "Please login to add items to your favorites"
+    },
+    "details": "Product Details",
+    "quantity": "Quantity",
+    "available": "available"
+  },
+  "features": {
+    "title": "Why Choose Us",
+    "description": "We're committed to providing you with the best fragrance shopping experience",
+    "items": {
+      "fastDelivery": {
+        "title": "Fast Delivery",
+        "description": "Free shipping on orders over $50. Express delivery available."
+      },
+      "returns": {
+        "title": "14-Day Returns",
+        "description": "Easy returns within 14 days. No questions asked."
+      },
+      "authentic": {
+        "title": "Authentic Products",
+        "description": "100% genuine fragrances from authorized distributors."
+      },
+      "support": {
+        "title": "24/7 Support",
+        "description": "Round-the-clock customer service for all your needs."
+      },
+      "quality": {
+        "title": "Premium Quality",
+        "description": "Curated selection of the finest fragrances worldwide."
+      },
+      "giftWrap": {
+        "title": "Gift Wrapping",
+        "description": "Complimentary luxury gift wrapping for special occasions."
+      }
+    }
+  },
+  "reviews": {
+    "title": "What Our Customers Say",
+    "description": "Don't just take our word for it - hear from our satisfied customers",
+    "purchased": "Purchased",
+    "reviews": "reviews"
+  },
+  "contact": {
+    "title": "Get in Touch",
+    "description": "Have questions about our fragrances? We're here to help you find your perfect scent.",
+    "info": {
+      "title": "Contact Information",
+      "address": "Address",
+      "phone": "Phone",
+      "email": "Email",
+      "hours": "Business Hours"
+    },
+    "form": {
+      "title": "Send us a Message",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "subject": "Subject",
+      "message": "Message",
+      "send": "Send Message",
+      "placeholders": {
+        "firstName": "John",
+        "lastName": "Doe",
+        "email": "john@example.com",
+        "subject": "How can we help you?",
+        "message": "Tell us more about your inquiry..."
+      }
+    }
+  },
+  "footer": {
+    "description": "Discover the world's finest fragrances. We curate premium perfumes from the most prestigious brands worldwide.",
+    "quickLinks": {
+      "title": "Quick Links",
+      "about": "About Us",
+      "contact": "Contact",
+      "shipping": "Shipping Info",
+      "returns": "Returns",
+      "sizeGuide": "Size Guide",
+      "faq": "FAQ"
+    },
+    "categories": {
+      "title": "Categories",
+      "women": "Women's Perfumes",
+      "men": "Men's Cologne",
+      "unisex": "Unisex Fragrances",
+      "luxury": "Luxury Collection",
+      "newArrivals": "New Arrivals",
+      "sale": "Sale Items"
+    },
+    "newsletter": {
+      "title": "Newsletter",
+      "description": "Subscribe to get updates on new arrivals and exclusive offers.",
+      "placeholder": "Enter your email",
+      "disclaimer": "By subscribing, you agree to our Privacy Policy and Terms of Service."
+    },
+    "copyright": "Eleva. All rights reserved.",
+    "legal": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "cookies": "Cookie Policy"
+    }
+  },
+  "auth": {
+    "login": "Login",
+    "loginRequired": "Login Required",
+    "loginToAddFavorites": "Please login to add items to your favorites"
+  },
+  "favorites": {
+    "added": "Added to favorites",
+    "removed": "Removed from favorites"
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "viewCart": "View Cart",
+    "item": "item",
+    "items": "items",
+    "empty": {
+      "title": "Your cart is empty",
+      "description": "Looks like you haven't added any items to your cart yet.",
+      "shopNow": "Start Shopping",
+      "backHome": "Back to Home"
+    },
+    "continueShopping": "Continue Shopping",
+    "clearAll": "Clear Cart",
+    "itemRemoved": "Item removed from cart",
+    "movedToFavorites": "Moved to favorites",
+    "cleared": "Cart cleared",
+    "moveToFavorites": "Move to Favorites",
+    "orderSummary": "Order Summary",
+    "subtotal": "Subtotal",
+    "shipping": "Shipping",
+    "tax": "Tax",
+    "total": "Total",
+    "free": "Free",
+    "freeShippingNotice": "Add",
+    "forFreeShipping": "more for free shipping",
+    "proceedToCheckout": "Proceed to Checkout",
+    "processing": "Processing...",
+    "checkoutSuccess": "Redirecting to checkout...",
+    "secureCheckout": "Secure checkout with SSL encryption",
+    "shippingCalculated": "Shipping fees are calculated at checkout based on your delivery location."
+  },
+  "common": {
+    "back": "Back"
+  }
+}
