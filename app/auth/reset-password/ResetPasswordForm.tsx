@@ -1,54 +1,70 @@
-"use client";
+"use client"
 
-import type React from "react";
+import type React from "react"
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useAction } from "next-safe-action/hooks";
-import { resetPasswordAction } from "@/app/_actions/auth";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Eye, EyeOff, Loader2 } from "lucide-react";
+import { useState } from "react"
+import { useRouter } from "next/navigation"
+import { useAction } from "next-safe-action/hooks"
+import { resetPasswordAction } from "@/app/_actions/auth"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Alert, AlertDescription } from "@/components/ui/alert"
+import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react"
 
 export default function ResetPasswordForm() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [showPassword, setShowPassword] = useState(false)
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
     password: "",
     confirmPassword: "",
-  });
-  const router = useRouter();
+  })
+  const router = useRouter()
 
   const { execute, result, isExecuting } = useAction(resetPasswordAction, {
     onSuccess: ({ data }) => {
       if (data?.success) {
         setTimeout(() => {
-          router.push("/auth/login");
-        }, 2000);
+          router.push("/auth/login")
+        }, 2000)
       }
     },
-  });
+  })
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    execute(formData);
-  };
+    e.preventDefault()
+    execute(formData)
+  }
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    });
-  };
+    })
+  }
+
+  const getPasswordStrength = (password: string) => {
+    let strength = 0
+    if (password.length >= 8) strength++
+    if (/[A-Z]/.test(password)) strength++
+    if (/[a-z]/.test(password)) strength++
+    if (/[0-9]/.test(password)) strength++
+    if (/[^A-Za-z0-9]/.test(password)) strength++
+    return strength
+  }
+
+  const passwordStrength = getPasswordStrength(formData.password)
+  const strengthLabels = ["Very Weak", "Weak", "Fair", "Good", "Strong"]
+  const strengthColors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-blue-500", "bg-green-500"]
 
   return (
-    <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
-      <div className="space-y-4">
-        <div>
-          <Label htmlFor="password">New Password</Label>
-          <div className="relative mt-1">
+    <form className="space-y-6" onSubmit={handleSubmit}>
+      <div className="space-y-5">
+        <div className="space-y-2">
+          <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+            New Password
+          </Label>
+          <div className="relative">
             <Input
               id="password"
               name="password"
@@ -57,25 +73,42 @@ export default function ResetPasswordForm() {
               value={formData.password}
               onChange={handleInputChange}
               placeholder="Enter your new password"
-              className="pr-10"
+              className="pr-10 h-12 border-gray-200 focus:border-gray-900 focus:ring-gray-900 rounded-lg"
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-700"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4 text-gray-400" />
-              ) : (
-                <Eye className="h-4 w-4 text-gray-400" />
-              )}
+              {showPassword ? <EyeOff className="h-5 w-5 text-gray-400" /> : <Eye className="h-5 w-5 text-gray-400" />}
             </button>
           </div>
+
+          {/* Password Strength Indicator */}
+          {formData.password && (
+            <div className="space-y-2">
+              <div className="flex space-x-1">
+                {[1, 2, 3, 4, 5].map((level) => (
+                  <div
+                    key={level}
+                    className={`h-2 flex-1 rounded-full ${
+                      level <= passwordStrength ? strengthColors[passwordStrength - 1] : "bg-gray-200"
+                    }`}
+                  />
+                ))}
+              </div>
+              <p className="text-xs text-gray-600">
+                Password strength: {strengthLabels[passwordStrength - 1] || "Very Weak"}
+              </p>
+            </div>
+          )}
         </div>
 
-        <div>
-          <Label htmlFor="confirmPassword">Confirm New Password</Label>
-          <div className="relative mt-1">
+        <div className="space-y-2">
+          <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
+            Confirm New Password
+          </Label>
+          <div className="relative">
             <Input
               id="confirmPassword"
               name="confirmPassword"
@@ -84,51 +117,77 @@ export default function ResetPasswordForm() {
               value={formData.confirmPassword}
               onChange={handleInputChange}
               placeholder="Confirm your new password"
-              className="pr-10"
+              className="pr-10 h-12 border-gray-200 focus:border-gray-900 focus:ring-gray-900 rounded-lg"
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 pr-3 flex items-center"
+              className="absolute inset-y-0 right-0 pr-3 flex items-center hover:text-gray-700"
               onClick={() => setShowConfirmPassword(!showConfirmPassword)}
             >
               {showConfirmPassword ? (
-                <EyeOff className="h-4 w-4 text-gray-400" />
+                <EyeOff className="h-5 w-5 text-gray-400" />
               ) : (
-                <Eye className="h-4 w-4 text-gray-400" />
+                <Eye className="h-5 w-5 text-gray-400" />
               )}
             </button>
           </div>
+
+          {/* Password Match Indicator */}
+          {formData.confirmPassword && (
+            <div className="flex items-center space-x-2">
+              {formData.password === formData.confirmPassword ? (
+                <>
+                  <CheckCircle className="h-4 w-4 text-green-500" />
+                  <span className="text-xs text-green-600">Passwords match</span>
+                </>
+              ) : (
+                <>
+                  <div className="h-4 w-4 rounded-full border-2 border-red-500" />
+                  <span className="text-xs text-red-600">Passwords don't match</span>
+                </>
+              )}
+            </div>
+          )}
         </div>
       </div>
 
       {result?.data?.error && (
-        <Alert variant="destructive">
-          <AlertDescription>{result.data.error}</AlertDescription>
+        <Alert variant="destructive" className="border-red-200 bg-red-50">
+          <AlertDescription className="text-red-800">{result.data.error}</AlertDescription>
         </Alert>
       )}
 
       {result?.data?.success && (
-        <Alert>
-          <AlertDescription>
-            {result.data.message} Redirecting to login...
-          </AlertDescription>
+        <Alert className="border-green-200 bg-green-50">
+          <CheckCircle className="h-4 w-4 text-green-600" />
+          <AlertDescription className="text-green-800">{result.data.message} Redirecting to login...</AlertDescription>
         </Alert>
       )}
 
       <Button
         type="submit"
-        className="w-full bg-black hover:bg-gray-800"
-        disabled={isExecuting}
+        className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
+        disabled={isExecuting || formData.password !== formData.confirmPassword || passwordStrength < 3}
       >
         {isExecuting ? (
           <>
-            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             Updating password...
           </>
         ) : (
           "Update Password"
         )}
       </Button>
+
+      <div className="text-center text-xs text-gray-500 space-y-1">
+        <p>Password requirements:</p>
+        <ul className="space-y-1">
+          <li className={formData.password.length >= 8 ? "text-green-600" : ""}>• At least 8 characters</li>
+          <li className={/[A-Z]/.test(formData.password) ? "text-green-600" : ""}>• One uppercase letter</li>
+          <li className={/[a-z]/.test(formData.password) ? "text-green-600" : ""}>• One lowercase letter</li>
+          <li className={/[0-9]/.test(formData.password) ? "text-green-600" : ""}>• One number</li>
+        </ul>
+      </div>
     </form>
-  );
+  )
 }
