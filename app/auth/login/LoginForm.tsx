@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import React from "react"
 
 import { useState } from "react"
 import { useRouter } from "next/navigation"
@@ -28,6 +28,34 @@ export default function LoginForm() {
         router.refresh()
       }
     },
+    onError: ({ error }) => {
+      // Handle specific confirmation errors
+      if (error?.serverError) {
+        const errorMessage = error.serverError.toLowerCase()
+        const isEmail = formData.emailOrPhone.includes("@")
+
+        // Check for email confirmation errors
+        if (
+          errorMessage.includes("email not confirmed") ||
+          errorMessage.includes("email_not_confirmed") ||
+          errorMessage.includes("confirm your email")
+        ) {
+          router.push(`/auth/confirm-email?email=${encodeURIComponent(formData.emailOrPhone)}`)
+          return
+        }
+
+        // Check for phone confirmation errors
+        if (
+          errorMessage.includes("phone not confirmed") ||
+          errorMessage.includes("phone_not_confirmed") ||
+          errorMessage.includes("confirm your phone") ||
+          errorMessage.includes("sms not confirmed")
+        ) {
+          router.push(`/auth/confirm-phone?phone=${encodeURIComponent(formData.emailOrPhone)}`)
+          return
+        }
+      }
+    },
   })
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -41,6 +69,44 @@ export default function LoginForm() {
       [e.target.name]: e.target.value,
     })
   }
+
+  // Check if we need to redirect based on error message
+  const handleAuthError = (errorMessage: string) => {
+    const isEmail = formData.emailOrPhone.includes("@")
+    const lowerError = errorMessage.toLowerCase()
+
+    if (
+      lowerError.includes("email not confirmed") ||
+      lowerError.includes("email_not_confirmed") ||
+      lowerError.includes("confirm your email")
+    ) {
+      router.push(`/auth/confirm-email?email=${encodeURIComponent(formData.emailOrPhone)}`)
+      return true
+    }
+
+    if (
+      lowerError.includes("phone not confirmed") ||
+      lowerError.includes("phone_not_confirmed") ||
+      lowerError.includes("confirm your phone") ||
+      lowerError.includes("sms not confirmed")
+    ) {
+      router.push(`/auth/confirm-phone?phone=${encodeURIComponent(formData.emailOrPhone)}`)
+      return true
+    }
+
+    return false
+  }
+
+  // Handle error display and redirects
+  React.useEffect(() => {
+    if (result?.data?.error) {
+      const shouldRedirect = handleAuthError(result.data.error)
+      if (shouldRedirect) {
+        // Don't show error if we're redirecting
+        return
+      }
+    }
+  }, [result?.data?.error])
 
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
@@ -113,7 +179,7 @@ export default function LoginForm() {
         </Link>
       </div>
 
-      {result?.data?.error && (
+      {result?.data?.error && !handleAuthError(result.data.error) && (
         <Alert variant="destructive" className="border-red-200 bg-red-50">
           <AlertDescription className="text-red-800">{result.data.error}</AlertDescription>
         </Alert>
