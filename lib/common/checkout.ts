@@ -1,3 +1,4 @@
+import { createAdminClient } from "../supabase/admin";
 import createClient from "../supabase/client";
 import { createSsrClient } from "../supabase/server";
 import { CartItem } from "./cart";
@@ -333,6 +334,14 @@ export async function processGuestCheckout(
         },
       },
     });
+    try {
+      const supabaseAdmin = await createAdminClient();
+      await supabase.auth.admin.updateUserById(authData.user?.id || "", {
+        phone: checkoutData.phone,
+      });
+    } catch (error) {
+      console.error("Error during guest checkout:", error);
+    }
 
     if (authError) {
       console.error("Auth error:", authError);

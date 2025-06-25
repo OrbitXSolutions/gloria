@@ -9,9 +9,14 @@ import {
   resetPasswordSchema,
   emailVerificationSchema,
 } from "@/lib/schemas/auth";
-import { isValidPhoneNumber, parsePhoneNumber } from "libphonenumber-js";
+import {
+  isValidPhoneNumber,
+  parsePhoneNumberWithError,
+} from "libphonenumber-js";
 import { z } from "zod";
 import createClient from "@/lib/supabase/client";
+import { createSsrClient } from "@/lib/supabase/server";
+import { createAdminClient } from "@/lib/supabase/admin";
 
 const action = createSafeActionClient();
 
@@ -19,11 +24,11 @@ export const registerAction = action
   .schema(registerSchema)
   .action(async ({ parsedInput }) => {
     const { firstName, lastName, email, phone, password } = parsedInput;
-    const supabase = await createClient();
+    const supabase = await createSsrClient();
 
     try {
       // Parse and format phone number
-      const phoneNumber = parsePhoneNumber(phone);
+      const phoneNumber = parsePhoneNumberWithError(phone);
       const formattedPhone = phoneNumber?.format("E.164");
 
       if (!formattedPhone) {
@@ -43,11 +48,26 @@ export const registerAction = action
           },
         },
       });
-
       if (error) {
         return { error: error.message };
       }
+      try {
+        const supabaseAdmin = await createAdminClient();
+        // update the email
+        if (data.user && email) {
+          const { error: updateError } =
+            await supabaseAdmin.auth.admin.updateUserById(data.user.id, {
+              email,
+            });
 
+          if (updateError) {
+            console.error("Error updating user email:", updateError);
+          }
+        }
+      } catch (err) {
+        console.error("Error updating user email in admin client:", err);
+        // return { error: "Failed to update user email" };
+      }
       if (data.user && !data.session) {
         // User needs to verify phone number
         return {
@@ -73,7 +93,7 @@ export const loginAction = action
   .schema(loginSchema)
   .action(async ({ parsedInput }) => {
     const { emailOrPhone, password } = parsedInput;
-    const supabase = await createClient();
+    const supabase = await createSsrClient();
 
     try {
       // Detect if input is email or phone
@@ -92,7 +112,7 @@ export const loginAction = action
           return { error: "Invalid phone number format" };
         }
 
-        const phoneNumber = parsePhoneNumber(emailOrPhone);
+        const phoneNumber = parsePhoneNumberWithError(emailOrPhone);
         const formattedPhone = phoneNumber?.format("E.164");
 
         if (!formattedPhone) {
@@ -142,7 +162,7 @@ export const verifyOtpAction = action
   .schema(otpSchema.extend({ phone: z.string() }))
   .action(async ({ parsedInput }) => {
     const { token, phone } = parsedInput;
-    const supabase = await createClient();
+    const supabase = await createSsrClient();
 
     try {
       const { data, error } = await supabase.auth.verifyOtp({
@@ -157,16 +177,20 @@ export const verifyOtpAction = action
 
       if (data.user) {
         // Create user in public.users table
-        const { error: insertError } = await supabase.from("users").upsert({
-          user_id: data.user.id,
-          email: data.user.user_metadata?.email,
-          phone: data.user.phone,
-          first_name: data.user.user_metadata?.first_name,
-          last_name: data.user.user_metadata?.last_name,
-          full_name: data.user.user_metadata?.full_name,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        });
+        const { error: insertError } = await supabase
+          .from("users")
+          .upsert({
+            id: data.user.user_metadata?.user_id,
+            user_id: data.user.id,
+            email: data.user.email ?? data.user.user_metadata?.email,
+            phone: data.user.phone,
+            first_name: data.user.user_metadata?.first_name,
+            last_name: data.user.user_metadata?.last_name,
+            full_name: data.user.user_metadata?.full_name,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq("user_id", data.user.id);
 
         if (insertError) {
           console.error("Error creating user:", insertError);
@@ -189,7 +213,7 @@ export const forgotPasswordAction = action
   .schema(forgotPasswordSchema)
   .action(async ({ parsedInput }) => {
     const { emailOrPhone } = parsedInput;
-    const supabase = await createClient();
+    const supabase = await createSsrClient();
 
     try {
       const isEmail = emailOrPhone.includes("@");
@@ -216,7 +240,7 @@ export const forgotPasswordAction = action
           return { error: "Invalid phone number format" };
         }
 
-        const phoneNumber = parsePhoneNumber(emailOrPhone);
+        const phoneNumber = parsePhoneNumberWithError(emailOrPhone);
         const formattedPhone = phoneNumber?.format("E.164");
 
         if (!formattedPhone) {
@@ -267,16 +291,19 @@ export const resetPasswordAction = action
   });
 
 export const sendEmailVerificationAction = action
-  .schema(emailVerificationSchema)
+  .inputSchema(emailVerificationSchema)
   .action(async ({ parsedInput }) => {
     const { email } = parsedInput;
-    const supabase = await createClient();
+    const supabase = await createSsrClient();
 
     try {
-      const { error } = await supabase.auth.updateUser({
+      // const { error } = await supabase.auth.updateUser({
+      //   email,
+      // });
+      const { data, error } = await supabase.auth.resend({
+        type: "signup",
         email,
       });
-
       if (error) {
         return { error: error.message };
       }
@@ -292,7 +319,7 @@ export const sendEmailVerificationAction = action
   });
 
 export const signOutAction = action.action(async () => {
-  const supabase = await createClient();
+  const supabase = await createSsrClient();
 
   try {
     const { error } = await supabase.auth.signOut();
