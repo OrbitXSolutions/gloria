@@ -14,56 +14,76 @@ type Favorite = Database["public"]["Tables"]["favorites"]["Row"];
 export async function getUserProfile(userId: number) {
   const supabase = await createSsrClient();
 
-  const { data: user, error: userError } = await supabase
-    .from("users")
-    .select("*")
-    .eq("id", userId)
-    .eq("is_deleted", false)
-    .single();
+  try {
+    const { data: user, error: userError } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", userId)
+      .eq("is_deleted", false)
+      .single();
 
-  if (userError) {
-    console.error("Error fetching user:", userError);
+    if (userError) {
+      console.error("Error fetching user:", userError);
+      return null;
+    }
+
+    // Get user stats with proper error handling
+    const [ordersResult, favoritesResult, totalSpentResult] =
+      await Promise.allSettled([
+        supabase
+          .from("orders")
+          .select("id")
+          .eq("user_id", userId)
+          .eq("is_deleted", false),
+        supabase
+          .from("favorites")
+          .select("id")
+          .eq("user_id", userId)
+          .eq("is_deleted", false),
+        supabase
+          .from("orders")
+          .select("total_price")
+          .eq("user_id", userId)
+          .eq("is_deleted", false)
+          .in("status", ["delivered", "delivered"]),
+      ]);
+
+    // Handle results with fallbacks
+    const totalOrders =
+      ordersResult.status === "fulfilled"
+        ? ordersResult.value.data?.length || 0
+        : 0;
+    const totalFavorites =
+      favoritesResult.status === "fulfilled"
+        ? favoritesResult.value.data?.length || 0
+        : 0;
+    const totalSpent =
+      totalSpentResult.status === "fulfilled"
+        ? totalSpentResult.value.data?.reduce(
+            (sum, order) => sum + (order.total_price || 0),
+            0
+          ) || 0
+        : 0;
+
+    const getVipStatus = (spent: number) => {
+      if (spent >= 1000) return "Gold";
+      if (spent >= 500) return "Silver";
+      return "Bronze";
+    };
+
+    return {
+      ...user,
+      stats: {
+        totalOrders,
+        totalFavorites,
+        totalSpent,
+        vipStatus: getVipStatus(totalSpent),
+      },
+    };
+  } catch (error) {
+    console.error("Error in getUserProfile:", error);
     return null;
   }
-
-  // Get user stats
-  const [ordersResult, favoritesResult, totalSpentResult] = await Promise.all([
-    supabase
-      .from("orders")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("is_deleted", false),
-
-    supabase
-      .from("favorites")
-      .select("id")
-      .eq("user_id", userId)
-      .eq("is_deleted", false),
-
-    supabase
-      .from("orders")
-      .select("total_price")
-      .eq("user_id", userId)
-      .eq("is_deleted", false)
-      .eq("status", "delivered"),
-  ]);
-
-  const totalSpent =
-    totalSpentResult.data?.reduce(
-      (sum, order) => sum + (order.total_price || 0),
-      0
-    ) || 0;
-
-  return {
-    ...user,
-    stats: {
-      totalOrders: ordersResult.data?.length || 0,
-      totalFavorites: favoritesResult.data?.length || 0,
-      totalSpent,
-      vipStatus:
-        totalSpent > 1000 ? "Gold" : totalSpent > 500 ? "Silver" : "Bronze",
-    },
-  };
 }
 
 // Get user addresses
@@ -91,7 +111,7 @@ export async function getUserAddresses(userId: number) {
   return data || [];
 }
 
-// Get user orders with items and products
+// Get user orders with better error handling
 export async function getUserOrders(
   userId: number,
   status?: Database["public"]["Enums"]["order_status"] | "all",
@@ -99,85 +119,100 @@ export async function getUserOrders(
 ) {
   const supabase = await createSsrClient();
 
-  let query = supabase
-    .from("orders")
-    .select(
-      `
-      *,
-      order_items!inner(
+  try {
+    let query = supabase
+      .from("orders")
+      .select(
+        `
         *,
-        product:products(*)
-      ),
-      address:addresses(*),
-      user:users(*)
-    `
-    )
-    .eq("user_id", userId)
-    .eq("is_deleted", false);
+        order_items(
+          *,
+          product:products(*)
+        ),
+        address:addresses(*),
+        user:users(*)
+      `
+      )
+      .eq("user_id", userId)
+      .eq("is_deleted", false);
 
-  if (status && status !== "all") {
-    query = query.eq("status", status);
-  }
+    if (status && status !== "all") {
+      query = query.eq("status", status);
+    }
 
-  if (limit) {
-    query = query.limit(limit);
-  }
+    if (limit) {
+      query = query.limit(limit);
+    }
 
-  const { data, error } = await query.order("created_at", { ascending: false });
+    const { data, error } = await query.order("created_at", {
+      ascending: false,
+    });
 
-  if (error) {
-    console.error("Error fetching orders:", error);
+    if (error) {
+      console.error("Error fetching orders:", error);
+      return [];
+    }
+
+    return data || [];
+  } catch (error) {
+    console.error("Error in getUserOrders:", error);
     return [];
   }
-
-  return data || [];
 }
 
-// Get user favorites with product details
+// Get user favorites with better error handling
 export async function getUserFavorites(userId: number, categoryId?: number) {
   const supabase = await createSsrClient();
 
-  let query = supabase
-    .from("favorites")
-    .select(
-      `
-      *,
-      product:products(
+  try {
+    let query = supabase
+      .from("favorites")
+      .select(
+        `
         *,
-        currency:currencies(*),
-        cart_items!left(quantity, user_id)
+        product:products(
+          *,
+          currency:currencies(*),
+          cart_items!left(quantity, user_id)
+        )
+      `
       )
-    `
-    )
-    .eq("user_id", userId)
-    .eq("is_deleted", false)
-    .eq("products.is_deleted", false);
+      .eq("user_id", userId)
+      .eq("is_deleted", false);
 
-  if (categoryId) {
-    query = query.eq("products.category_id", categoryId);
-  }
+    if (categoryId) {
+      query = query.eq("products.category_id", categoryId);
+    }
 
-  const { data, error } = await query.order("created_at", { ascending: false });
+    const { data, error } = await query.order("created_at", {
+      ascending: false,
+    });
 
-  if (error) {
-    console.error("Error fetching favorites:", error);
+    if (error) {
+      console.error("Error fetching favorites:", error);
+      return [];
+    }
+
+    // Transform to include user-specific data
+    return (data || [])
+      .map((favorite) => ({
+        ...favorite,
+        product: favorite.product
+          ? {
+              ...favorite.product,
+              in_cart:
+                favorite.product.cart_items &&
+                favorite.product.cart_items.length > 0,
+              cart_quantity: favorite.product.cart_items?.[0]?.quantity || null,
+              is_favorite: true,
+            }
+          : null,
+      }))
+      .filter((fav) => fav.product !== null); // Filter out favorites with deleted products
+  } catch (error) {
+    console.error("Error in getUserFavorites:", error);
     return [];
   }
-
-  // Transform to include user-specific data
-  return (data || []).map((favorite) => ({
-    ...favorite,
-    product: favorite.product
-      ? {
-          ...favorite.product,
-          in_cart:
-            favorite.product.cart_items &&
-            favorite.product.cart_items.length > 0,
-          cart_quantity: favorite.product.cart_items?.[0]?.quantity || null,
-          is_favorite: true,
-        }
-      : null,
-  }));
 }
 
 // Client-side functions

@@ -312,7 +312,7 @@ export function SecurityClient() {
       </Card>
 
       {/* Two-Factor Authentication */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
             <Smartphone className="h-5 w-5 mr-2" />
@@ -354,10 +354,10 @@ export function SecurityClient() {
             <Button variant="outline">Generate Backup Codes</Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Notification Settings */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
             <Mail className="h-5 w-5 mr-2" />
@@ -410,10 +410,10 @@ export function SecurityClient() {
             />
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Active Sessions */}
-      <Card>
+      {/* <Card>
         <CardHeader>
           <CardTitle className="flex items-center">
             <Monitor className="h-5 w-5 mr-2" />
@@ -483,7 +483,7 @@ export function SecurityClient() {
             </Button>
           </div>
         </CardContent>
-      </Card>
+      </Card> */}
 
       {/* Account Deletion */}
       <Card className="border-red-200">

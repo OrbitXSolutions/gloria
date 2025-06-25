@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Progress } from "@/components/ui/progress";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Package,
   Heart,
@@ -17,6 +18,8 @@ import {
   Gift,
   Shield,
   Bell,
+  AlertCircle,
+  Sparkles,
 } from "lucide-react";
 import Link from "next/link";
 import {
@@ -44,66 +47,74 @@ interface UserWithStats {
 }
 
 export function ProfileOverview() {
-  const { user: authUser } = useSupabaseUser();
+  const { user: authUser, loading: authLoading } = useSupabaseUser();
   const [user, setUser] = useState<UserWithStats | null>(null);
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [recentFavorites, setRecentFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     async function loadData() {
-      if (!authUser?.id) return;
+      if (authLoading) return;
+
+      if (!authUser?.id) {
+        setError("Please log in to view your profile");
+        setLoading(false);
+        return;
+      }
 
       try {
+        setError(null);
+
         // Get user profile with stats
         const userProfile = await getUserProfile(Number.parseInt(authUser.id));
-        if (userProfile) {
-          setUser(userProfile as UserWithStats);
+        if (!userProfile) {
+          setError("Unable to load profile. Please try again.");
+          setLoading(false);
+          return;
         }
 
-        // Get recent orders (limit 3)
-        const orders = await getUserOrders(
-          Number.parseInt(authUser.id),
-          undefined,
-          3
-        );
-        setRecentOrders(orders);
+        setUser(userProfile as UserWithStats);
 
-        // Get recent favorites (limit 3)
-        const favorites = await getUserFavorites(Number.parseInt(authUser.id));
-        setRecentFavorites(favorites.slice(0, 3));
+        // Load additional data in parallel
+        const [orders, favorites] = await Promise.allSettled([
+          getUserOrders(Number.parseInt(authUser.id), undefined, 3),
+          getUserFavorites(Number.parseInt(authUser.id)),
+        ]);
+
+        // Handle orders result
+        if (orders.status === "fulfilled") {
+          setRecentOrders(orders.value);
+        } else {
+          console.error("Error loading orders:", orders.reason);
+        }
+
+        // Handle favorites result
+        if (favorites.status === "fulfilled") {
+          setRecentFavorites(favorites.value.slice(0, 3));
+        } else {
+          console.error("Error loading favorites:", favorites.reason);
+        }
       } catch (error) {
         console.error("Error loading profile data:", error);
+        setError("Something went wrong. Please refresh the page.");
       } finally {
         setLoading(false);
       }
     }
 
     loadData();
-  }, [authUser]);
-
-  if (loading) {
-    return <Spinner />;
-  }
-
-  if (!user) {
-    return (
-      <div className="p-6">
-        <div className="text-center">
-          <p className="text-gray-600">Unable to load profile data</p>
-        </div>
-      </div>
-    );
-  }
+  }, [authUser, authLoading]);
 
   const getVipBadgeColor = (status: string) => {
     switch (status) {
       case "Gold":
-        return "bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800";
+        return "bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800 border-yellow-300";
       case "Silver":
-        return "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800";
+        return "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800 border-gray-300";
       default:
-        return "bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800";
+        return "bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800 border-orange-300";
     }
   };
 
@@ -111,13 +122,32 @@ export function ProfileOverview() {
     const statusConfig = {
       processing: {
         label: "Processing",
-        color: "bg-yellow-100 text-yellow-800",
+        color: "bg-yellow-50 text-yellow-700 border-yellow-200",
       },
-      shipped: { label: "Shipped", color: "bg-blue-100 text-blue-800" },
-      delivered: { label: "Delivered", color: "bg-green-100 text-green-800" },
-      cancelled: { label: "Cancelled", color: "bg-red-100 text-red-800" },
-      pending: { label: "Pending", color: "bg-gray-100 text-gray-800" },
-      confirmed: { label: "Confirmed", color: "bg-blue-100 text-blue-800" },
+      shipped: {
+        label: "Shipped",
+        color: "bg-blue-50 text-blue-700 border-blue-200",
+      },
+      delivered: {
+        label: "Delivered",
+        color: "bg-green-50 text-green-700 border-green-200",
+      },
+      cancelled: {
+        label: "Cancelled",
+        color: "bg-red-50 text-red-700 border-red-200",
+      },
+      pending: {
+        label: "Pending",
+        color: "bg-gray-50 text-gray-700 border-gray-200",
+      },
+      confirmed: {
+        label: "Confirmed",
+        color: "bg-blue-50 text-blue-700 border-blue-200",
+      },
+      completed: {
+        label: "Completed",
+        color: "bg-green-50 text-green-700 border-green-200",
+      },
     };
     return (
       statusConfig[status as keyof typeof statusConfig] || statusConfig.pending
@@ -127,22 +157,102 @@ export function ProfileOverview() {
   const getVipProgress = (status: string, spent: number) => {
     switch (status) {
       case "Gold":
-        return { progress: 100, nextLevel: null, needed: 0 };
+        return {
+          progress: 100,
+          nextLevel: null,
+          needed: 0,
+          message: "You've reached the highest tier!",
+        };
       case "Silver":
-        return { progress: 75, nextLevel: "Gold", needed: 1000 - spent };
+        return {
+          progress: Math.min((spent / 1000) * 100, 99),
+          nextLevel: "Gold",
+          needed: Math.max(1000 - spent, 0),
+          message: `Spend $${(1000 - spent).toFixed(
+            2
+          )} more to reach Gold status`,
+        };
       default:
         return {
-          progress: (spent / 500) * 100,
+          progress: Math.min((spent / 500) * 100, 99),
           nextLevel: "Silver",
-          needed: 500 - spent,
+          needed: Math.max(500 - spent, 0),
+          message: `Spend $${(500 - spent).toFixed(
+            2
+          )} more to reach Silver status`,
         };
     }
   };
+
+  const getUserDisplayName = (user: UserWithStats) => {
+    if (user.first_name && user.last_name) {
+      return `${user.first_name} ${user.last_name}`;
+    }
+    if (user.first_name) {
+      return user.first_name;
+    }
+    return "Valued Customer";
+  };
+
+  const getUserInitials = (user: UserWithStats) => {
+    if (user.first_name && user.last_name) {
+      return `${user.first_name[0]}${user.last_name[0]}`;
+    }
+    if (user.first_name) {
+      return user.first_name[0];
+    }
+    if (user.email) {
+      return user.email[0].toUpperCase();
+    }
+    return "U";
+  };
+
+  // Loading state
+  if (loading || authLoading) {
+    return (
+      <div className="p-6 flex items-center justify-center min-h-[400px]">
+        <Spinner />
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="p-6">
+        <Alert className="max-w-md mx-auto">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+        <div className="text-center mt-4">
+          <Button onClick={() => window.location.reload()} variant="outline">
+            Try Again
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  // No user data
+  if (!user) {
+    return (
+      <div className="p-6">
+        <Alert className="max-w-md mx-auto">
+          <AlertCircle className="h-4 w-4" />
+          <AlertDescription>
+            Unable to load profile data. Please try refreshing the page.
+          </AlertDescription>
+        </Alert>
+      </div>
+    );
+  }
 
   const vipProgress = getVipProgress(
     user.stats.vipStatus,
     user.stats.totalSpent
   );
+  const displayName = getUserDisplayName(user);
+  const userInitials = getUserInitials(user);
 
   return (
     <div className="p-6 space-y-6">
@@ -170,6 +280,17 @@ export function ProfileOverview() {
         </div>
       </div>
 
+      {/* Welcome Message for New Users */}
+      {user.stats.totalOrders === 0 && (
+        <Alert className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
+          <Sparkles className="h-4 w-4 text-blue-600" />
+          <AlertDescription className="text-blue-800">
+            Welcome to ELEVA! Complete your profile and start exploring our
+            luxury fragrance collection.
+          </AlertDescription>
+        </Alert>
+      )}
+
       {/* Profile Card */}
       <Card>
         <CardContent className="p-6">
@@ -179,14 +300,13 @@ export function ProfileOverview() {
                 src={user.avatar || "/placeholder.svg?height=96&width=96"}
               />
               <AvatarFallback className="text-xl font-medium bg-gradient-to-br from-gray-100 to-gray-200">
-                {user.first_name?.[0] || "U"}
-                {user.last_name?.[0] || ""}
+                {userInitials}
               </AvatarFallback>
             </Avatar>
             <div className="flex-1 space-y-3">
               <div className="flex items-center space-x-3">
                 <h2 className="text-xl font-semibold text-gray-900">
-                  {user.first_name} {user.last_name}
+                  {displayName}
                 </h2>
                 <Badge
                   variant="secondary"
@@ -228,6 +348,13 @@ export function ProfileOverview() {
                     value={Math.min(vipProgress.progress, 100)}
                     className="h-2"
                   />
+                  <p className="text-xs text-gray-500">{vipProgress.message}</p>
+                </div>
+              )}
+              {user.stats.vipStatus === "Gold" && (
+                <div className="text-sm text-yellow-700 bg-yellow-50 p-2 rounded-lg">
+                  🎉 Congratulations! You've reached our highest VIP tier with
+                  exclusive benefits.
                 </div>
               )}
             </div>
@@ -322,7 +449,7 @@ export function ProfileOverview() {
                       key={order.id}
                       className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
                     >
-                      <div>
+                      <div className="flex-1">
                         <p className="font-medium text-gray-900">
                           #{order.code || `ORD-${order.id}`}
                         </p>
@@ -349,13 +476,14 @@ export function ProfileOverview() {
                 </Link>
               </>
             ) : (
-              <div className="text-center py-4">
-                <Package className="h-12 w-12 text-gray-300 mx-auto mb-2" />
-                <p className="text-gray-500">No orders yet</p>
+              <div className="text-center py-8">
+                <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500 mb-3">No orders yet</p>
+                <p className="text-sm text-gray-400 mb-4">
+                  Start your luxury fragrance journey
+                </p>
                 <Link href="/products">
-                  <Button variant="outline" className="mt-2">
-                    Start Shopping
-                  </Button>
+                  <Button className="w-full">Start Shopping</Button>
                 </Link>
               </div>
             )}
@@ -392,6 +520,8 @@ export function ProfileOverview() {
                       </p>
                       <p className="text-sm text-gray-600">
                         ${favorite.product?.price?.toFixed(2)}
+                        {favorite.product?.currency &&
+                          ` ${favorite.product.currency.symbol_en}`}
                       </p>
                     </div>
                   </div>
@@ -403,11 +533,14 @@ export function ProfileOverview() {
                 </Link>
               </>
             ) : (
-              <div className="text-center py-4">
-                <Heart className="h-12 w-12 text-gray-300 mx-auto mb-2" />
-                <p className="text-gray-500">No favorites yet</p>
+              <div className="text-center py-8">
+                <Heart className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                <p className="text-gray-500 mb-3">No favorites yet</p>
+                <p className="text-sm text-gray-400 mb-4">
+                  Save products you love
+                </p>
                 <Link href="/products">
-                  <Button variant="outline" className="mt-2">
+                  <Button variant="outline" className="w-full">
                     Browse Products
                   </Button>
                 </Link>
@@ -433,7 +566,7 @@ export function ProfileOverview() {
                 </div>
                 <Badge
                   variant="outline"
-                  className="bg-green-100 text-green-800"
+                  className="bg-green-100 text-green-800 border-green-200"
                 >
                   Secure
                 </Badge>
@@ -442,10 +575,13 @@ export function ProfileOverview() {
               <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
                 <div className="flex items-center space-x-2">
                   <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
-                  <span className="text-sm text-gray-700">Two-Factor Auth</span>
+                  <span className="text-sm text-gray-700">Password</span>
                 </div>
-                <Badge variant="outline" className="bg-blue-100 text-blue-800">
-                  Enabled
+                <Badge
+                  variant="outline"
+                  className="bg-blue-100 text-blue-800 border-blue-200"
+                >
+                  Strong
                 </Badge>
               </div>
 
@@ -454,7 +590,10 @@ export function ProfileOverview() {
                   <Bell className="h-4 w-4 text-gray-500" />
                   <span className="text-sm text-gray-700">Notifications</span>
                 </div>
-                <Badge variant="outline" className="bg-gray-100 text-gray-800">
+                <Badge
+                  variant="outline"
+                  className="bg-gray-100 text-gray-800 border-gray-200"
+                >
                   On
                 </Badge>
               </div>
