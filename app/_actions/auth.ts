@@ -162,7 +162,7 @@ export const verifyOtpAction = action
   .schema(otpSchema.extend({ phone: z.string() }))
   .action(async ({ parsedInput }) => {
     const { token, phone } = parsedInput;
-    const supabase = await createClient();
+    const supabase = await createSsrClient();
 
     try {
       const { data, error } = await supabase.auth.verifyOtp({
@@ -177,16 +177,20 @@ export const verifyOtpAction = action
 
       if (data.user) {
         // Create user in public.users table
-        const { error: insertError } = await supabase.from("users").upsert({
-          user_id: data.user.id,
-          email: data.user.user_metadata?.email,
-          phone: data.user.phone,
-          first_name: data.user.user_metadata?.first_name,
-          last_name: data.user.user_metadata?.last_name,
-          full_name: data.user.user_metadata?.full_name,
-          created_at: new Date().toISOString(),
-          updated_at: new Date().toISOString(),
-        });
+        const { error: insertError } = await supabase
+          .from("users")
+          .upsert({
+            id: data.user.user_metadata?.user_id,
+            user_id: data.user.id,
+            email: data.user.email ?? data.user.user_metadata?.email,
+            phone: data.user.phone,
+            first_name: data.user.user_metadata?.first_name,
+            last_name: data.user.user_metadata?.last_name,
+            full_name: data.user.user_metadata?.full_name,
+            created_at: new Date().toISOString(),
+            updated_at: new Date().toISOString(),
+          })
+          .eq("user_id", data.user.id);
 
         if (insertError) {
           console.error("Error creating user:", insertError);
