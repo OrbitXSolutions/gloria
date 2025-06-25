@@ -1,25 +1,173 @@
-"use client"
+"use client";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Badge } from "@/components/ui/badge"
-import { Button } from "@/components/ui/button"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Package, Heart, Crown, Edit, TrendingUp, Calendar, Star } from "lucide-react"
-import Link from "next/link"
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Progress } from "@/components/ui/progress";
+import {
+  Package,
+  Heart,
+  Crown,
+  Edit,
+  TrendingUp,
+  Calendar,
+  Star,
+  Gift,
+  Shield,
+  Bell,
+} from "lucide-react";
+import Link from "next/link";
+import {
+  getUserProfile,
+  getUserOrders,
+  getUserFavorites,
+} from "@/lib/common/profile-queries";
+import { useSupabaseUser } from "@/hooks/use-supabase-user";
+import { Spinner } from "@/components/ui/spinner";
+
+interface UserWithStats {
+  id: number;
+  email: string;
+  first_name: string | null;
+  last_name: string | null;
+  avatar: string | null;
+  phone: string | null;
+  created_at: string;
+  stats: {
+    totalOrders: number;
+    totalFavorites: number;
+    totalSpent: number;
+    vipStatus: string;
+  };
+}
 
 export function ProfileOverview() {
+  const { user: authUser } = useSupabaseUser();
+  const [user, setUser] = useState<UserWithStats | null>(null);
+  const [recentOrders, setRecentOrders] = useState<any[]>([]);
+  const [recentFavorites, setRecentFavorites] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function loadData() {
+      if (!authUser?.id) return;
+
+      try {
+        // Get user profile with stats
+        const userProfile = await getUserProfile(Number.parseInt(authUser.id));
+        if (userProfile) {
+          setUser(userProfile as UserWithStats);
+        }
+
+        // Get recent orders (limit 3)
+        const orders = await getUserOrders(
+          Number.parseInt(authUser.id),
+          undefined,
+          3
+        );
+        setRecentOrders(orders);
+
+        // Get recent favorites (limit 3)
+        const favorites = await getUserFavorites(Number.parseInt(authUser.id));
+        setRecentFavorites(favorites.slice(0, 3));
+      } catch (error) {
+        console.error("Error loading profile data:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadData();
+  }, [authUser]);
+
+  if (loading) {
+    return <Spinner />;
+  }
+
+  if (!user) {
+    return (
+      <div className="p-6">
+        <div className="text-center">
+          <p className="text-gray-600">Unable to load profile data</p>
+        </div>
+      </div>
+    );
+  }
+
+  const getVipBadgeColor = (status: string) => {
+    switch (status) {
+      case "Gold":
+        return "bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800";
+      case "Silver":
+        return "bg-gradient-to-r from-gray-100 to-gray-200 text-gray-800";
+      default:
+        return "bg-gradient-to-r from-orange-100 to-orange-200 text-orange-800";
+    }
+  };
+
+  const getStatusBadge = (status: string) => {
+    const statusConfig = {
+      processing: {
+        label: "Processing",
+        color: "bg-yellow-100 text-yellow-800",
+      },
+      shipped: { label: "Shipped", color: "bg-blue-100 text-blue-800" },
+      delivered: { label: "Delivered", color: "bg-green-100 text-green-800" },
+      cancelled: { label: "Cancelled", color: "bg-red-100 text-red-800" },
+      pending: { label: "Pending", color: "bg-gray-100 text-gray-800" },
+      confirmed: { label: "Confirmed", color: "bg-blue-100 text-blue-800" },
+    };
+    return (
+      statusConfig[status as keyof typeof statusConfig] || statusConfig.pending
+    );
+  };
+
+  const getVipProgress = (status: string, spent: number) => {
+    switch (status) {
+      case "Gold":
+        return { progress: 100, nextLevel: null, needed: 0 };
+      case "Silver":
+        return { progress: 75, nextLevel: "Gold", needed: 1000 - spent };
+      default:
+        return {
+          progress: (spent / 500) * 100,
+          nextLevel: "Silver",
+          needed: 500 - spent,
+        };
+    }
+  };
+
+  const vipProgress = getVipProgress(
+    user.stats.vipStatus,
+    user.stats.totalSpent
+  );
+
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900">Profile Overview</h1>
-          <p className="text-gray-600 mt-1">Manage your account and preferences</p>
+          <p className="text-gray-600 mt-1">
+            Welcome back, {user.first_name || "Valued Customer"}!
+          </p>
         </div>
-        <Button className="mt-4 sm:mt-0">
-          <Edit className="h-4 w-4 mr-2" />
-          Edit Profile
-        </Button>
+        <div className="flex gap-2 mt-4 sm:mt-0">
+          <Link href="/profile/settings">
+            <Button variant="outline">
+              <Edit className="h-4 w-4 mr-2" />
+              Edit Profile
+            </Button>
+          </Link>
+          <Link href="/profile/security">
+            <Button variant="outline">
+              <Shield className="h-4 w-4 mr-2" />
+              Security
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Profile Card */}
@@ -27,31 +175,61 @@ export function ProfileOverview() {
         <CardContent className="p-6">
           <div className="flex flex-col sm:flex-row sm:items-center space-y-4 sm:space-y-0 sm:space-x-6">
             <Avatar className="h-24 w-24">
-              <AvatarImage src="/placeholder.svg?height=96&width=96" />
+              <AvatarImage
+                src={user.avatar || "/placeholder.svg?height=96&width=96"}
+              />
               <AvatarFallback className="text-xl font-medium bg-gradient-to-br from-gray-100 to-gray-200">
-                JD
+                {user.first_name?.[0] || "U"}
+                {user.last_name?.[0] || ""}
               </AvatarFallback>
             </Avatar>
-            <div className="flex-1 space-y-2">
+            <div className="flex-1 space-y-3">
               <div className="flex items-center space-x-3">
-                <h2 className="text-xl font-semibold text-gray-900">John Doe</h2>
-                <Badge variant="secondary" className="bg-gradient-to-r from-yellow-100 to-yellow-200 text-yellow-800">
+                <h2 className="text-xl font-semibold text-gray-900">
+                  {user.first_name} {user.last_name}
+                </h2>
+                <Badge
+                  variant="secondary"
+                  className={getVipBadgeColor(user.stats.vipStatus)}
+                >
                   <Crown className="h-3 w-3 mr-1" />
-                  VIP Member
+                  {user.stats.vipStatus} Member
                 </Badge>
               </div>
-              <p className="text-gray-600">john.doe@example.com</p>
-              <p className="text-gray-600">+1 (555) 123-4567</p>
+              <p className="text-gray-600">{user.email}</p>
+              {user.phone && <p className="text-gray-600">{user.phone}</p>}
               <div className="flex items-center space-x-4 text-sm text-gray-500">
                 <span className="flex items-center">
                   <Calendar className="h-4 w-4 mr-1" />
-                  Member since Jan 2024
+                  Member since{" "}
+                  {new Date(user.created_at).toLocaleDateString("en-US", {
+                    month: "short",
+                    year: "numeric",
+                  })}
                 </span>
                 <span className="flex items-center">
                   <Star className="h-4 w-4 mr-1 text-yellow-500" />
-                  4.9 Rating
+                  VIP Member
                 </span>
               </div>
+
+              {/* VIP Progress */}
+              {vipProgress.nextLevel && (
+                <div className="space-y-2">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-gray-600">
+                      Progress to {vipProgress.nextLevel}
+                    </span>
+                    <span className="text-gray-600">
+                      ${vipProgress.needed.toFixed(2)} to go
+                    </span>
+                  </div>
+                  <Progress
+                    value={Math.min(vipProgress.progress, 100)}
+                    className="h-2"
+                  />
+                </div>
+              )}
             </div>
           </div>
         </CardContent>
@@ -66,7 +244,9 @@ export function ProfileOverview() {
                 <Package className="h-6 w-6 text-blue-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">12</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {user.stats.totalOrders}
+                </p>
                 <p className="text-sm text-gray-600">Total Orders</p>
               </div>
             </div>
@@ -80,7 +260,9 @@ export function ProfileOverview() {
                 <Heart className="h-6 w-6 text-red-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">24</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {user.stats.totalFavorites}
+                </p>
                 <p className="text-sm text-gray-600">Favorites</p>
               </div>
             </div>
@@ -94,7 +276,9 @@ export function ProfileOverview() {
                 <TrendingUp className="h-6 w-6 text-green-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">$2,450</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  ${user.stats.totalSpent.toFixed(2)}
+                </p>
                 <p className="text-sm text-gray-600">Total Spent</p>
               </div>
             </div>
@@ -108,7 +292,9 @@ export function ProfileOverview() {
                 <Crown className="h-6 w-6 text-purple-600" />
               </div>
               <div>
-                <p className="text-2xl font-bold text-gray-900">Gold</p>
+                <p className="text-2xl font-bold text-gray-900">
+                  {user.stats.vipStatus}
+                </p>
                 <p className="text-sm text-gray-600">VIP Status</p>
               </div>
             </div>
@@ -116,8 +302,9 @@ export function ProfileOverview() {
         </Card>
       </div>
 
-      {/* Quick Actions */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      {/* Quick Actions Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        {/* Recent Orders */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -126,32 +313,56 @@ export function ProfileOverview() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium text-gray-900">#ORD-2024-001</p>
-                <p className="text-sm text-gray-600">Chanel No. 5 - 100ml</p>
+            {recentOrders.length > 0 ? (
+              <>
+                {recentOrders.map((order) => {
+                  const statusInfo = getStatusBadge(order.status);
+                  return (
+                    <div
+                      key={order.id}
+                      className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
+                    >
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          #{order.code || `ORD-${order.id}`}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          {order.order_items?.[0]?.product?.name_en ||
+                            "Order items"}
+                          {order.order_items?.length > 1 &&
+                            ` +${order.order_items.length - 1} more`}
+                        </p>
+                        <p className="text-xs text-gray-500">
+                          {new Date(order.created_at).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <Badge variant="outline" className={statusInfo.color}>
+                        {statusInfo.label}
+                      </Badge>
+                    </div>
+                  );
+                })}
+                <Link href="/profile/orders">
+                  <Button variant="outline" className="w-full">
+                    View All Orders
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <div className="text-center py-4">
+                <Package className="h-12 w-12 text-gray-300 mx-auto mb-2" />
+                <p className="text-gray-500">No orders yet</p>
+                <Link href="/products">
+                  <Button variant="outline" className="mt-2">
+                    Start Shopping
+                  </Button>
+                </Link>
               </div>
-              <Badge variant="outline" className="text-green-600 border-green-200">
-                Delivered
-              </Badge>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-              <div>
-                <p className="font-medium text-gray-900">#ORD-2024-002</p>
-                <p className="text-sm text-gray-600">Dior Sauvage - 60ml</p>
-              </div>
-              <Badge variant="outline" className="text-blue-600 border-blue-200">
-                Shipped
-              </Badge>
-            </div>
-            <Link href="/profile/orders">
-              <Button variant="outline" className="w-full">
-                View All Orders
-              </Button>
-            </Link>
+            )}
           </CardContent>
         </Card>
 
+        {/* Favorite Items */}
         <Card>
           <CardHeader>
             <CardTitle className="flex items-center">
@@ -160,36 +371,144 @@ export function ProfileOverview() {
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
-            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-              <img
-                src="/placeholder.svg?height=48&width=48"
-                alt="Product"
-                className="h-12 w-12 rounded-lg object-cover"
-              />
-              <div className="flex-1">
-                <p className="font-medium text-gray-900">Tom Ford Black Orchid</p>
-                <p className="text-sm text-gray-600">$180.00</p>
+            {recentFavorites.length > 0 ? (
+              <>
+                {recentFavorites.map((favorite) => (
+                  <div
+                    key={favorite.id}
+                    className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg"
+                  >
+                    <img
+                      src={
+                        favorite.product?.primary_image ||
+                        "/placeholder.svg?height=48&width=48"
+                      }
+                      alt={favorite.product?.name_en || "Product"}
+                      className="h-12 w-12 rounded-lg object-cover"
+                    />
+                    <div className="flex-1">
+                      <p className="font-medium text-gray-900 text-sm">
+                        {favorite.product?.name_en}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        ${favorite.product?.price?.toFixed(2)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+                <Link href="/profile/favorites">
+                  <Button variant="outline" className="w-full">
+                    View All Favorites
+                  </Button>
+                </Link>
+              </>
+            ) : (
+              <div className="text-center py-4">
+                <Heart className="h-12 w-12 text-gray-300 mx-auto mb-2" />
+                <p className="text-gray-500">No favorites yet</p>
+                <Link href="/products">
+                  <Button variant="outline" className="mt-2">
+                    Browse Products
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </CardContent>
+        </Card>
+
+        {/* Account Security */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Shield className="h-5 w-5 mr-2" />
+              Account Security
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <div className="h-2 w-2 bg-green-500 rounded-full"></div>
+                  <span className="text-sm text-gray-700">Email Verified</span>
+                </div>
+                <Badge
+                  variant="outline"
+                  className="bg-green-100 text-green-800"
+                >
+                  Secure
+                </Badge>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <div className="h-2 w-2 bg-blue-500 rounded-full"></div>
+                  <span className="text-sm text-gray-700">Two-Factor Auth</span>
+                </div>
+                <Badge variant="outline" className="bg-blue-100 text-blue-800">
+                  Enabled
+                </Badge>
+              </div>
+
+              <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                <div className="flex items-center space-x-2">
+                  <Bell className="h-4 w-4 text-gray-500" />
+                  <span className="text-sm text-gray-700">Notifications</span>
+                </div>
+                <Badge variant="outline" className="bg-gray-100 text-gray-800">
+                  On
+                </Badge>
               </div>
             </div>
-            <div className="flex items-center space-x-3 p-3 bg-gray-50 rounded-lg">
-              <img
-                src="/placeholder.svg?height=48&width=48"
-                alt="Product"
-                className="h-12 w-12 rounded-lg object-cover"
-              />
-              <div className="flex-1">
-                <p className="font-medium text-gray-900">Creed Aventus</p>
-                <p className="text-sm text-gray-600">$365.00</p>
-              </div>
-            </div>
-            <Link href="/profile/favorites">
+
+            <Link href="/profile/security">
               <Button variant="outline" className="w-full">
-                View All Favorites
+                Security Settings
               </Button>
             </Link>
           </CardContent>
         </Card>
       </div>
+
+      {/* VIP Benefits */}
+      {user.stats.vipStatus !== "Bronze" && (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center">
+              <Gift className="h-5 w-5 mr-2" />
+              Your VIP Benefits
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="text-center p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg">
+                <Crown className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
+                <h3 className="font-semibold text-gray-900">
+                  Priority Support
+                </h3>
+                <p className="text-sm text-gray-600">
+                  24/7 dedicated customer service
+                </p>
+              </div>
+              <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
+                <Package className="h-8 w-8 text-blue-600 mx-auto mb-2" />
+                <h3 className="font-semibold text-gray-900">Free Shipping</h3>
+                <p className="text-sm text-gray-600">
+                  On all orders, no minimum
+                </p>
+              </div>
+              <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
+                <Star className="h-8 w-8 text-purple-600 mx-auto mb-2" />
+                <h3 className="font-semibold text-gray-900">
+                  Exclusive Access
+                </h3>
+                <p className="text-sm text-gray-600">
+                  Early access to new collections
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
-  )
+  );
 }

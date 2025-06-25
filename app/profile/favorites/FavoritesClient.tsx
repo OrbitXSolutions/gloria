@@ -1,99 +1,123 @@
-"use client"
+"use client";
 
-import { useState } from "react"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Badge } from "@/components/ui/badge"
-import { Heart, Search, Filter, ShoppingCart, Star, Trash2 } from "lucide-react"
-
-const favorites = [
-  {
-    id: 1,
-    name: "Chanel No. 5",
-    brand: "Chanel",
-    price: 180.0,
-    originalPrice: 200.0,
-    image: "/placeholder.svg?height=200&width=200",
-    category: "Women",
-    rating: 4.8,
-    reviews: 1250,
-    inStock: true,
-    dateAdded: "2024-01-15",
-  },
-  {
-    id: 2,
-    name: "Creed Aventus",
-    brand: "Creed",
-    price: 365.0,
-    originalPrice: 365.0,
-    image: "/placeholder.svg?height=200&width=200",
-    category: "Men",
-    rating: 4.9,
-    reviews: 890,
-    inStock: true,
-    dateAdded: "2024-01-20",
-  },
-  {
-    id: 3,
-    name: "Tom Ford Black Orchid",
-    brand: "Tom Ford",
-    price: 180.0,
-    originalPrice: 220.0,
-    image: "/placeholder.svg?height=200&width=200",
-    category: "Unisex",
-    rating: 4.7,
-    reviews: 650,
-    inStock: false,
-    dateAdded: "2024-01-25",
-  },
-  {
-    id: 4,
-    name: "Dior Sauvage",
-    brand: "Dior",
-    price: 120.0,
-    originalPrice: 140.0,
-    image: "/placeholder.svg?height=200&width=200",
-    category: "Men",
-    rating: 4.6,
-    reviews: 2100,
-    inStock: true,
-    dateAdded: "2024-02-01",
-  },
-]
+import { useState, useEffect } from "react";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { Heart, Search, ShoppingCart, Trash2 } from "lucide-react";
+import {
+  getUserFavorites,
+  removeFromFavorites,
+  addToCart,
+} from "@/lib/common/profile-queries";
+import { useSupabaseUser } from "@/hooks/use-supabase-user";
+import { toast } from "sonner";
+import { Spinner } from "@/components/ui/spinner";
 
 export function FavoritesClient() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [categoryFilter, setCategoryFilter] = useState("all")
-  const [sortBy, setSortBy] = useState("newest")
+  const { user: authUser } = useSupabaseUser();
+  const [favorites, setFavorites] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [sortBy, setSortBy] = useState("newest");
 
-  const filteredFavorites = favorites.filter((item) => {
+  useEffect(() => {
+    async function loadFavorites() {
+      if (!authUser?.id) return;
+
+      try {
+        const favoritesData = await getUserFavorites(
+          Number.parseInt(authUser.id)
+        );
+        setFavorites(favoritesData);
+      } catch (error) {
+        console.error("Error loading favorites:", error);
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    loadFavorites();
+  }, [authUser]);
+
+  const handleRemoveFromFavorites = async (productId: number) => {
+    if (!authUser?.id) return;
+
+    const result = await removeFromFavorites(
+      productId,
+      Number.parseInt(authUser.id)
+    );
+    if (result.success) {
+      setFavorites((prev) =>
+        prev.filter((fav) => fav.product_id !== productId)
+      );
+      toast.success("Removed from favorites");
+    } else {
+      toast.error("Failed to remove from favorites");
+    }
+  };
+
+  const handleAddToCart = async (productId: number) => {
+    if (!authUser?.id) return;
+
+    const result = await addToCart(productId, Number.parseInt(authUser.id));
+    if (result.success) {
+      toast.success("Added to cart");
+    } else {
+      toast.error("Failed to add to cart");
+    }
+  };
+
+  const filteredFavorites = favorites.filter((favorite) => {
+    const product = favorite.product;
+    if (!product) return false;
+
     const matchesSearch =
-      item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      item.brand.toLowerCase().includes(searchTerm.toLowerCase())
-    const matchesCategory = categoryFilter === "all" || item.category.toLowerCase() === categoryFilter
+      product.name_en?.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      product.name_ar?.toLowerCase().includes(searchTerm.toLowerCase());
 
-    return matchesSearch && matchesCategory
-  })
+    // For category filter, you'd need to join with categories table
+    const matchesCategory = categoryFilter === "all"; // Simplified for now
+
+    return matchesSearch && matchesCategory;
+  });
 
   // Sort favorites
   filteredFavorites.sort((a, b) => {
     switch (sortBy) {
       case "newest":
-        return new Date(b.dateAdded).getTime() - new Date(a.dateAdded).getTime()
+        return (
+          new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+        );
       case "oldest":
-        return new Date(a.dateAdded).getTime() - new Date(b.dateAdded).getTime()
+        return (
+          new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+        );
       case "price-low":
-        return a.price - b.price
+        return (a.product?.price || 0) - (b.product?.price || 0);
       case "price-high":
-        return b.price - a.price
+        return (b.product?.price || 0) - (a.product?.price || 0);
       case "name":
-        return a.name.localeCompare(b.name)
+        return (a.product?.name_en || "").localeCompare(
+          b.product?.name_en || ""
+        );
       default:
-        return 0
+        return 0;
     }
-  })
+  });
+
+  if (loading) {
+    return <Spinner />;
+  }
 
   return (
     <div className="p-6 space-y-6">
@@ -120,18 +144,6 @@ export function FavoritesClient() {
                 />
               </div>
             </div>
-            <Select value={categoryFilter} onValueChange={setCategoryFilter}>
-              <SelectTrigger className="w-full lg:w-48">
-                <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                <SelectItem value="men">Men</SelectItem>
-                <SelectItem value="women">Women</SelectItem>
-                <SelectItem value="unisex">Unisex</SelectItem>
-              </SelectContent>
-            </Select>
             <Select value={sortBy} onValueChange={setSortBy}>
               <SelectTrigger className="w-full lg:w-48">
                 <SelectValue placeholder="Sort by" />
@@ -153,73 +165,97 @@ export function FavoritesClient() {
         <Card>
           <CardContent className="p-12 text-center">
             <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No favorites found</h3>
-            <p className="text-gray-600">Try adjusting your search or browse our collection to add favorites.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No favorites found
+            </h3>
+            <p className="text-gray-600">
+              Try adjusting your search or browse our collection to add
+              favorites.
+            </p>
           </CardContent>
         </Card>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {filteredFavorites.map((item) => (
-            <Card key={item.id} className="group hover:shadow-lg transition-shadow duration-200">
-              <CardContent className="p-0">
-                <div className="relative">
-                  <img
-                    src={item.image || "/placeholder.svg"}
-                    alt={item.name}
-                    className="w-full h-48 object-cover rounded-t-lg"
-                  />
-                  <Button
-                    size="sm"
-                    variant="ghost"
-                    className="absolute top-2 right-2 h-8 w-8 p-0 bg-white/80 hover:bg-white"
-                  >
-                    <Trash2 className="h-4 w-4 text-red-500" />
-                  </Button>
-                  {!item.inStock && (
-                    <div className="absolute inset-0 bg-black/50 rounded-t-lg flex items-center justify-center">
-                      <Badge variant="secondary" className="bg-white text-gray-900">
-                        Out of Stock
-                      </Badge>
-                    </div>
-                  )}
-                </div>
+          {filteredFavorites.map((favorite) => {
+            const product = favorite.product;
+            if (!product) return null;
 
-                <div className="p-4 space-y-3">
-                  <div>
-                    <p className="text-sm text-gray-600">{item.brand}</p>
-                    <h3 className="font-semibold text-gray-900 line-clamp-2">{item.name}</h3>
+            return (
+              <Card
+                key={favorite.id}
+                className="group hover:shadow-lg transition-shadow duration-200"
+              >
+                <CardContent className="p-0">
+                  <div className="relative">
+                    <img
+                      src={
+                        product.primary_image ||
+                        "/placeholder.svg?height=200&width=200"
+                      }
+                      alt={product.name_en || "Product"}
+                      className="w-full h-48 object-cover rounded-t-lg"
+                    />
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      className="absolute top-2 right-2 h-8 w-8 p-0 bg-white/80 hover:bg-white"
+                      onClick={() => handleRemoveFromFavorites(product.id)}
+                    >
+                      <Trash2 className="h-4 w-4 text-red-500" />
+                    </Button>
+                    {product.quantity === 0 && (
+                      <div className="absolute inset-0 bg-black/50 rounded-t-lg flex items-center justify-center">
+                        <Badge
+                          variant="secondary"
+                          className="bg-white text-gray-900"
+                        >
+                          Out of Stock
+                        </Badge>
+                      </div>
+                    )}
                   </div>
 
-                  <div className="flex items-center space-x-2">
-                    <div className="flex items-center">
-                      <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                      <span className="text-sm text-gray-600 ml-1">{item.rating}</span>
-                    </div>
-                    <span className="text-sm text-gray-400">({item.reviews})</span>
-                    <Badge variant="outline" className="text-xs">
-                      {item.category}
-                    </Badge>
-                  </div>
-
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-2">
-                      <span className="text-lg font-bold text-gray-900">${item.price.toFixed(2)}</span>
-                      {item.originalPrice > item.price && (
-                        <span className="text-sm text-gray-500 line-through">${item.originalPrice.toFixed(2)}</span>
+                  <div className="p-4 space-y-3">
+                    <div>
+                      <h3 className="font-semibold text-gray-900 line-clamp-2">
+                        {product.name_en}
+                      </h3>
+                      {product.name_ar && (
+                        <p className="text-sm text-gray-600">
+                          {product.name_ar}
+                        </p>
                       )}
                     </div>
-                  </div>
 
-                  <Button className="w-full" disabled={!item.inStock}>
-                    <ShoppingCart className="h-4 w-4 mr-2" />
-                    {item.inStock ? "Add to Cart" : "Out of Stock"}
-                  </Button>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center space-x-2">
+                        <span className="text-lg font-bold text-gray-900">
+                          ${product.price?.toFixed(2)}
+                        </span>
+                        {product.old_price &&
+                          product.old_price > product.price && (
+                            <span className="text-sm text-gray-500 line-through">
+                              ${product.old_price.toFixed(2)}
+                            </span>
+                          )}
+                      </div>
+                    </div>
+
+                    <Button
+                      className="w-full"
+                      disabled={product.quantity === 0}
+                      onClick={() => handleAddToCart(product.id)}
+                    >
+                      <ShoppingCart className="h-4 w-4 mr-2" />
+                      {product.quantity === 0 ? "Out of Stock" : "Add to Cart"}
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
       )}
     </div>
-  )
+  );
 }
