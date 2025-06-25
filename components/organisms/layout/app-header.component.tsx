@@ -12,6 +12,7 @@ import { useTranslations } from "next-intl";
 import { useCart } from "@/components/_core/providers/cart-provider";
 import LanguageSwitcher from "@/components/atoms/langauge-switcher";
 import Form from "next/form";
+import AuthButton from "@/components/atoms/auth-button";
 // import AuthButton from "./AuthButton";
 
 export default function AppHeader() {
@@ -132,7 +133,7 @@ export default function AppHeader() {
               <LanguageSwitcher />
 
               {/* Action buttons */}
-              {/* <AuthButton /> */}
+              <AuthButton />
               <Button variant="ghost" size="sm" className="hidden md:flex">
                 <Heart className="h-5 w-5" />
               </Button>
