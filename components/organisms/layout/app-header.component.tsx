@@ -55,7 +55,7 @@ export default function AppHeader() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-50 bg-gradient-to-r from-primary-400 to-primary-700 text-white shadow-sm ">
+      <header className="sticky top-0 z-50 bg-gradient-to-r from-primary-400 via-40% via-primary-500 to-primary-700 text-white shadow-sm ">
         <div className="container mx-auto px-4">
           {/* Top bar */}
 
