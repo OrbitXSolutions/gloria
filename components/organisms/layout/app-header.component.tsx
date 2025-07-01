@@ -55,7 +55,7 @@ export default function AppHeader() {
         </div>
       </div>
 
-      <header className="sticky top-0 z-50 bg-primary text-white shadow-sm ">
+      <header className="sticky top-0 z-50 bg-gradient-to-r from-primary-400 to-primary-700 text-white shadow-sm ">
         <div className="container mx-auto px-4">
           {/* Top bar */}
 
@@ -72,8 +72,8 @@ export default function AppHeader() {
                 href="/"
                 className={`font-medium transition-colors flex items-center gap-2 ${
                   isActiveLink("/")
-                    ? "text-secondary-300 border-b-2 border-secondary pb-1"
-                    : "hover:text-secondary-300"
+                    ? "text-secondary-100 border-b-2 border-secondary-300 pb-1"
+                    : "hover:text-secondary-100"
                 }`}
               >
                 {t("nav.home")}
@@ -83,8 +83,8 @@ export default function AppHeader() {
                 href="/products"
                 className={`font-medium transition-colors flex items-center gap-2 ${
                   isActiveLink("/products")
-                    ? "text-secondary-300 border-b-2 border-secondary pb-1"
-                    : "hover:text-secondary-300"
+                    ? "text-secondary-100 border-b-2 border-secondary pb-1"
+                    : "hover:text-secondary-100"
                 }`}
               >
                 {t("nav.products")}
@@ -94,8 +94,8 @@ export default function AppHeader() {
                 href="/gifts"
                 className={`font-medium transition-colors flex items-center gap-2 ${
                   isActiveLink("/gifts")
-                    ? "text-secondary-300 border-b-2 border-secondary pb-1"
-                    : "hover:text-secondary-300"
+                    ? "text-secondary-100 border-b-2 border-secondary pb-1"
+                    : "hover:text-secondary-100"
                 }`}
               >
                 {t("nav.gifts")}
@@ -105,8 +105,8 @@ export default function AppHeader() {
                 href="/about"
                 className={`font-medium transition-colors flex items-center gap-2 ${
                   isActiveLink("/about")
-                    ? "text-secondary-300 border-b-2 border-secondary pb-1"
-                    : "hover:text-secondary-300"
+                    ? "text-secondary-100 border-b-2 border-secondary pb-1"
+                    : "hover:text-secondary-100"
                 }`}
               >
                 {t("nav.about")}

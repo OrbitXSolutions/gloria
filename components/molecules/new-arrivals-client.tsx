@@ -13,7 +13,7 @@ export default function NewArrivalsClient({ products }: Props) {
   const t = useTranslations("newArrivals");
 
   return (
-    <section className="py-16 bg-gray-50">
+    <section className="py-16 bg-primary-50">
       <div className=" px-4  container mx-auto max-w-[1300px]">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-primary-800 mb-4">
