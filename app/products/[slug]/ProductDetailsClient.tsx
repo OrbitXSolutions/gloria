@@ -29,7 +29,8 @@ import { useFavorites } from "@/components/_core/providers/favorites-provider";
 import { getProductImageUrl } from "@/lib/constants/supabase-storage";
 import Image from "next/image";
 import { addReview } from "@/app/_actions/add-review";
-
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 interface ProductDetailsClientProps {
   product: ProductWithUserData;
   reviews: ReviewWithUser[];
@@ -487,18 +488,6 @@ export default function ProductDetailsClient({
               )}
             </div>
 
-            {/* Description */}
-            {getProductDescription() && (
-              <div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                  {t("products.description") || "Description"}
-                </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  {getProductDescription()}
-                </p>
-              </div>
-            )}
-
             {/* Quantity and Add to Cart */}
             {isInStock && (
               <div className="space-y-4">
@@ -735,6 +724,22 @@ export default function ProductDetailsClient({
                 </div>
               )}
           </div>
+        </div>
+
+        <div className="mt-4 space-y-8">
+          {/* Description */}
+          {getProductDescription() && (
+            <div>
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                {t("products.description") || "Description"}
+              </h3>
+              <p className="text-gray-600 leading-relaxed">
+                <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                  {getProductDescription() || ""}
+                </ReactMarkdown>
+              </p>
+            </div>
+          )}
         </div>
 
         {/* Reviews Section */}

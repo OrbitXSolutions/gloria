@@ -13,6 +13,22 @@ import { useCart } from "@/components/_core/providers/cart-provider";
 import LanguageSwitcher from "@/components/atoms/langauge-switcher";
 import Form from "next/form";
 import AuthButton from "@/components/atoms/auth-button";
+import localFont from "next/font/local";
+import { cn } from "@/lib/utils";
+
+const kawoszehFont = localFont({
+  src: [
+    {
+      path: "../../../fonts/kawoszeh/kawoszeh.ttf",
+      weight: "400",
+      style: "normal",
+    },
+  ],
+  display: "swap",
+  preload: true,
+  adjustFontFallback: false,
+});
+
 // import AuthButton from "./AuthButton";
 
 export default function AppHeader() {
@@ -62,8 +78,11 @@ export default function AppHeader() {
           {/* Main header */}
           <div className="flex items-center justify-between py-4">
             {/* Logo */}
-            <Link href="/" className="text-2xl font-bold ">
-              {t("brand")}
+            <Link
+              href="/"
+              className={cn("text-2xl font-bold ", kawoszehFont.className)}
+            >
+              {t("brand").toUpperCase()}
             </Link>
 
             {/* Desktop Navigation */}
@@ -77,7 +96,7 @@ export default function AppHeader() {
                 }`}
               >
                 {t("nav.home")}
-                <LoadingIndicator loaderClassName="text-secondary" />
+                <LoadingIndicator loaderClassName="text-white" />
               </Link>
               <Link
                 href="/products"
@@ -88,7 +107,7 @@ export default function AppHeader() {
                 }`}
               >
                 {t("nav.products")}
-                <LoadingIndicator loaderClassName="text-secondary" />
+                <LoadingIndicator loaderClassName="text-white" />
               </Link>
               <Link
                 href="/gifts"
@@ -99,7 +118,7 @@ export default function AppHeader() {
                 }`}
               >
                 {t("nav.gifts")}
-                <LoadingIndicator loaderClassName="text-secondary" />
+                <LoadingIndicator loaderClassName="text-white" />
               </Link>
               <Link
                 href="/about"
@@ -110,7 +129,7 @@ export default function AppHeader() {
                 }`}
               >
                 {t("nav.about")}
-                <LoadingIndicator loaderClassName="text-secondary" />
+                <LoadingIndicator loaderClassName="text-white" />
               </Link>
             </nav>
 
@@ -185,7 +204,7 @@ export default function AppHeader() {
                   }`}
                 >
                   {t("nav.home")}
-                  <LoadingIndicator loaderClassName="text-secondary" />
+                  <LoadingIndicator loaderClassName="text-white" />
                 </Link>
                 <Link
                   href="/products"
@@ -196,7 +215,7 @@ export default function AppHeader() {
                   }`}
                 >
                   {t("nav.products")}
-                  <LoadingIndicator loaderClassName="text-secondary" />
+                  <LoadingIndicator loaderClassName="text-white" />
                 </Link>
                 <Link
                   href="/gifts"
@@ -207,7 +226,7 @@ export default function AppHeader() {
                   }`}
                 >
                   {t("nav.gifts")}
-                  <LoadingIndicator loaderClassName="text-secondary" />
+                  <LoadingIndicator loaderClassName="text-white" />
                 </Link>
                 <Link
                   href="/about"
@@ -218,7 +237,7 @@ export default function AppHeader() {
                   }`}
                 >
                   {t("nav.about")}
-                  <LoadingIndicator loaderClassName="text-secondary" />
+                  <LoadingIndicator loaderClassName="text-white" />
                 </Link>
               </div>
             </div>

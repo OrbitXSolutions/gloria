@@ -286,7 +286,7 @@ export async function getProductReviews(
 
 export async function searchProducts(
   query?: string,
-  categoryId?: number,
+  categorySlug?: string,
   limit = 20,
   offset = 0
 ): Promise<ProductWithCurrency[]> {
@@ -297,6 +297,7 @@ export async function searchProducts(
     .select(
       `
     *,
+    categories!inner(*),
     currency:currencies(*)
   `
     )
@@ -310,8 +311,15 @@ export async function searchProducts(
     );
   }
 
-  if (categoryId) {
-    queryBuilder = queryBuilder.eq("category_id", categoryId);
+  if (categorySlug) {
+    // queryBuilder = queryBuilder.or(
+    //   `categories.slug.eq.${categorySlug},categories.slug_ar.eq.${categorySlug}`
+    // );
+    queryBuilder = queryBuilder
+      .ilike("categories.slug", `%${categorySlug}%`)
+      .ilike("categories.slug_ar", `%${categorySlug}%`);
+    // `categories.slug.eq.${categorySlug},categories.slug_ar.eq.${categorySlug}`
+    // );
   }
 
   const { data, error } = await queryBuilder

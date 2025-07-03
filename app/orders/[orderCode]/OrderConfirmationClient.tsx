@@ -132,7 +132,9 @@ export default function OrderConfirmationClient({
                   <p className="text-lg font-bold text-secondary-600">
                     {formatPrice(
                       order.total_price,
-                      { code: order.currency_code },
+                      {
+                        code: order.order_items[0]?.product?.currency_code,
+                      },
                       locale
                     )}
                   </p>
@@ -204,15 +206,21 @@ export default function OrderConfirmationClient({
                           <span className="text-sm text-gray-600">
                             {formatPrice(
                               item.price,
-                              { code: order.currency_code },
+                              {
+                                code: order.order_items[0]?.product
+                                  ?.currency_code,
+                              },
                               locale
                             )}{" "}
                             each
                           </span>
                           <span className="font-semibold text-gray-900">
                             {formatPrice(
-                              item.total_price,
-                              { code: order.currency_code },
+                              item.price * item.quantity,
+                              {
+                                code: order.order_items[0]?.product
+                                  ?.currency_code,
+                              },
                               locale
                             )}
                           </span>
@@ -238,7 +246,9 @@ export default function OrderConfirmationClient({
                   <span className="font-semibold">
                     {formatPrice(
                       order.subtotal || order.total_price,
-                      { code: order.currency_code },
+                      {
+                        code: order.order_items[0]?.product?.currency_code,
+                      },
                       locale
                     )}
                   </span>
@@ -252,7 +262,9 @@ export default function OrderConfirmationClient({
                   <span className="font-semibold">
                     {formatPrice(
                       order.total_price - (order.subtotal || order.total_price),
-                      { code: order.currency_code },
+                      {
+                        code: order.order_items[0]?.product?.currency_code,
+                      },
                       locale
                     )}
                   </span>
@@ -264,7 +276,9 @@ export default function OrderConfirmationClient({
                   <span>
                     {formatPrice(
                       order.total_price,
-                      { code: order.currency_code },
+                      {
+                        code: order.order_items[0]?.product?.currency_code,
+                      },
                       locale
                     )}
                   </span>

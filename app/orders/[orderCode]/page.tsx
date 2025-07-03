@@ -37,7 +37,7 @@ async function getOrderDetails(orderCode: string) {
       address:addresses(*),
       order_items(
         *,
-        product:products(*)
+        product:products (*,currencies(*))
       )
     `
     )
