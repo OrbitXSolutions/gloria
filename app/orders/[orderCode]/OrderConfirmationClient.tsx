@@ -216,7 +216,7 @@ export default function OrderConfirmationClient({
                           </span>
                           <span className="font-semibold text-gray-900">
                             {formatPrice(
-                              item.total_price,
+                              item.price * item.quantity,
                               {
                                 code: order.order_items[0]?.product
                                   ?.currency_code,

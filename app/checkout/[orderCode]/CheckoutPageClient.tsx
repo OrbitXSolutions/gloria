@@ -78,6 +78,9 @@ export default function CheckoutPageClient({
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [checkedState, setCheckedState] = useState<State | undefined>(
+    states[0]
+  );
 
   const form = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
@@ -181,7 +184,7 @@ export default function CheckoutPageClient({
     0
   );
   const tax = subtotal * 0.05; // 5% VAT
-  const shipping = 0; // Free shipping
+  const shipping = checkedState?.delivery_fee ?? 0; // Free shipping
   const total = subtotal + tax + shipping;
 
   return (
@@ -504,7 +507,12 @@ export default function CheckoutPageClient({
                           <FormItem>
                             <FormLabel>Emirate *</FormLabel>
                             <Select
-                              onValueChange={field.onChange}
+                              onValueChange={(value) => {
+                                setCheckedState(
+                                  states.find((s) => s.code === value)
+                                );
+                                field.onChange(value);
+                              }}
                               defaultValue={field.value}
                             >
                               <FormControl>
@@ -619,7 +627,18 @@ export default function CheckoutPageClient({
                     </div>
                     <div className={`flex justify-between`}>
                       <span className="text-gray-600">Shipping</span>
-                      <span className="font-semibold text-green-600">Free</span>
+                      <span className="font-semibold text-gray-600">
+                        {!checkedState
+                          ? "Select State"
+                          : formatPrice(
+                              shipping,
+                              {
+                                code: order.order_items[0]?.product
+                                  ?.currency_code,
+                              },
+                              locale
+                            )}
+                      </span>
                     </div>
                     <div className={`flex justify-between `}>
                       <span className="text-gray-600">VAT (5%)</span>

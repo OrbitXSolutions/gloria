@@ -231,8 +231,8 @@ export default function CartPageClient() {
                     <span className="text-gray-600">
                       {t("summary.shipping")}
                     </span>
-                    <span className="font-semibold text-green-600">
-                      {t("summary.free")}
+                    <span className="flex items-center text-xs text-gray-600">
+                      {"Calculated during checkout"}
                     </span>
                   </div>
                   <div className={`flex justify-between`}>
