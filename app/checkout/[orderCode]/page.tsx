@@ -33,7 +33,7 @@ export default async function Page({ params }: CheckoutPageProps) {
       *,
       order_items (
         *,
-        product:products (*)
+        product:products (*,currencies(*))
       )
     `
     )

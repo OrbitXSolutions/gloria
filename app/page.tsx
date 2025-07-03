@@ -7,12 +7,15 @@ import Promo from "@/components/molecules/promo";
 import Reviews from "@/components/molecules/reviews";
 import NewArrivals from "@/components/organisms/new-arrivals";
 import Products from "@/components/organisms/products";
+import { getCategories } from "@/lib/common/supabase-queries";
 
-export default function Home() {
+export default async function Home() {
+  const categories = await getCategories();
+  categories.sort((a, b) => a.id - b.id);
   return (
     <>
       <Hero />
-      <Categories />
+      <Categories categories={categories} />
       <NewArrivals />
       <Promo />
 

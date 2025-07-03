@@ -7,9 +7,7 @@ export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
     const query = searchParams.get("q") || "";
-    const categoryId = searchParams.get("category")
-      ? Number.parseInt(searchParams.get("category")!)
-      : undefined;
+    const categorySlug = searchParams.get("category");
     const page = Number.parseInt(searchParams.get("page") || "1");
     const sort = searchParams.get("sort") || "newest";
     const limit = 8; // Changed from 20 to 8
@@ -27,6 +25,7 @@ export async function GET(request: NextRequest) {
       .select(
         `
         *,
+        categories:categories(*),
         currency:currencies(*),
         cart_items!left(quantity, user_id),
         favorites!left(user_id)
@@ -44,17 +43,18 @@ export async function GET(request: NextRequest) {
     }
 
     // Add search filter
-    if (query) {
-      queryBuilder = queryBuilder.or(
-        `name_en.ilike.%${query}%,name_ar.ilike.%${query}%,description_en.ilike.%${query}%,description_ar.ilike.%${query}%,keywords.ilike.%${query}%`
-      );
+    if (categorySlug) {
+      queryBuilder = queryBuilder
+        .ilike("categories.slug", `%${categorySlug}%`)
+        .ilike("categories.slug_ar", `%${categorySlug}%`);
     }
 
     // Add category filter
-    if (categoryId) {
-      queryBuilder = queryBuilder.eq("category_id", categoryId);
+    if (categorySlug) {
+      queryBuilder = queryBuilder.or(
+        `slug.eq.${categorySlug},slug_ar.eq.${categorySlug}`
+      );
     }
-
     // Add sorting
     switch (sort) {
       case "oldest":
@@ -105,13 +105,14 @@ export async function GET(request: NextRequest) {
 
     // Apply same filters for count
     if (query) {
-      countQuery = countQuery.or(
-        `name_en.ilike.%${query}%,name_ar.ilike.%${query}%,description_en.ilike.%${query}%,description_ar.ilike.%${query}%,keywords.ilike.%${query}%`
-      );
+      countQuery = countQuery
+        .ilike("categories.slug", `%${categorySlug}%`)
+        .ilike("categories.slug_ar", `%${categorySlug}%`);
     }
-
-    if (categoryId) {
-      countQuery = countQuery.eq("category_id", categoryId);
+    if (categorySlug) {
+      countQuery = countQuery.or(
+        `categories.slug.eq.${categorySlug},categories.slug_ar.eq.${categorySlug}`
+      );
     }
 
     const { count, error: countError } = await countQuery;

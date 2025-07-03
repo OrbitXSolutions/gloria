@@ -57,9 +57,7 @@ export default async function Page({ searchParams }: PageProps) {
 
   // Get search parameters
   const query = searchParamsObj.get("q") || "";
-  const categoryId = searchParamsObj.get("category")
-    ? Number.parseInt(searchParamsObj.get("category")!)
-    : undefined;
+  const categorySlug = searchParamsObj.get("category") ?? undefined; // Changed from categoryId to categorySlug
   const page = Number.parseInt(searchParamsObj.get("page") || "1");
   const limit = 8; // Changed from 20 to 8
   const offset = (page - 1) * limit;
@@ -73,14 +71,14 @@ export default async function Page({ searchParams }: PageProps) {
   // Fetch products and categories
   const [categories] = await Promise.all([getCategories()]);
 
-  const products = await searchProducts(query, categoryId, limit, offset);
+  const products = await searchProducts(query, categorySlug, limit, offset);
 
   return (
     <ProductsPageClient
       initialProducts={products}
-      categories={categories}
+      categories={categories?.sort((a, b) => a.id - b.id)}
       initialQuery={query}
-      initialCategoryId={categoryId}
+      initialCategorySlug={categorySlug}
       currentPage={page}
       hasMore={products.length === limit}
     />

@@ -29,22 +29,17 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination";
 import { useAction } from "next-safe-action/hooks";
-import { ProductWithUserData } from "@/lib/types/database.types";
+import { Database, ProductWithUserData } from "@/lib/types/database.types";
 import { useLocale, useTranslations } from "next-intl";
 import ProductCard from "@/components/molecules/product-card";
-
-interface Category {
-  id: number;
-  name_en: string | null;
-  name_ar: string | null;
-  slug: string | null;
-}
+import CategoryIcon from "@/components/atoms/category-icon";
+type Category = Database["public"]["Tables"]["categories"]["Row"];
 
 interface ProductsPageClientProps {
   initialProducts: ProductWithUserData[];
   categories: Category[];
   initialQuery: string;
-  initialCategoryId?: number;
+  initialCategorySlug?: string;
   currentPage: number;
   hasMore: boolean;
 }
@@ -64,7 +59,7 @@ export default function ProductsPageClient({
   initialProducts,
   categories,
   initialQuery,
-  initialCategoryId,
+  initialCategorySlug,
   currentPage,
   hasMore,
 }: ProductsPageClientProps) {
@@ -74,12 +69,13 @@ export default function ProductsPageClient({
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
-  const [products, setProducts] =
-    useState<ProductWithUserData[]>(initialProducts);
+  const [products, setProducts] = useState<ProductWithUserData[]>(
+    initialProducts ?? []
+  );
   const [loading, setLoading] = useState(false);
   const [searchQuery, setSearchQuery] = useState(initialQuery);
-  const [selectedCategory, setSelectedCategory] = useState<number | undefined>(
-    initialCategoryId
+  const [selectedCategory, setSelectedCategory] = useState<string | undefined>(
+    initialCategorySlug
   );
   const [viewMode, setViewMode] = useState<ViewMode>("grid");
   const [sortBy, setSortBy] = useState<SortOption>("newest");
@@ -122,7 +118,7 @@ export default function ProductsPageClient({
     }
   }, [searchParams]);
   useEffect(() => {
-    setProducts(initialProducts);
+    setProducts(initialProducts ?? []);
   }, [initialProducts]);
   const getCategoryName = (category: Category) => {
     return locale === "ar"
@@ -132,7 +128,9 @@ export default function ProductsPageClient({
 
   const getSelectedCategoryName = () => {
     if (!selectedCategory) return null;
-    const category = categories.find((cat) => cat.id === selectedCategory);
+    const category = categories.find(
+      (cat) => cat.slug === selectedCategory || cat.slug_ar === selectedCategory
+    );
     return category ? getCategoryName(category) : null;
   };
 
@@ -159,8 +157,8 @@ export default function ProductsPageClient({
     async (params: any) => {
       const searchParams = new URLSearchParams();
       if (params.query) searchParams.set("q", params.query);
-      if (params.categoryId)
-        searchParams.set("category", params.categoryId.toString());
+      if (params.categorySlug)
+        searchParams.set("category", params.categorySlug);
       searchParams.set("page", params.page.toString());
       searchParams.set("sort", params.sort);
 
@@ -170,7 +168,11 @@ export default function ProductsPageClient({
     },
     {
       onSuccess: (data: any) => {
-        setProducts(data.products);
+        if (!data || !data.products) {
+          console.error("Invalid data format:", data);
+          return;
+        }
+        setProducts(data.products ?? []);
         setPage(data.page || 1);
         setTotalPages(data.totalPages || 1);
         setTotalProducts(data.total || 0);
@@ -182,11 +184,11 @@ export default function ProductsPageClient({
   );
 
   const handleSearch = useCallback(
-    async (query: string, categoryId?: number, newPage = 1) => {
+    async (query: string, categorySlug?: string, newPage = 1) => {
       // Update URL without reloading
       updateURL({
         q: query || undefined,
-        category: categoryId?.toString(),
+        category: categorySlug?.toString(),
         page: newPage > 1 ? newPage.toString() : undefined,
         sort: sortBy !== "newest" ? sortBy : undefined,
       });
@@ -194,7 +196,7 @@ export default function ProductsPageClient({
       // Execute the search action
       searchAction.execute({
         query,
-        categoryId,
+        categorySlug,
         page: newPage,
         sort: sortBy,
       });
@@ -202,11 +204,10 @@ export default function ProductsPageClient({
     [sortBy, updateURL, searchAction]
   );
 
-  const handleCategoryChange = (categoryId: string) => {
-    const newCategoryId =
-      categoryId === "all" ? undefined : Number.parseInt(categoryId);
-    setSelectedCategory(newCategoryId);
-    handleSearch(searchQuery, newCategoryId, 1);
+  const handleCategoryChange = (categorySlug: string) => {
+    const newCategorySlug = categorySlug === "all" ? undefined : categorySlug;
+    setSelectedCategory(newCategorySlug);
+    handleSearch(searchQuery, newCategorySlug, 1);
   };
 
   const handleClearFilters = () => {
@@ -284,7 +285,7 @@ export default function ProductsPageClient({
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Hero Section */}
-      <section className="bg-gradient-to-r from-secondary-600 to-pink-600 text-white py-16">
+      <section className="bg-gradient-to-r from-secondary-400 via-50% via-secondary to-secondary-600 text-white py-16">
         <div className="container mx-auto px-4">
           <div className="text-center">
             <h1 className="text-4xl lg:text-5xl font-bold mb-4">
@@ -381,20 +382,25 @@ export default function ProductsPageClient({
                         key={category.id}
                         type="button"
                         variant={
-                          selectedCategory === category.id
+                          selectedCategory === category.slug
                             ? "default"
                             : "outline"
                         }
                         size="sm"
                         onClick={() => {
-                          setSelectedCategory(category.id);
-                          handleSearch(searchQuery, category.id, 1);
+                          const slug = category.slug;
+                          if (!slug) return;
+                          setSelectedCategory(slug);
+                          handleSearch(searchQuery, slug, 1);
                         }}
                         className="flex flex-col items-center gap-1 h-auto py-2 px-3"
                         disabled={searchAction.isExecuting}
                       >
                         <div className="w-8 h-8 bg-gradient-to-br from-secondary-100 to-pink-100 rounded-full flex items-center justify-center">
-                          <div className="w-6 h-6 bg-secondary-200 rounded-full"></div>
+                          <CategoryIcon
+                            className="w-6 h-6 text-secondary-200 rounded-full"
+                            name={category.slug || ""}
+                          />
                         </div>
                         <span className="text-xs">
                           {getCategoryName(category)}
