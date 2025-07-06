@@ -15,7 +15,7 @@ export default function Hero() {
   // const heroImagePath = "/images/hero.jpg"; // Replace with your actual image path
   const heroImagePath = isMobile
     ? "/images/hero.jpg"
-    : "/images/home-cover.png";
+    : "/images/hero-desktop.jpg";
   const heroImageUrl = heroImagePath;
 
   const handleHeroImageError = (error: string, src: string) => {
@@ -28,8 +28,8 @@ export default function Hero() {
         src={heroImageUrl}
         className="h-full w-full"
         priority
-        width={1200}
-        height={600}
+        width={5816}
+        height={1536}
         alt=""
       />
     </>
