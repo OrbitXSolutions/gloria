@@ -36,7 +36,7 @@ export default function Categories({
   const locale = useLocale();
 
   return (
-    <section className="py-16 bg-white">
+    <section className="py-12 bg-white">
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-primary-600 mb-4">
@@ -58,14 +58,16 @@ export default function Categories({
                 }}
                 className="group flex flex-col items-center text-center hover:transform hover:scale-105 transition-all duration-300"
               >
-                <div className="w-24 h-24 bg-gradient-to-br from-secondary-100 to-secondary-100 rounded-full flex items-center justify-center mb-4 group-hover:from-secondary-200 group-hover:to-secondary-200 transition-all duration-300">
+                <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mb-4 group-hover:from-secondary-200 group-hover:to-secondary-200 transition-all duration-300">
                   <CategoryIcon
-                    className="h-10 w-10 text-secondary"
+                    className="h-10 w-10 text-primary"
                     name={category.slug}
                   />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900">
-                  {locale == "en" ? category.name_en : category.name_ar}
+                <h3 className="text-sm self-start text-center font-bold text-primary-600 w-[60px]">
+                  <div className="text-center">
+                    {locale == "en" ? category.name_en : category.name_ar}
+                  </div>
                 </h3>
               </Link>
             );

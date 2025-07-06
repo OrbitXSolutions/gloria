@@ -21,7 +21,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 const action = createSafeActionClient();
 
 export const registerAction = action
-  .schema(registerSchema)
+  .inputSchema(registerSchema)
   .action(async ({ parsedInput }) => {
     const { firstName, lastName, email, phone, password } = parsedInput;
     const supabase = await createSsrClient();
@@ -39,6 +39,7 @@ export const registerAction = action
       const { data, error } = await supabase.auth.signUp({
         phone: formattedPhone,
         password,
+
         options: {
           data: {
             first_name: firstName,
@@ -46,6 +47,7 @@ export const registerAction = action
             email: email,
             full_name: `${firstName} ${lastName}`,
           },
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/confirm`,
         },
       });
       if (error) {
@@ -195,9 +197,11 @@ export const verifyOtpAction = action
         if (insertError) {
           console.error("Error creating user:", insertError);
         }
+        if (data.session) supabase.auth.setSession(data.session);
 
         return {
           success: true,
+          name: data.user.user_metadata?.first_name || "User",
           message: "Phone number verified successfully!",
         };
       }

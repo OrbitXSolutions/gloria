@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ProductWithUserData } from "@/lib/types/database.types";
 import { useTranslations } from "next-intl";
 import ProductCard from "./product-card";
+import Link from "next/link";
+import LoadingIndicator from "../atoms/LoadingIndicator";
 
 interface Props {
   products: ProductWithUserData[];
@@ -37,10 +39,19 @@ export default function NewArrivalsClient({ products }: Props) {
             <div className="text-center mt-12">
               <Button
                 variant="outline"
+                asChild
                 size="lg"
                 className="border-secondary text-secondary hover:bg-secondary-50"
               >
-                {t("viewAll")}
+                <Link
+                  href={{
+                    pathname: "/products",
+                    query: { sort: "newest" },
+                  }}
+                >
+                  {t("viewAll")}
+                  <LoadingIndicator />
+                </Link>
               </Button>
             </div>
           </>

@@ -5,31 +5,40 @@ import { Button } from "@/components/ui/button";
 import { Globe } from "lucide-react";
 import { useLocale } from "next-intl";
 import { toggleLanguage } from "@/i18n/toggle";
-
-
+import { useActionState } from "react";
+import { useAction } from "next-safe-action/hooks";
+import { Spinner } from "../ui/spinner";
 
 export default function LanguageSwitcher() {
-    const locale = useLocale();
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+  const { execute, isPending } = useAction(toggleLanguage, {
+    onExecute: () => {
+      // remove the lang search param
+      const params = new URLSearchParams(searchParams);
+
+      params.delete("lang");
+      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      const newPathname =
+        pathname + (params.toString() ? `?${params.toString()}` : "");
+
+      // Redirect to the new URL without the lang param
+      router.replace(newPathname, undefined);
+    },
+    onError: (error) => {
+      console.error("Failed to toggle language:", error);
+    },
+  });
+  const locale = useLocale();
 
   // Get current language from URL params or cookies
   const localeFromParams = searchParams.get("lang");
- 
+
   const currentLang = locale;
 
   const toggle = () => {
-    // const newLang = currentLang === "en" ? "ar" : "en";
-    // const params = new URLSearchParams(searchParams.toString());
-    // params.set("lang", newLang);
-
-    // const queryString = params.toString();
-    // const newUrl = `${pathname}?${queryString}`;
-
-    // // Use replace to avoid adding to history
-    // router.replace(newUrl);
-    toggleLanguage();
+    execute();
   };
 
   return (
@@ -41,6 +50,7 @@ export default function LanguageSwitcher() {
     >
       <Globe className="h-4 w-4" />
       <span>{currentLang === "en" ? "العربية" : "English"}</span>
+      {isPending && <Spinner size="small" className="text-white" />}
     </Button>
   );
 }

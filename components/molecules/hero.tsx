@@ -10,6 +10,7 @@ import Image from "next/image";
 export default function Hero() {
   const t = useTranslations("hero");
   // You can store the hero image path in your database or use a static path
+  // const heroImagePath = "/images/hero.jpg"; // Replace with your actual image path
   const heroImagePath = "/images/home-cover.png";
   const heroImageUrl = heroImagePath;
 

@@ -1,72 +1,76 @@
-"use client"
+"use client";
 
-import type React from "react"
+import type React from "react";
 
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
-import { useAction } from "next-safe-action/hooks"
-import { verifyOtpAction } from "@/app/_actions/auth"
-import { Button } from "@/components/ui/button"
-import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp"
-import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Loader2, ArrowLeft, RefreshCw } from "lucide-react"
-import Link from "next/link"
+import { useState, useEffect } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useAction } from "next-safe-action/hooks";
+import { verifyOtpAction } from "@/app/_actions/auth";
+import { Button } from "@/components/ui/button";
+import {
+  InputOTP,
+  InputOTPGroup,
+  InputOTPSlot,
+} from "@/components/ui/input-otp";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Loader2, ArrowLeft, RefreshCw } from "lucide-react";
+import Link from "next/link";
 
 export default function OtpForm() {
-  const [otp, setOtp] = useState("")
-  const [timeLeft, setTimeLeft] = useState(60)
-  const [canResend, setCanResend] = useState(false)
-  const searchParams = useSearchParams()
-  const phone = searchParams.get("phone")
-  const router = useRouter()
+  const [otp, setOtp] = useState("");
+  const [timeLeft, setTimeLeft] = useState(60);
+  const [canResend, setCanResend] = useState(false);
+  const searchParams = useSearchParams();
+  const phone = searchParams.get("phone");
+  const router = useRouter();
 
   const { execute, result, isExecuting } = useAction(verifyOtpAction, {
     onSuccess: ({ data }) => {
       if (data?.success) {
-        router.push("/")
-        router.refresh()
+        router.push("/welcome");
+        router.refresh();
       }
     },
-  })
+  });
 
   useEffect(() => {
     if (!phone) {
-      router.push("/auth/register")
+      router.push("/auth/register");
     }
-  }, [phone, router])
+  }, [phone, router]);
 
   useEffect(() => {
     if (timeLeft > 0) {
-      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000)
-      return () => clearTimeout(timer)
+      const timer = setTimeout(() => setTimeLeft(timeLeft - 1), 1000);
+      return () => clearTimeout(timer);
     } else {
-      setCanResend(true)
+      setCanResend(true);
     }
-  }, [timeLeft])
+  }, [timeLeft]);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
+    e.preventDefault();
     if (otp.length === 6 && phone) {
-      execute({ token: otp, phone })
+      execute({ token: otp, phone });
     }
-  }
+  };
 
   const handleOtpChange = (value: string) => {
-    setOtp(value)
+    setOtp(value);
     if (value.length === 6 && phone) {
-      execute({ token: value, phone })
+      execute({ token: value, phone });
     }
-  }
+  };
 
   const handleResend = () => {
-    setTimeLeft(60)
-    setCanResend(false)
+    setTimeLeft(60);
+    setCanResend(false);
     // Implement resend logic here
-    console.log("Resend OTP")
-  }
+    console.log("Resend OTP");
+  };
 
   if (!phone) {
-    return null
+    return null;
   }
 
   return (
@@ -74,11 +78,17 @@ export default function OtpForm() {
       <div className="space-y-6">
         <div className="text-center">
           <p className="text-sm text-gray-600 mb-6">
-            Code sent to <span className="font-medium text-gray-900">{phone}</span>
+            Code sent to{" "}
+            <span className="font-medium text-gray-900">{phone}</span>
           </p>
 
           <div className="flex justify-center mb-6">
-            <InputOTP maxLength={6} value={otp} onChange={handleOtpChange} className="gap-3">
+            <InputOTP
+              maxLength={6}
+              value={otp}
+              onChange={handleOtpChange}
+              className="gap-3"
+            >
               <InputOTPGroup className="gap-3">
                 <InputOTPSlot
                   index={0}
@@ -112,13 +122,17 @@ export default function OtpForm() {
 
       {result?.data?.error && (
         <Alert variant="destructive" className="border-red-200 bg-red-50">
-          <AlertDescription className="text-red-800">{result.data.error}</AlertDescription>
+          <AlertDescription className="text-red-800">
+            {result.data.error}
+          </AlertDescription>
         </Alert>
       )}
 
       {result?.data?.success && (
         <Alert className="border-green-200 bg-green-50">
-          <AlertDescription className="text-green-800">{result.data.message}</AlertDescription>
+          <AlertDescription className="text-green-800">
+            {result.data.message}
+          </AlertDescription>
         </Alert>
       )}
 
@@ -151,7 +165,8 @@ export default function OtpForm() {
             </Button>
           ) : (
             <span>
-              Resend code in <span className="font-medium text-gray-900">{timeLeft}s</span>
+              Resend code in{" "}
+              <span className="font-medium text-gray-900">{timeLeft}s</span>
             </span>
           )}
         </div>
@@ -165,5 +180,5 @@ export default function OtpForm() {
         </Link>
       </div>
     </form>
-  )
+  );
 }

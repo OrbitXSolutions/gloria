@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { ProductWithUserData } from "@/lib/types/database.types";
 import { useTranslations } from "next-intl";
 import ProductCard from "./product-card";
+import Link from "next/link";
+import LoadingIndicator from "../atoms/LoadingIndicator";
 
 interface ProductsClientProps {
   products: ProductWithUserData[];
@@ -36,7 +38,15 @@ export default function ProductsClient({ products }: ProductsClientProps) {
                 size="lg"
                 className="border-secondary text-secondary hover:bg-secondary-50"
               >
-                {t("viewAll")}
+                <Link
+                  href={{
+                    pathname: "/products",
+                    query: { sort: "rating-high" },
+                  }}
+                >
+                  {t("viewAll")}
+                  <LoadingIndicator />
+                </Link>
               </Button>
             </div>
           </>
