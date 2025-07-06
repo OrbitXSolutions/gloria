@@ -1,9 +1,9 @@
 "use server";
-import { ROUTES } from "@/lib/constants/routes";
 
-import { UserSetPhoneSchema } from "@/lib/data/models/schemas/set-phone-schema";
-import { setUserPhone } from "@/lib/data/supabase/auth";
-import { actionClient } from "@/lib/safe-action";
+import { setUserPhone } from "@/app/_actions/auth";
+import { actionClient } from "@/lib/common/safe-action";
+import { ROUTES } from "@/lib/constants/routes";
+import { UserSetPhoneSchema } from "@/lib/schemas/set-phone-schema";
 import { redirect } from "next/navigation";
 
 export const setPhoneAction = actionClient

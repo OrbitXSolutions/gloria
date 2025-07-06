@@ -16,10 +16,12 @@ export default function LanguageSwitcher() {
   const { execute, isPending } = useAction(toggleLanguage, {
     onExecute: () => {
       // remove the lang search param
+      const lang = searchParams.get("lang");
+      if (!lang) return;
       const params = new URLSearchParams(searchParams);
 
       params.delete("lang");
-      const newUrl = `${window.location.pathname}?${params.toString()}`;
+      // const newUrl = `${window.location.pathname}?${params.toString()}`;
       const newPathname =
         pathname + (params.toString() ? `?${params.toString()}` : "");
 

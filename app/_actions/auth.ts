@@ -17,6 +17,14 @@ import { z } from "zod";
 import createClient from "@/lib/supabase/client";
 import { createSsrClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  UserVerifyPhone,
+  UserVerifyPhoneSchema,
+} from "@/lib/schemas/confirm-phone-otp";
+import {
+  UserSetPhone,
+  UserSetPhoneSchema,
+} from "@/lib/schemas/set-phone-schema";
 
 const action = createSafeActionClient();
 
@@ -338,3 +346,40 @@ export const signOutAction = action.action(async () => {
     return { error: "An unexpected error occurred" };
   }
 });
+
+export async function setUserPhone(input: UserSetPhone) {
+  const parsedInput = UserSetPhoneSchema.safeParse(input);
+  if (!parsedInput.success) {
+    throw new Error(
+      "Invalid user data: " + JSON.stringify(parsedInput.error.issues)
+    );
+  }
+  const supabase = await createSsrClient();
+
+  const { data, error } = await supabase.auth.updateUser({
+    phone: parsedInput.data.phone,
+  });
+
+  if (error) {
+    throw error;
+  }
+  if (!data.user) {
+    throw new Error("User phone update failed");
+  }
+
+  return data;
+}
+
+export async function verifyOtp(input: UserVerifyPhone) {
+  const parsedInput = UserVerifyPhoneSchema.safeParse(input);
+  if (
+    !parsedInput.success ||
+    !parsedInput.data.phone ||
+    !parsedInput.data.token
+  ) {
+    throw new Error(
+      "Invalid user data: " +
+        JSON.stringify(parsedInput.error?.issues ?? `Invalid input`)
+    );
+  }
+}

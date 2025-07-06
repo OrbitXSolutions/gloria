@@ -212,6 +212,7 @@ export async function getProductBySlug(
   slug: string,
   userId?: number
 ): Promise<ProductWithUserData | null> {
+  slug = encodeURIComponent(slug);
   const supabase = await createSsrClient();
 
   let query = supabase
