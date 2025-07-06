@@ -1,9 +1,77 @@
-import { MapPin, Phone, Mail, Clock } from "lucide-react";
+"use client";
+
+import { useState } from "react";
+import { useAction } from "next-safe-action/hooks";
+import {
+  MapPin,
+  Phone,
+  Mail,
+  Clock,
+  CheckCircle,
+  AlertCircle,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
+import { ContactInfo } from "@/lib/constants/contact-info";
+import {
+  sendContactEmail,
+  type ContactFormInput,
+} from "@/app/_actions/send-contact-email";
 
 export default function Contact() {
+  const [formData, setFormData] = useState<ContactFormInput>({
+    firstName: "",
+    lastName: "",
+    email: "",
+    subject: "",
+    message: "",
+  });
+
+  // Use the server action with next-safe-action
+  const { execute, result, isExecuting, reset } = useAction(sendContactEmail, {
+    onSuccess: () => {
+      // Reset form on successful submission
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        subject: "",
+        message: "",
+      });
+    },
+  });
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+
+    // Clear any previous results when user starts typing
+    if (result) {
+      reset();
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    execute(formData);
+  };
+
+  // Get field-specific validation errors
+  const getFieldError = (
+    fieldName: keyof ContactFormInput
+  ): string | undefined => {
+    if (result?.validationErrors?.[fieldName]) {
+      return result.validationErrors[fieldName]?._errors?.[0];
+    }
+    return undefined;
+  };
+
   return (
     <section className="py-16 bg-primary-50">
       <div className="container mx-auto px-4">
@@ -27,25 +95,11 @@ export default function Contact() {
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
                   <div className="bg-secondary-100 rounded-full p-3">
-                    <MapPin className="h-6 w-6 text-secondary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">Address</h4>
-                    <p className="text-gray-600">
-                      123 Fragrance Street
-                      <br />
-                      New York, NY 10001
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="bg-secondary-100 rounded-full p-3">
                     <Phone className="h-6 w-6 text-secondary" />
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">Phone</h4>
-                    <p className="text-gray-600">+1 (555) 123-4567</p>
+                    <p className="text-gray-600">{ContactInfo.PHONE}</p>
                   </div>
                 </div>
 
@@ -55,25 +109,7 @@ export default function Contact() {
                   </div>
                   <div>
                     <h4 className="font-semibold text-gray-900">Email</h4>
-                    <p className="text-gray-600">hello@luxeperfumes.com</p>
-                  </div>
-                </div>
-
-                <div className="flex items-start space-x-4">
-                  <div className="bg-secondary-100 rounded-full p-3">
-                    <Clock className="h-6 w-6 text-secondary" />
-                  </div>
-                  <div>
-                    <h4 className="font-semibold text-gray-900">
-                      Business Hours
-                    </h4>
-                    <p className="text-gray-600">
-                      Monday - Friday: 9:00 AM - 8:00 PM
-                      <br />
-                      Saturday: 10:00 AM - 6:00 PM
-                      <br />
-                      Sunday: 12:00 PM - 5:00 PM
-                    </p>
+                    <p className="text-gray-600">{ContactInfo.EMAIL}</p>
                   </div>
                 </div>
               </div>
@@ -85,25 +121,72 @@ export default function Contact() {
             <h3 className="text-2xl font-bold text-gray-900 mb-6">
               Send us a Message
             </h3>
-            <form className="space-y-6">
+
+            {/* Success Message */}
+            {result?.data?.success && (
+              <div className="mb-6 p-4 rounded-lg flex items-center space-x-3 bg-green-50 text-green-800 border border-green-200">
+                <CheckCircle className="h-5 w-5 flex-shrink-0" />
+                <p className="text-sm">{result.data.message}</p>
+              </div>
+            )}
+
+            {/* Server Error Message */}
+            {result?.serverError && (
+              <div className="mb-6 p-4 rounded-lg flex items-center space-x-3 bg-red-50 text-red-800 border border-red-200">
+                <AlertCircle className="h-5 w-5 flex-shrink-0" />
+                <p className="text-sm">{result.serverError}</p>
+              </div>
+            )}
+
+            <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label
                     htmlFor="firstName"
                     className="block text-sm font-medium text-primary mb-2"
                   >
-                    First Name
+                    First Name *
                   </label>
-                  <Input id="firstName" placeholder="John" />
+                  <Input
+                    id="firstName"
+                    name="firstName"
+                    value={formData.firstName}
+                    onChange={handleInputChange}
+                    placeholder="John"
+                    className={
+                      getFieldError("firstName") ? "border-red-500" : ""
+                    }
+                    disabled={isExecuting}
+                  />
+                  {getFieldError("firstName") && (
+                    <p className="text-red-600 text-sm mt-1">
+                      {getFieldError("firstName")}
+                    </p>
+                  )}
                 </div>
                 <div>
                   <label
                     htmlFor="lastName"
                     className="block text-sm font-medium text-primary mb-2"
                   >
-                    Last Name
+                    Last Name *
                   </label>
-                  <Input id="lastName" placeholder="Doe" />
+                  <Input
+                    id="lastName"
+                    name="lastName"
+                    value={formData.lastName}
+                    onChange={handleInputChange}
+                    placeholder="Doe"
+                    className={
+                      getFieldError("lastName") ? "border-red-500" : ""
+                    }
+                    disabled={isExecuting}
+                  />
+                  {getFieldError("lastName") && (
+                    <p className="text-red-600 text-sm mt-1">
+                      {getFieldError("lastName")}
+                    </p>
+                  )}
                 </div>
               </div>
 
@@ -112,9 +195,23 @@ export default function Contact() {
                   htmlFor="email"
                   className="block text-sm font-medium text-primary mb-2"
                 >
-                  Email
+                  Email *
                 </label>
-                <Input id="email" type="email" placeholder="john@example.com" />
+                <Input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleInputChange}
+                  placeholder="john@example.com"
+                  className={getFieldError("email") ? "border-red-500" : ""}
+                  disabled={isExecuting}
+                />
+                {getFieldError("email") && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {getFieldError("email")}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -122,9 +219,22 @@ export default function Contact() {
                   htmlFor="subject"
                   className="block text-sm font-medium text-primary mb-2"
                 >
-                  Subject
+                  Subject *
                 </label>
-                <Input id="subject" placeholder="How can we help you?" />
+                <Input
+                  id="subject"
+                  name="subject"
+                  value={formData.subject}
+                  onChange={handleInputChange}
+                  placeholder="How can we help you?"
+                  className={getFieldError("subject") ? "border-red-500" : ""}
+                  disabled={isExecuting}
+                />
+                {getFieldError("subject") && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {getFieldError("subject")}
+                  </p>
+                )}
               </div>
 
               <div>
@@ -132,20 +242,39 @@ export default function Contact() {
                   htmlFor="message"
                   className="block text-sm font-medium text-primary mb-2"
                 >
-                  Message
+                  Message *
                 </label>
                 <Textarea
                   id="message"
+                  name="message"
                   rows={5}
+                  value={formData.message}
+                  onChange={handleInputChange}
                   placeholder="Tell us more about your inquiry..."
+                  className={getFieldError("message") ? "border-red-500" : ""}
+                  disabled={isExecuting}
                 />
+                {getFieldError("message") && (
+                  <p className="text-red-600 text-sm mt-1">
+                    {getFieldError("message")}
+                  </p>
+                )}
               </div>
 
               <Button
-                className="w-full bg-secondary hover:bg-secondary-700"
+                type="submit"
+                disabled={isExecuting}
+                className="w-full bg-secondary hover:bg-secondary-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 size="lg"
               >
-                Send Message
+                {isExecuting ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                    <span>Sending...</span>
+                  </div>
+                ) : (
+                  "Send Message"
+                )}
               </Button>
             </form>
           </div>

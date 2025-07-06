@@ -19,13 +19,16 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { motion } from "motion/react";
+import { useSupabase } from "@/components/_core/providers/SupabaseProvider";
 
 export default function WelcomeClient() {
   const [confirmationType, setConfirmationType] = useState<
     "email" | "phone" | null
   >(null);
+  const { user } = useSupabase();
+  const userFirstName = user?.user_metadata?.first_name || "User";
   const [userEmail, setUserEmail] = useState("");
-  const [userName, setUserName] = useState("");
+  const [userName, setUserName] = useState(userFirstName);
   const router = useRouter();
   const searchParams = useSearchParams();
 
@@ -37,7 +40,7 @@ export default function WelcomeClient() {
     if (type) setConfirmationType(type);
     if (email) setUserEmail(decodeURIComponent(email));
     if (name) setUserName(decodeURIComponent(name));
-  }, [searchParams]);
+  }, [searchParams, user]);
 
   const handleContinue = () => {
     router.push("/");

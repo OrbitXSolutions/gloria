@@ -7,6 +7,7 @@ import { getLocale } from "next-intl/server";
 import { RootWrapper } from "@/components/_core/wrappers/root-wrapper";
 import { Footer } from "react-day-picker";
 import AppFooter from "@/components/organisms/layout/app-footer";
+import { GoogleAnalytics } from "@next/third-parties/google";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -95,15 +96,12 @@ interface Props {
   children: React.ReactNode;
 }
 
-export default async function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default async function RootLayout({ children, searchParams }: Props) {
   const locale = await getLocale();
   const dir = locale === "ar" ? "rtl" : "ltr";
   return (
     <html lang={locale} dir={dir}>
+      <GoogleAnalytics gaId="'G-VHR5QKPREW'" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

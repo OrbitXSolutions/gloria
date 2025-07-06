@@ -6,11 +6,16 @@ import { getImageUrl } from "@/lib/constants/supabase-storage";
 import { useTranslations } from "next-intl";
 import SafeImage from "../_common/safe-image";
 import Image from "next/image";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 export default function Hero() {
   const t = useTranslations("hero");
+  const isMobile = useIsMobile();
   // You can store the hero image path in your database or use a static path
-  const heroImagePath = "/images/home-cover.png";
+  // const heroImagePath = "/images/hero.jpg"; // Replace with your actual image path
+  const heroImagePath = isMobile
+    ? "/images/hero.jpg"
+    : "/images/home-cover.png";
   const heroImageUrl = heroImagePath;
 
   const handleHeroImageError = (error: string, src: string) => {
