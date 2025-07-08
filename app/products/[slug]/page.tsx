@@ -124,8 +124,10 @@ export default async function Page({ params, searchParams }: PageProps) {
   } = await supabase.auth.getUser();
 
   const [product, reviews] = await Promise.all([
-    getProductBySlug(slug, user?.user_metadata?.user_id),
-    getProductBySlug(slug).then((p) => (p ? getProductReviews(p.id, 10) : [])),
+    getProductBySlug(decodeURIComponent(slug), user?.user_metadata?.user_id),
+    getProductBySlug(decodeURIComponent(slug)).then((p) =>
+      p ? getProductReviews(p.id, 10) : []
+    ),
   ]);
 
   if (!product) {

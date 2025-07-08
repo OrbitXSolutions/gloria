@@ -156,16 +156,18 @@ export default function AppHeader() {
               <Button variant="ghost" size="sm" className="hidden md:flex">
                 <Heart className="h-5 w-5" />
               </Button>
-              <Link href="/cart">
-                <Button variant="ghost" size="sm" className="relative">
+
+              <Button asChild variant="ghost" size="sm" className="relative">
+                <Link href="/cart">
                   <ShoppingBag className="h-5 w-5" />
                   {cart.itemCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
                       {cart.items.length}
                     </span>
                   )}
-                </Button>
-              </Link>
+                  <LoadingIndicator loaderClassName="text-white" />
+                </Link>
+              </Button>
 
               {/* Mobile menu button */}
               <Button

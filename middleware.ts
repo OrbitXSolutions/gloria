@@ -2,6 +2,11 @@ import { type NextRequest } from "next/server";
 import { updateSession } from "./lib/supabase/middleware";
 
 export async function middleware(request: NextRequest) {
+  const lang = request.nextUrl.searchParams.get("lang");
+  const locale = request.cookies.get("NEXT_LOCALE")?.value || "en";
+  if (lang && lang !== locale) {
+    request.cookies.set("NEXT_LOCALE", lang);
+  }
   return await updateSession(request);
 }
 
