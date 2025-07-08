@@ -19,7 +19,7 @@ export async function generateMetadata({
   const locale = await getLocale();
 
   const title =
-    locale === "ar" ? "سلة التسوق - إليفا" : "Shopping Cart - Eleva";
+    locale === "ar" ? "سلة التسوق - جلوريا" : "Shopping Cart - Gloria";
   const description =
     locale === "ar"
       ? "راجع عناصر سلة التسوق الخاصة بك وأكمل عملية الشراء"

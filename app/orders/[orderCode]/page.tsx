@@ -17,7 +17,7 @@ export async function generateMetadata({
   const { orderCode } = await params;
 
   return {
-    title: `Order ${orderCode} - Eleva`,
+    title: `Order ${orderCode} - Gloria`,
     description: "Order confirmation and details",
     robots: {
       index: false,

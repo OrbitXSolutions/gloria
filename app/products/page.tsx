@@ -17,7 +17,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const locale = await getLocale();
 
-  const title = locale === "ar" ? "المنتجات - إليفا" : "Products - Eleva";
+  const title = locale === "ar" ? "المنتجات - جلوريا" : "Products - Gloria";
   const description =
     locale === "ar"
       ? "تصفح مجموعتنا الكاملة من العطور الفاخرة. اعثر على عطرك المثالي من أفضل العلامات التجارية العالمية."

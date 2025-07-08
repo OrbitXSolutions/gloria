@@ -1,5 +1,5 @@
-import { Suspense } from "react"
-import EmailConfirmationForm from "./EmailConfirmationForm"
+import { Suspense } from "react";
+import EmailConfirmationForm from "./EmailConfirmationForm";
 
 export default function ConfirmEmailPage() {
   return (
@@ -17,15 +17,15 @@ export default function ConfirmEmailPage() {
 
         <div className="relative z-10 flex flex-col justify-end p-12 text-white">
           <div className="mb-8">
-            <h1 className="text-4xl font-light mb-4">ELEVA</h1>
+            <h1 className="text-4xl font-light mb-4">GLORIA</h1>
             <p className="text-xl font-light opacity-90">Elevate Your Style</p>
           </div>
 
           <div className="space-y-4">
             <h2 className="text-2xl font-light">Almost There!</h2>
             <p className="text-lg opacity-80 leading-relaxed">
-              We've sent a confirmation link to your email. Click the link to verify your account and start shopping our
-              exclusive collection.
+              We've sent a confirmation link to your email. Click the link to
+              verify your account and start shopping our exclusive collection.
             </p>
           </div>
         </div>
@@ -36,13 +36,18 @@ export default function ConfirmEmailPage() {
         <div className="w-full max-w-md">
           {/* Mobile header */}
           <div className="lg:hidden text-center mb-8">
-            <h1 className="text-3xl font-light text-gray-900 mb-2">ELEVA</h1>
+            <h1 className="text-3xl font-light text-gray-900 mb-2">GLORIA</h1>
             <p className="text-gray-600">Elevate Your Style</p>
           </div>
 
           <div className="text-center mb-8">
-            <h2 className="text-2xl font-light text-gray-900 mb-2">Confirm Your Email</h2>
-            <p className="text-gray-600">Check your inbox and click the confirmation link to activate your account</p>
+            <h2 className="text-2xl font-light text-gray-900 mb-2">
+              Confirm Your Email
+            </h2>
+            <p className="text-gray-600">
+              Check your inbox and click the confirmation link to activate your
+              account
+            </p>
           </div>
 
           <Suspense fallback={<div>Loading...</div>}>
@@ -51,5 +56,5 @@ export default function ConfirmEmailPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

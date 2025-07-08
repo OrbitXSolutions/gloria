@@ -1,6 +1,6 @@
 {
   "header": {
-    "brand": "Eleva",
+    "brand": "Gloria",
     "nav": {
       "home": "Home",
       "products": "Products",
@@ -192,7 +192,7 @@
       "placeholder": "Enter your email",
       "disclaimer": "By subscribing, you agree to our Privacy Policy and Terms of Service."
     },
-    "copyright": "Eleva. All rights reserved.",
+    "copyright": "Gloria. All rights reserved.",
     "legal": {
       "privacy": "Privacy Policy",
       "terms": "Terms of Service",

@@ -1,10 +1,10 @@
-import type { Metadata } from "next"
-import ForgotPasswordForm from "./ForgotPasswordForm"
+import type { Metadata } from "next";
+import ForgotPasswordForm from "./ForgotPasswordForm";
 
 export const metadata: Metadata = {
-  title: "Forgot Password - Eleva",
+  title: "Forgot Password - Gloria",
   description: "Reset your password",
-}
+};
 
 export default function ForgotPasswordPage() {
   return (
@@ -23,7 +23,7 @@ export default function ForgotPasswordPage() {
         {/* Promo Content */}
         <div className="relative z-10 flex flex-col justify-between p-12 text-white">
           <div>
-            <h1 className="text-4xl font-bold mb-2">ELEVA</h1>
+            <h1 className="text-4xl font-bold mb-2">GLORIA</h1>
             <p className="text-lg opacity-90">Luxury Fashion Redefined</p>
           </div>
 
@@ -31,8 +31,8 @@ export default function ForgotPasswordPage() {
             <div>
               <h2 className="text-3xl font-light mb-4">Secure Recovery</h2>
               <p className="text-lg opacity-80 leading-relaxed">
-                Your account security is our priority. We'll help you regain access to your exclusive fashion world
-                safely.
+                Your account security is our priority. We'll help you regain
+                access to your exclusive fashion world safely.
               </p>
             </div>
 
@@ -43,16 +43,22 @@ export default function ForgotPasswordPage() {
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-white rounded-full"></div>
-                <span className="text-sm opacity-75">Instant Recovery Process</span>
+                <span className="text-sm opacity-75">
+                  Instant Recovery Process
+                </span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-white rounded-full"></div>
-                <span className="text-sm opacity-75">24/7 Support Available</span>
+                <span className="text-sm opacity-75">
+                  24/7 Support Available
+                </span>
               </div>
             </div>
           </div>
 
-          <div className="text-xs opacity-60">© 2024 Eleva. All rights reserved.</div>
+          <div className="text-xs opacity-60">
+            © 2024 Gloria. All rights reserved.
+          </div>
         </div>
       </div>
 
@@ -61,13 +67,18 @@ export default function ForgotPasswordPage() {
         <div className="w-full max-w-md">
           {/* Mobile header */}
           <div className="lg:hidden text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">ELEVA</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">GLORIA</h1>
             <p className="text-gray-600">Luxury Fashion Redefined</p>
           </div>
 
           <div className="mb-8 text-center">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-8 h-8 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -76,13 +87,17 @@ export default function ForgotPasswordPage() {
                 />
               </svg>
             </div>
-            <h2 className="text-3xl font-light text-gray-900 mb-2">Forgot Password?</h2>
-            <p className="text-gray-600">No worries, we'll send you reset instructions</p>
+            <h2 className="text-3xl font-light text-gray-900 mb-2">
+              Forgot Password?
+            </h2>
+            <p className="text-gray-600">
+              No worries, we'll send you reset instructions
+            </p>
           </div>
 
           <ForgotPasswordForm />
         </div>
       </div>
     </div>
-  )
+  );
 }

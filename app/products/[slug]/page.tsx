@@ -47,7 +47,7 @@ export async function generateMetadata({
       ? product.meta_description_ar || product.description_ar
       : product.meta_description_en || product.description_en;
 
-  const metaBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://eleva.com";
+  const metaBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://gloria.com";
 
   let imageUrl = `${metaBaseUrl}/og-image.jpg`;
   if (product.meta_thumbnail) {
@@ -66,7 +66,7 @@ export async function generateMetadata({
   ];
 
   return {
-    title: metaTitle || "Eleva Product",
+    title: metaTitle || "Gloria Product",
     description: metaDescription || `Discover our premium product ${metaTitle}`,
     keywords:
       product.keywords ||
@@ -80,7 +80,7 @@ export async function generateMetadata({
       },
     },
     openGraph: {
-      title: metaTitle || "Eleva Product",
+      title: metaTitle || "Gloria Product",
       description:
         metaDescription || `Discover our premium product ${metaTitle}`,
       url: `/products/${slug}${locale !== "en" ? `?lang=${locale}` : ""}`,
@@ -100,7 +100,7 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: metaTitle || "Eleva Product",
+      title: metaTitle || "Gloria Product",
       description:
         metaDescription || `Discover our premium product ${metaTitle}`,
       images: [imageUrl],

@@ -17,9 +17,9 @@ import {
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "Returns & Refunds - Eleva",
+  title: "Returns & Refunds - Gloria",
   description:
-    "Learn about our return policy, how to return products, and get refunds for your Eleva fragrance purchases.",
+    "Learn about our return policy, how to return products, and get refunds for your Gloria fragrance purchases.",
   keywords: [
     "returns",
     "refunds",
@@ -139,7 +139,7 @@ export default function Page() {
                         Contact Customer Service
                       </h3>
                       <p className="text-gray-600 text-sm">
-                        Email us at <strong>returns@eleva.com</strong> or call{" "}
+                        Email us at <strong>returns@gloria.com</strong> or call{" "}
                         <strong>+971 4 123 4567</strong> with your order number
                         and reason for return.
                       </p>
@@ -300,7 +300,7 @@ export default function Page() {
                     <div className="space-y-2">
                       <div className="flex items-center gap-2 justify-center">
                         <Mail className="h-4 w-4 text-purple-600" />
-                        <span className="text-sm">returns@eleva.com</span>
+                        <span className="text-sm">returns@gloria.com</span>
                       </div>
                       <div className="flex items-center gap-2 justify-center">
                         <Phone className="h-4 w-4 text-purple-600" />

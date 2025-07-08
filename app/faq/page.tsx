@@ -10,9 +10,9 @@ import { Badge } from "@/components/ui/badge";
 import { MessageCircle, Phone, Mail, Clock } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Frequently Asked Questions - Eleva",
+  title: "Frequently Asked Questions - Gloria",
   description:
-    "Find answers to common questions about Eleva fragrances, shipping, returns, and more.",
+    "Find answers to common questions about Gloria fragrances, shipping, returns, and more.",
   keywords: [
     "FAQ",
     "questions",
@@ -198,7 +198,9 @@ export default function Page() {
                     <Mail className="h-4 w-4 text-purple-600" />
                     <div>
                       <p className="text-sm font-medium">Email Us</p>
-                      <p className="text-sm text-gray-600">support@eleva.com</p>
+                      <p className="text-sm text-gray-600">
+                        support@gloria.com
+                      </p>
                     </div>
                   </div>
 

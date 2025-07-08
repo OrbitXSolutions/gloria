@@ -20,8 +20,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Eleva - Premium Fragrances for Every Occasion",
-    template: "%s | Eleva",
+    default: "Gloria - Premium Fragrances for Every Occasion",
+    template: "%s | Gloria",
   },
   description:
     "Discover our exquisite collection of premium perfumes. Fast delivery, 14-day returns, and authentic fragrances from top brands.",
@@ -35,15 +35,15 @@ export const metadata: Metadata = {
     "beauty",
     "cosmetics",
   ],
-  authors: [{ name: "Eleva" }],
-  creator: "Eleva",
-  publisher: "Eleva",
+  authors: [{ name: "Gloria" }],
+  creator: "Gloria",
+  publisher: "Gloria",
   formatDetection: {
     email: false,
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://eleva-store.vercel.app"),
+  metadataBase: new URL("https://gloria-store.vercel.app"),
   alternates: {
     canonical: "/",
     languages: {
@@ -52,17 +52,17 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    title: "Eleva - Premium Fragrances for Every Occasion",
+    title: "Gloria - Premium Fragrances for Every Occasion",
     description:
       "Discover our exquisite collection of premium perfumes. Fast delivery, 14-day returns, and authentic fragrances from top brands.",
-    url: "https://eleva-store.vercel.app",
-    siteName: "Eleva",
+    url: "https://gloria-store.vercel.app",
+    siteName: "Gloria",
     images: [
       {
         url: "/og-image.jpg",
         width: 1200,
         height: 630,
-        alt: "Eleva - Premium Fragrances",
+        alt: "Gloria - Premium Fragrances",
       },
     ],
     locale: "en_US",
@@ -70,10 +70,10 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Eleva - Premium Fragrances",
+    title: "Gloria - Premium Fragrances",
     description: "Discover our exquisite collection of premium perfumes",
     images: ["/og-image.jpg"],
-    creator: "@eleva",
+    creator: "@gloria",
   },
   robots: {
     index: true,

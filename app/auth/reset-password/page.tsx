@@ -1,10 +1,10 @@
-import type { Metadata } from "next"
-import ResetPasswordForm from "./ResetPasswordForm"
+import type { Metadata } from "next";
+import ResetPasswordForm from "./ResetPasswordForm";
 
 export const metadata: Metadata = {
-  title: "Reset Password - Eleva",
+  title: "Reset Password - Gloria",
   description: "Create a new password",
-}
+};
 
 export default function ResetPasswordPage() {
   return (
@@ -23,7 +23,7 @@ export default function ResetPasswordPage() {
         {/* Promo Content */}
         <div className="relative z-10 flex flex-col justify-between p-12 text-white">
           <div>
-            <h1 className="text-4xl font-bold mb-2">ELEVA</h1>
+            <h1 className="text-4xl font-bold mb-2">GLORIA</h1>
             <p className="text-lg opacity-90">Luxury Fashion Redefined</p>
           </div>
 
@@ -31,7 +31,8 @@ export default function ResetPasswordPage() {
             <div>
               <h2 className="text-3xl font-light mb-4">New Beginning</h2>
               <p className="text-lg opacity-80 leading-relaxed">
-                Create a strong, secure password to protect your exclusive access to luxury fashion collections.
+                Create a strong, secure password to protect your exclusive
+                access to luxury fashion collections.
               </p>
             </div>
 
@@ -51,7 +52,9 @@ export default function ResetPasswordPage() {
             </div>
           </div>
 
-          <div className="text-xs opacity-60">© 2024 Eleva. All rights reserved.</div>
+          <div className="text-xs opacity-60">
+            © 2024 Gloria. All rights reserved.
+          </div>
         </div>
       </div>
 
@@ -60,13 +63,18 @@ export default function ResetPasswordPage() {
         <div className="w-full max-w-md">
           {/* Mobile header */}
           <div className="lg:hidden text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">ELEVA</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">GLORIA</h1>
             <p className="text-gray-600">Luxury Fashion Redefined</p>
           </div>
 
           <div className="mb-8 text-center">
             <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
-              <svg className="w-8 h-8 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <svg
+                className="w-8 h-8 text-gray-600"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
                 <path
                   strokeLinecap="round"
                   strokeLinejoin="round"
@@ -75,7 +83,9 @@ export default function ResetPasswordPage() {
                 />
               </svg>
             </div>
-            <h2 className="text-3xl font-light text-gray-900 mb-2">Reset Password</h2>
+            <h2 className="text-3xl font-light text-gray-900 mb-2">
+              Reset Password
+            </h2>
             <p className="text-gray-600">Create your new secure password</p>
           </div>
 
@@ -83,5 +93,5 @@ export default function ResetPasswordPage() {
         </div>
       </div>
     </div>
-  )
+  );
 }

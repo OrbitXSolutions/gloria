@@ -55,7 +55,7 @@ export default function WelcomeClient() {
           <div className="absolute inset-0 bg-gradient-to-br from-black/20 to-black/40 z-10" />
           <img
             src="/placeholder.svg?height=1080&width=720"
-            alt="Welcome to ELEVA"
+            alt="Welcome to GLORIA"
             className="w-full h-full object-cover"
           />
 
@@ -97,7 +97,7 @@ export default function WelcomeClient() {
           {/* Brand overlay */}
           <div className="absolute bottom-10 left-10 z-20">
             <div className="text-white">
-              <h3 className="text-2xl font-light tracking-wider">ELEVA</h3>
+              <h3 className="text-2xl font-light tracking-wider">GLORIA</h3>
               <p className="text-white/80 text-sm">Elevate Your Style</p>
             </div>
           </div>
@@ -114,7 +114,7 @@ export default function WelcomeClient() {
             {/* Mobile header */}
             <div className="lg:hidden text-center mb-8">
               <h1 className="text-3xl font-light tracking-wider text-gray-900">
-                ELEVA
+                GLORIA
               </h1>
               <p className="text-gray-600 text-sm">Elevate Your Style</p>
             </div>
@@ -152,7 +152,7 @@ export default function WelcomeClient() {
 
                 <p className="text-gray-600 leading-relaxed">
                   Your {confirmationType === "email" ? "email" : "phone number"}{" "}
-                  has been successfully verified. You're now part of the ELEVA
+                  has been successfully verified. You're now part of the GLORIA
                   family and ready to discover luxury fashion.
                 </p>
               </motion.div>
@@ -259,7 +259,7 @@ export default function WelcomeClient() {
                 className="w-full h-12 border-gray-300 text-gray-700 hover:bg-gray-50 font-medium transition-all duration-300"
               >
                 <Heart className="mr-2 h-4 w-4" />
-                Explore ELEVA
+                Explore GLORIA
               </Button>
             </motion.div>
 

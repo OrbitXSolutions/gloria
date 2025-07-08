@@ -15,7 +15,7 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Fragrance Guide - Eleva",
+  title: "Fragrance Guide - Gloria",
   description:
     "Learn about fragrance concentrations, longevity, and how to choose the perfect scent strength for your preferences.",
   keywords: [

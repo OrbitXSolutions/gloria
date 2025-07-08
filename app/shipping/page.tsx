@@ -14,9 +14,9 @@ import {
 } from "lucide-react";
 
 export const metadata: Metadata = {
-  title: "Shipping Information - Eleva",
+  title: "Shipping Information - Gloria",
   description:
-    "Learn about our shipping options, delivery times, and policies for Eleva fragrance orders.",
+    "Learn about our shipping options, delivery times, and policies for Gloria fragrance orders.",
   keywords: [
     "shipping",
     "delivery",

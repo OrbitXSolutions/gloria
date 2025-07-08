@@ -15,7 +15,7 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const locale = await getLocale();
 
-  const title = locale === "ar" ? "إتمام الطلب - إليفا" : "Checkout - Eleva";
+  const title = locale === "ar" ? "إتمام الطلب - جلوريا" : "Checkout - Gloria";
   const description =
     locale === "ar"
       ? "أكمل طلبك وأدخل تفاصيل الشحن والدفع"

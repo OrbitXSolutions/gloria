@@ -1,17 +1,17 @@
-import type React from "react"
-import type { Metadata } from "next"
-import { ProfileSidebar } from "./components/ProfileSidebar"
-import { ProfileMobileNav } from "./components/ProfileMobileNav"
+import type React from "react";
+import type { Metadata } from "next";
+import { ProfileSidebar } from "./components/ProfileSidebar";
+import { ProfileMobileNav } from "./components/ProfileMobileNav";
 
 export const metadata: Metadata = {
-  title: "My Profile | Eleva",
+  title: "My Profile | Gloria",
   description: "Manage your profile, orders, and preferences",
-}
+};
 
 export default function ProfileLayout({
   children,
 }: {
-  children: React.ReactNode
+  children: React.ReactNode;
 }) {
   return (
     <div className="min-h-screen bg-gray-50">
@@ -29,10 +29,12 @@ export default function ProfileLayout({
 
           {/* Main Content */}
           <div className="lg:col-span-9">
-            <div className="bg-white rounded-xl shadow-sm border border-gray-200">{children}</div>
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200">
+              {children}
+            </div>
           </div>
         </div>
       </div>
     </div>
-  )
+  );
 }

@@ -285,7 +285,7 @@ export function ProfileOverview() {
         <Alert className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
           <Sparkles className="h-4 w-4 text-blue-600" />
           <AlertDescription className="text-blue-800">
-            Welcome to ELEVA! Complete your profile and start exploring our
+            Welcome to GLORIA! Complete your profile and start exploring our
             luxury fragrance collection.
           </AlertDescription>
         </Alert>
