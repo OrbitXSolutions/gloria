@@ -13,25 +13,29 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { signOutAction } from "@/app/_actions/auth";
 import { useSupabase } from "../_core/providers/SupabaseProvider";
+import Link from "next/link";
+import LoadingIndicator from "./LoadingIndicator";
+import { useSupabaseUser } from "@/hooks/use-supabase-user";
+import { Spinner } from "../ui/spinner";
 
 export default function AuthButton() {
-  const { user, loading } = useSupabase();
+  const { user, loading, logout, isLoggingOut } = useSupabaseUser();
   const router = useRouter();
 
-  const { execute: signOut, isExecuting } = useAction(signOutAction, {
-    onSuccess: (result) => {
-      if (result.data?.success) {
-        toast.success(result.data.message);
-        router.refresh();
-      }
-    },
-    onError: (error) => {
-      toast.error("Failed to sign out");
-    },
-  });
+  // const { execute: signOut, isExecuting } = useAction(signOutAction, {
+  //   onSuccess: (result) => {
+  //     if (result.data?.success) {
+  //       toast.success(result.data.message);
+  //       router.refresh();
+  //     }
+  //   },
+  //   onError: (error) => {
+  //     toast.error("Failed to sign out");
+  //   },
+  // });
 
   const handleSignOut = () => {
-    signOut();
+    logout();
   };
 
   if (loading) {
@@ -65,9 +69,10 @@ export default function AuthButton() {
             Orders
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          <DropdownMenuItem onClick={handleSignOut} disabled={isExecuting}>
+          <DropdownMenuItem onClick={handleSignOut} disabled={isLoggingOut}>
             <LogOut className="h-4 w-4 mr-2" />
             Sign Out
+            {isLoggingOut && <Spinner size={"small"} className="text-white" />}
           </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
@@ -77,12 +82,15 @@ export default function AuthButton() {
   return (
     <Button
       variant="ghost"
+      asChild
       size="sm"
-      onClick={() => router.push("/auth/login")}
       className="flex items-center gap-2"
     >
-      <LogIn className="h-4 w-4" />
-      <span className="hidden md:inline">Sign In</span>
+      <Link href="/auth/login">
+        <LogIn className="h-4 w-4" />
+        <span className="hidden md:inline">Sign In</span>
+        <LoadingIndicator loaderClassName="text-white" />
+      </Link>
     </Button>
   );
 }

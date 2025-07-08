@@ -9,13 +9,15 @@ import { useLocale, useTranslations } from "next-intl";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { useSearchParams } from "next/navigation";
 import { toast } from "sonner";
-import { getProductImageUrl, getFirstImageUrl } from "@/lib/constants/supabase-storage";
+import {
+  getProductImageUrl,
+  getFirstImageUrl,
+} from "@/lib/constants/supabase-storage";
 import SafeImage from "../_common/safe-image";
 import { formatPrice } from "@/lib/common/cart";
 import { useCart } from "../_core/providers/cart-provider";
 import Link from "next/link";
 import Image from "next/image";
-
 
 interface ProductCardProps {
   product: ProductWithUserData;
@@ -26,12 +28,12 @@ export default function ProductCard({
   product,
   showNewBadge = false,
 }: ProductCardProps) {
-  const t = useTranslations('');
+  const t = useTranslations("");
   const locale = useLocale();
   const { user } = useSupabaseUser();
   const { cart, addItem, updateQuantity, removeItem } = useCart();
 
-//   const { addFavorite, removeFavorite } = useFavorites();
+  //   const { addFavorite, removeFavorite } = useFavorites();
   const searchParams = useSearchParams();
 
   const getProductName = () => {
@@ -59,8 +61,8 @@ export default function ProductCard({
   );
   const clientIsInCart = !!clientCartItem;
   const clientCartQuantity = clientCartItem?.quantity || 0;
-//   const clientIsInCart = false;
-//   const clientCartQuantity = 0;
+  //   const clientIsInCart = false;
+  //   const clientCartQuantity = 0;
 
   // Use client-side data if it exists (for real-time updates), otherwise use server-side
   const isInCart = clientIsInCart || serverIsInCart;
@@ -97,12 +99,12 @@ export default function ProductCard({
     }
 
     if (isFavorited) {
-    //   removeFavorite(product.id);
+      //   removeFavorite(product.id);
       toast.success(t("favorites.removed"), {
         description: getProductName(),
       });
     } else {
-    //   addFavorite(product.id);
+      //   addFavorite(product.id);
       toast.success(t("favorites.added"), {
         description: getProductName(),
       });
@@ -158,7 +160,7 @@ export default function ProductCard({
   return (
     <Link href={productLink} className="block">
       <div className="group bg-white rounded-2xl shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden border border-gray-100 cursor-pointer">
-        <div className="relative h-[250px] overflow-hidden">
+        <div className="relative aspect-square overflow-hidden">
           <Image
             src={primaryImage || "/placeholder.svg"}
             alt=""

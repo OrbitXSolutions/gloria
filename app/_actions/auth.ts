@@ -17,11 +17,19 @@ import { z } from "zod";
 import createClient from "@/lib/supabase/client";
 import { createSsrClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  UserVerifyPhone,
+  UserVerifyPhoneSchema,
+} from "@/lib/schemas/confirm-phone-otp";
+import {
+  UserSetPhone,
+  UserSetPhoneSchema,
+} from "@/lib/schemas/set-phone-schema";
 
 const action = createSafeActionClient();
 
 export const registerAction = action
-  .schema(registerSchema)
+  .inputSchema(registerSchema)
   .action(async ({ parsedInput }) => {
     const { firstName, lastName, email, phone, password } = parsedInput;
     const supabase = await createSsrClient();
@@ -39,6 +47,7 @@ export const registerAction = action
       const { data, error } = await supabase.auth.signUp({
         phone: formattedPhone,
         password,
+
         options: {
           data: {
             first_name: firstName,
@@ -46,6 +55,7 @@ export const registerAction = action
             email: email,
             full_name: `${firstName} ${lastName}`,
           },
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/confirm`,
         },
       });
       if (error) {
@@ -195,9 +205,11 @@ export const verifyOtpAction = action
         if (insertError) {
           console.error("Error creating user:", insertError);
         }
+        if (data.session) supabase.auth.setSession(data.session);
 
         return {
           success: true,
+          name: data.user.user_metadata?.first_name || "User",
           message: "Phone number verified successfully!",
         };
       }
@@ -334,3 +346,40 @@ export const signOutAction = action.action(async () => {
     return { error: "An unexpected error occurred" };
   }
 });
+
+export async function setUserPhone(input: UserSetPhone) {
+  const parsedInput = UserSetPhoneSchema.safeParse(input);
+  if (!parsedInput.success) {
+    throw new Error(
+      "Invalid user data: " + JSON.stringify(parsedInput.error.issues)
+    );
+  }
+  const supabase = await createSsrClient();
+
+  const { data, error } = await supabase.auth.updateUser({
+    phone: parsedInput.data.phone,
+  });
+
+  if (error) {
+    throw error;
+  }
+  if (!data.user) {
+    throw new Error("User phone update failed");
+  }
+
+  return data;
+}
+
+export async function verifyOtp(input: UserVerifyPhone) {
+  const parsedInput = UserVerifyPhoneSchema.safeParse(input);
+  if (
+    !parsedInput.success ||
+    !parsedInput.data.phone ||
+    !parsedInput.data.token
+  ) {
+    throw new Error(
+      "Invalid user data: " +
+        JSON.stringify(parsedInput.error?.issues ?? `Invalid input`)
+    );
+  }
+}
