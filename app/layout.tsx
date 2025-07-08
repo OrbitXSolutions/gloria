@@ -44,7 +44,7 @@ export const metadata: Metadata = {
     address: false,
     telephone: false,
   },
-  metadataBase: new URL("https://gloria-store.vercel.app"),
+  metadataBase: new URL("https://glorianaturals.ae"),
   alternates: {
     canonical: "/",
     languages: {
@@ -56,7 +56,7 @@ export const metadata: Metadata = {
     title: "Gloria - Premium Fragrances for Every Occasion",
     description:
       "Discover our exquisite collection of premium perfumes. Fast delivery, 14-day returns, and authentic fragrances from top brands.",
-    url: "https://gloria-store.vercel.app",
+    url: "https://glorianaturals.ae",
     siteName: "Gloria",
     images: [
       {
@@ -87,9 +87,9 @@ export const metadata: Metadata = {
       "max-snippet": -1,
     },
   },
-  verification: {
-    google: "your-google-verification-code",
-  },
+  // verification: {
+  //   google: "your-google-verification-code",
+  // },
 };
 interface Props {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
@@ -101,7 +101,7 @@ export default async function RootLayout({ children, searchParams }: Props) {
   const dir = locale === "ar" ? "rtl" : "ltr";
   return (
     <html lang={locale} dir={dir}>
-      <GoogleAnalytics gaId="'G-VHR5QKPREW'" />
+      <GoogleAnalytics gaId="'G-9XCF65FS7X'" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >

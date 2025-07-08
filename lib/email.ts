@@ -52,7 +52,7 @@ export const generateContactEmailHTML = (data: {
       
       <hr style="margin: 30px 0; border: none; border-top: 1px solid #dee2e6;">
       <p style="color: #6c757d; font-size: 12px; text-align: center;">
-        This email was sent from the Eleva Boutique contact form.
+        This email was sent from the Gloria Naturals contact form.
       </p>
     </div>
   `;

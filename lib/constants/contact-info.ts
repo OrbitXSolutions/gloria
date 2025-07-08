@@ -1,7 +1,7 @@
 export enum ContactInfo {
-  EMAIL = "support@eleva-boutique.net",
-  INSTAGRAM = "https://www.instagram.com/eleva.boutique_79",
-  FACEBOOK = "https://www.facebook.com/Eleva.Boutique79",
-  WHATSAPP = "https://wa.me/971505582551",
-  PHONE = "+971 50 558 2551",
+  EMAIL = "sales@glorianaturals.ae",
+  INSTAGRAM = "https://www.instagram.com/naturalsgloria",
+  FACEBOOK = "https://www.facebook.com/profile.php?id=61571264219633",
+  WHATSAPP = "https://wa.me/971507425671",
+  PHONE = "+971 50 742 5671",
 }
