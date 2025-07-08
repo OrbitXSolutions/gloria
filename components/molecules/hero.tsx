@@ -14,7 +14,7 @@ export default function Hero() {
   // You can store the hero image path in your database or use a static path
   // const heroImagePath = "/images/hero.jpg"; // Replace with your actual image path
   const heroImagePath = isMobile
-    ? "/images/hero-mobile.jpg"
+    ? "/images/hero-mobile.png"
     : "/images/home-cover.png";
   const heroImageUrl = heroImagePath;
 

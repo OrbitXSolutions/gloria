@@ -1,4 +1,8 @@
 import {
+  SupabasePaths,
+  SupabaseStorageBuckets,
+} from "@/lib/constants/supabase-storage";
+import {
   Brush,
   Car,
   Crown,
@@ -9,14 +13,37 @@ import {
   Sparkles,
   Users,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function CategoryIcon({
   name,
   className = "",
+  image = "",
 }: {
   name: string;
+
   className?: string;
+  image?: string | null;
 }) {
+  if (image) {
+    const src =
+      SupabasePaths.IMAGES +
+      "/" +
+      SupabaseStorageBuckets.IMAGES.folders.CATEGORIES +
+      "/" +
+      image;
+
+    return (
+      <Image
+        src={src}
+        alt={name}
+        className={className}
+        width={64}
+        height={64}
+      />
+    );
+  }
+
   // [
   //   {
   //     slug: "women",
@@ -45,23 +72,19 @@ export default function CategoryIcon({
   // ];
 
   switch (name) {
-    case "women":
+    case "fragrance-sprays":
       return <Sparkles className={className} />;
-    case "men":
-      return <Crown className={className} />;
-
-    case "unisex":
-      return <Users className={className} />;
-    case "dkhoun":
-      return <FlameKindling className={className} />;
     case "hair-care":
       return <Brush className={className} />;
-    case "room-freshener":
-      return <School className={className} />;
-    case "car-freshener":
-      return <Car className={className} />;
-    case "giveaway":
-      return <Gift className={className} />;
+
+    case "mens-perfumes":
+      return <Crown className={className} />;
+    case "skin-care":
+      return <FlameKindling className={className} />;
+    case "unisex-perfumes":
+      return <Users className={className} />;
+    case "womens-perfumes":
+      return <Sparkles className={className} />;
     default:
       return <Gem className={className} />;
   }

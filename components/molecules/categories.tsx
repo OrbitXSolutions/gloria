@@ -60,8 +60,9 @@ export default function Categories({
               >
                 <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mb-4 group-hover:from-secondary-200 group-hover:to-secondary-200 transition-all duration-300">
                   <CategoryIcon
-                    className="h-10 w-10 text-primary"
+                    className="h-16 w-16 text-primary rounded-full"
                     name={category.slug}
+                    image={category.image}
                   />
                 </div>
                 <h3 className="text-sm self-start text-center font-bold text-primary-600 w-[60px]">

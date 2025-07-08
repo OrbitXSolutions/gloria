@@ -398,8 +398,9 @@ export default function ProductsPageClient({
                       >
                         <div className="w-8 h-8 bg-gradient-to-br from-secondary-100 to-pink-100 rounded-full flex items-center justify-center">
                           <CategoryIcon
-                            className="w-6 h-6 text-secondary-200 rounded-full"
+                            className="w-8 h-8 text-secondary-200 rounded-full"
                             name={category.slug || ""}
+                            image={category.image} // Ensure image is optional
                           />
                         </div>
                         <span className="text-xs">
