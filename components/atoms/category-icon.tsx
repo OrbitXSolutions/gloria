@@ -2,6 +2,7 @@ import {
   SupabasePaths,
   SupabaseStorageBuckets,
 } from "@/lib/constants/supabase-storage";
+import { cn } from "@/lib/utils";
 import {
   Brush,
   Car,
@@ -37,7 +38,7 @@ export default function CategoryIcon({
       <Image
         src={src}
         alt={name}
-        className={className}
+        className={cn("p-1", className)}
         width={64}
         height={64}
       />

@@ -45,7 +45,7 @@ export default function Categories({
           <p className="text-gray-600 max-w-2xl mx-auto">{t("description")}</p>
         </div>
 
-        <div className="flex justify-between gap-6 container mx-auto  lg:px-30 flex-wrap">
+        <div className="flex justify-between max-md:max-w-[320px] gap-6 container mx-auto  lg:px-30 flex-wrap">
           {categories?.map((category) => {
             return (
               <Link
@@ -56,7 +56,7 @@ export default function Categories({
                     category: locale == "en" ? category.slug : category.slug_ar,
                   },
                 }}
-                className="group flex flex-col items-center text-center hover:transform hover:scale-105 transition-all duration-300"
+                className="group flex flex-col  items-center text-center hover:transform hover:scale-105 transition-all duration-300"
               >
                 <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mb-4 group-hover:from-secondary-200 group-hover:to-secondary-200 transition-all duration-300">
                   <CategoryIcon
