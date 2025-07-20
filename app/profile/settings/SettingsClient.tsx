@@ -22,9 +22,11 @@ import {
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { useTranslations } from "next-intl";
 
 export function SettingsClient() {
   const { user: authUser } = useSupabaseUser();
+  const t = useTranslations("toast");
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -65,10 +67,10 @@ export function SettingsClient() {
       updates
     );
     if (result.success) {
-      toast.success("Profile updated successfully");
+      toast.success(t("profile.updated"));
       setUser(result.data);
     } else {
-      toast.error("Failed to update profile");
+      toast.error(t("profile.updateFailed"));
     }
   };
 
@@ -80,7 +82,7 @@ export function SettingsClient() {
     return (
       <div className="p-6">
         <div className="text-center">
-          <p className="text-gray-600">Unable to load user data</p>
+          <p className="text-gray-600">{t("profile.loadFailed")}</p>
         </div>
       </div>
     );

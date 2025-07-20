@@ -28,6 +28,7 @@ import {
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "sonner";
+import { useTranslations } from "next-intl";
 
 interface SecuritySettings {
   twoFactorEnabled: boolean;
@@ -46,6 +47,7 @@ interface LoginSession {
 
 export function SecurityClient() {
   const { user } = useSupabaseUser();
+  const t = useTranslations("toast");
   const [loading, setLoading] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -92,12 +94,12 @@ export function SecurityClient() {
     e.preventDefault();
 
     if (passwords.new !== passwords.confirm) {
-      toast.error("New passwords don't match");
+      toast.error(t("security.passwordMismatch"));
       return;
     }
 
     if (passwords.new.length < 8) {
-      toast.error("Password must be at least 8 characters");
+      toast.error(t("security.passwordTooShort"));
       return;
     }
 
@@ -111,10 +113,10 @@ export function SecurityClient() {
 
       if (error) throw error;
 
-      toast.success("Password updated successfully");
+      toast.success(t("security.passwordUpdated"));
       setPasswords({ current: "", new: "", confirm: "" });
     } catch (error: any) {
-      toast.error(error.message || "Failed to update password");
+      toast.error(error.message || t("security.passwordUpdateFailed"));
     } finally {
       setLoading(false);
     }
@@ -122,15 +124,15 @@ export function SecurityClient() {
 
   const handleSettingChange = (key: keyof SecuritySettings, value: boolean) => {
     setSettings((prev) => ({ ...prev, [key]: value }));
-    toast.success(`${key} ${value ? "enabled" : "disabled"}`);
+    toast.success(value ? t("security.settingEnabled", { setting: key }) : t("security.settingDisabled", { setting: key }));
   };
 
   const handleLogoutSession = (sessionId: string) => {
-    toast.success("Session terminated");
+    toast.success(t("security.sessionTerminated"));
   };
 
   const handleLogoutAllSessions = () => {
-    toast.success("All other sessions terminated");
+    toast.success(t("security.allSessionsTerminated"));
   };
 
   if (!user) {
@@ -138,7 +140,7 @@ export function SecurityClient() {
       <div className="p-6">
         <div className="text-center">
           <p className="text-gray-600">
-            Please log in to access security settings
+            {t("security.loginRequired")}
           </p>
         </div>
       </div>

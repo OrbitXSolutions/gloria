@@ -4,14 +4,12 @@
     "nav": {
       "home": "الرئيسية",
       "products": "المنتجات",
-      "gifts": "الهدايا",
-      "about": "من نحن"
+      "about": "من نحن",
+      "contact": "تواصل معنا"
     },
     "search": "البحث عن العطور...",
     "topBar": {
-      "freeShipping": "شحن مجاني للطلبات أكثر من 100 دولار",
-      "trackOrder": "تتبع الطلب",
-      "help": "المساعدة"
+      "freeShipping": "شحن مجاني للطلبات أكثر من 300 درهم"
     }
   },
   "hero": {
@@ -63,6 +61,7 @@
       "all": "جميع الفئات",
       "title": "اختر فئة"
     },
+    "buyNow": "شراء الآن",
     "search": "البحث عن المنتجات...",
     "description": "اكتشف مجموعتنا الكاملة من العطور الفاخرة",
     "addToCart": "أضف للسلة",
@@ -204,6 +203,68 @@
     "added": "تم إضافته للمفضلة",
     "removed": "تم إزالته من المفضلة"
   },
+  "toast": {
+    "profile": {
+      "updated": "تم تحديث الملف الشخصي بنجاح",
+      "updateFailed": "فشل في تحديث الملف الشخصي",
+      "loadFailed": "تعذر تحميل بيانات المستخدم"
+    },
+    "security": {
+      "passwordMismatch": "كلمات المرور الجديدة غير متطابقة",
+      "passwordTooShort": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
+      "passwordUpdated": "تم تحديث كلمة المرور بنجاح",
+      "passwordUpdateFailed": "فشل في تحديث كلمة المرور",
+      "settingEnabled": "تم تفعيل {setting}",
+      "settingDisabled": "تم إلغاء تفعيل {setting}",
+      "sessionTerminated": "تم إنهاء الجلسة",
+      "allSessionsTerminated": "تم إنهاء جميع الجلسات الأخرى",
+      "loginRequired": "يرجى تسجيل الدخول للوصول إلى إعدادات الأمان"
+    },
+    "favorites": {
+      "removed": "تم إزالته من المفضلة",
+      "removeFailed": "فشل في إزالته من المفضلة",
+      "addedToCart": "تم إضافته للسلة",
+      "addToCartFailed": "فشل في إضافته للسلة"
+    },
+    "addresses": {
+      "added": "تم إضافة العنوان بنجاح",
+      "addFailed": "فشل في إضافة العنوان",
+      "deleted": "تم حذف العنوان بنجاح",
+      "deleteFailed": "فشل في حذف العنوان",
+      "defaultUpdated": "تم تحديث العنوان الافتراضي",
+      "defaultUpdateFailed": "فشل في تحديث العنوان الافتراضي"
+    },
+    "cart": {
+      "empty": "سلة التسوق فارغة",
+      "checkoutFailed": "فشل في المتابعة للدفع. يرجى المحاولة مرة أخرى."
+    },
+    "checkout": {
+      "orderNotFound": "الطلب غير موجود",
+      "orderNotFoundDescription": "يرجى المحاولة مرة أخرى أو التواصل مع الدعم",
+      "orderPlaced": "تم تقديم الطلب بنجاح!",
+      "orderConfirmed": "تم تأكيد الطلب {orderCode}",
+      "checkoutFailed": "فشل في الدفع",
+      "checkoutFailedDescription": "حدث خطأ غير متوقع",
+      "unexpectedError": "حدث خطأ غير متوقع",
+      "unexpectedErrorDescription": "يرجى المحاولة مرة أخرى أو التواصل مع الدعم إذا استمرت المشكلة"
+    },
+    "reviews": {
+      "invalidRating": "يرجى اختيار تقييم صحيح",
+      "emptyComment": "يرجى إدخال تعليق التقييم",
+      "submitError": "فشل في إرسال التقييم. يرجى المحاولة مرة أخرى.",
+      "submitted": "تم إرسال التقييم بنجاح!"
+    },
+    "auth": {
+      "signOutFailed": "فشل في تسجيل الخروج"
+    },
+    "phone": {
+      "otpSent": "تم إرسال رمز التحقق إلى رقم الهاتف",
+      "registrationFailed": "فشل في التسجيل"
+    },
+    "share": {
+      "linkCopied": "تم نسخ الرابط إلى الحافظة"
+    }
+  },
   "cart": {
     "title": "سلة التسوق",
     "viewCart": "عرض السلة",
@@ -247,5 +308,47 @@
   },
   "common": {
     "back": "رجوع"
+  },
+  "seo": {
+    "title": {
+      "default": "إليفا - عطور فاخرة لكل مناسبة",
+      "template": "%s | إليفا"
+    },
+    "description": "اكتشف مجموعتنا المنتقاة من العطور الفاخرة. توصيل سريع، إرجاع خلال 14 يوم، وعطور أصلية من أرقى العلامات التجارية.",
+    "keywords": [
+      "عطور",
+      "روائح",
+      "عطور فاخرة",
+      "عطور مصممين",
+      "كولونيا",
+      "أو دو برفوم",
+      "جمال",
+      "مستحضرات تجميل"
+    ],
+    "openGraph": {
+      "title": "إليفا - عطور فاخرة لكل مناسبة",
+      "description": "اكتشف مجموعتنا المنتقاة من العطور الفاخرة. توصيل سريع، إرجاع خلال 14 يوم، وعطور أصلية من أرقى العلامات التجارية.",
+      "siteName": "إليفا",
+      "locale": "ar_SA"
+    },
+    "twitter": {
+      "title": "إليفا - عطور فاخرة",
+      "description": "اكتشف مجموعتنا المنتقاة من العطور الفاخرة",
+      "creator": "@eleva"
+    },
+    "product": {
+      "notFound": {
+        "title": "المنتج غير موجود",
+        "description": "المنتج المطلوب غير موجود."
+      },
+      "defaultTitle": "منتج إليفا",
+      "defaultDescription": "اكتشف منتجنا الفاخر {name}",
+      "defaultImageAlt": "صورة المنتج",
+      "keywords": {
+        "perfume": "عطر",
+        "fragrance": "رائحة",
+        "luxury": "فاخر"
+      }
+    }
   }
 }

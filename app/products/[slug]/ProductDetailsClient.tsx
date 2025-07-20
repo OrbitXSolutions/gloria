@@ -144,7 +144,7 @@ export default function ProductDetailsClient({
     if (!isInStock) return;
 
     addItem(selectedVariant, quantity);
-    toast.success(t("products.addedToCart"), {
+    toast.success(t("favorites.addedToCart"), {
       description: `${quantity}x ${getProductName()}`,
       action: {
         label: t("cart.viewCart"),
@@ -196,7 +196,7 @@ export default function ProductDetailsClient({
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
-      toast.success("Link copied to clipboard");
+      toast.success(t("toast.share.linkCopied"));
     }
   };
 
@@ -296,10 +296,10 @@ export default function ProductDetailsClient({
 
     // Client-side validation (additional to server-side)
     if (!rating || rating < 1 || rating > 5) {
-      return toast.error(t("reviews.invalidRating"));
+      return toast.error(t("toast.reviews.invalidRating"));
     }
     if (!comment || comment.trim().length === 0) {
-      return toast.error(t("reviews.emptyComment"));
+      return toast.error(t("toast.reviews.emptyComment"));
     }
 
     // Call the server action to add the review
@@ -322,7 +322,7 @@ export default function ProductDetailsClient({
       //   description: t("reviews.approvalInfo"),
       // });
     } catch (error) {
-      toast.error(t("reviews.submitError"));
+      toast.error(t("toast.reviews.submitError"));
       console.error("Error submitting review:", error);
     }
   };
@@ -381,11 +381,10 @@ export default function ProductDetailsClient({
                   <button
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
-                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
-                      selectedImageIndex === index
-                        ? "border-secondary-600"
-                        : "border-gray-200"
-                    }`}
+                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${selectedImageIndex === index
+                      ? "border-secondary-600"
+                      : "border-gray-200"
+                      }`}
                   >
                     <Image
                       src={image}
@@ -414,11 +413,10 @@ export default function ProductDetailsClient({
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`h-5 w-5 ${
-                          i < Math.floor(averageRating)
-                            ? "text-yellow-400 fill-current"
-                            : "text-gray-300"
-                        }`}
+                        className={`h-5 w-5 ${i < Math.floor(averageRating)
+                          ? "text-yellow-400 fill-current"
+                          : "text-gray-300"
+                          }`}
                       />
                     ))}
                   </div>
@@ -460,7 +458,7 @@ export default function ProductDetailsClient({
                         ((selectedVariant.old_price -
                           (selectedVariant.price || 0)) /
                           selectedVariant.old_price) *
-                          100
+                        100
                       )}
                       % OFF
                     </Badge>
@@ -474,7 +472,7 @@ export default function ProductDetailsClient({
                 <div className={`flex items-center gap-2`}>
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   <span className="text-green-600 font-medium">
-                    {t("products.inStock")} ({selectedVariant.quantity}{" "}
+                    {/* {t("products.inStock")} ({selectedVariant.quantity}{" "} */}
                     {t("products.available") || "available"})
                   </span>
                 </div>
@@ -607,11 +605,10 @@ export default function ProductDetailsClient({
                       <button
                         key={variant.id}
                         onClick={() => handleVariantSelect(variant)}
-                        className={`p-3 rounded-lg border-2 transition-all text-left ${
-                          isSelected
-                            ? "border-secondary-600 bg-secondary-50 ring-2 ring-secondary-200"
-                            : "border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50"
-                        }`}
+                        className={`p-3 rounded-lg border-2 transition-all text-left ${isSelected
+                          ? "border-secondary-600 bg-secondary-50 ring-2 ring-secondary-200"
+                          : "border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50"
+                          }`}
                       >
                         <div className="space-y-2">
                           {displayAttributes.map((attr, attrIndex) => (
@@ -630,11 +627,10 @@ export default function ProductDetailsClient({
                                   />
                                 )}
                                 <span
-                                  className={`text-xs font-semibold ${
-                                    isSelected
-                                      ? "text-secondary-700"
-                                      : "text-gray-900"
-                                  }`}
+                                  className={`text-xs font-semibold ${isSelected
+                                    ? "text-secondary-700"
+                                    : "text-gray-900"
+                                    }`}
                                 >
                                   {attr.value}
                                 </span>
@@ -644,11 +640,10 @@ export default function ProductDetailsClient({
                           {variant.price && (
                             <div className="pt-1 border-t border-gray-100">
                               <span
-                                className={`text-sm font-bold ${
-                                  isSelected
-                                    ? "text-secondary-700"
-                                    : "text-gray-900"
-                                }`}
+                                className={`text-sm font-bold ${isSelected
+                                  ? "text-secondary-700"
+                                  : "text-gray-900"
+                                  }`}
                               >
                                 {formatPrice(
                                   variant.price,
@@ -767,17 +762,16 @@ export default function ProductDetailsClient({
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`h-7 w-7 ${
-                            i <
+                          className={`h-7 w-7 ${i <
                             Math.floor(
                               reviews.reduce(
                                 (sum, review) => sum + (review.rating || 0),
                                 0
                               ) / reviews.length
                             )
-                              ? "text-yellow-400 fill-current"
-                              : "text-gray-300"
-                          }`}
+                            ? "text-yellow-400 fill-current"
+                            : "text-gray-300"
+                            }`}
                         />
                       ))}
                     </div>
@@ -803,7 +797,7 @@ export default function ProductDetailsClient({
                         {Math.round(
                           (reviews.filter((r) => (r.rating || 0) >= 4).length /
                             reviews.length) *
-                            100
+                          100
                         )}
                         %
                       </div>
@@ -814,7 +808,7 @@ export default function ProductDetailsClient({
                         {Math.round(
                           (reviews.filter((r) => (r.rating || 0) === 5).length /
                             reviews.length) *
-                            100
+                          100
                         )}
                         %
                       </div>
@@ -967,13 +961,12 @@ export default function ProductDetailsClient({
                       e.preventDefault();
                       // Handle form submission
                       const reviewerName = user
-                        ? `${user.user_metadata?.first_name || ""} ${
-                            user.user_metadata?.last_name || ""
+                        ? `${user.user_metadata?.first_name || ""} ${user.user_metadata?.last_name || ""
                           }`.trim() || user.email
                         : (
-                            e.currentTarget.form
-                              ?.reviewerName as HTMLInputElement
-                          )?.value;
+                          e.currentTarget.form
+                            ?.reviewerName as HTMLInputElement
+                        )?.value;
 
                       const comment = (
                         e.currentTarget.form
@@ -989,7 +982,7 @@ export default function ProductDetailsClient({
                         user?.user_metadata?.id
                       );
                       setShowReviewForm(false);
-                      toast.success("Review submitted successfully!", {
+                      toast.success(t("toast.reviews.submitted"), {
                         description:
                           "Your review will be published after admin approval.",
                       });
@@ -1014,8 +1007,7 @@ export default function ProductDetailsClient({
                   // Determine reviewer name and avatar based on user_id
                   const reviewerName =
                     review.user_id && review.user
-                      ? `${review.user.first_name || ""} ${
-                          review.user.last_name || ""
+                      ? `${review.user.first_name || ""} ${review.user.last_name || ""
                         }`.trim() || review.user.email
                       : review.name || "Anonymous";
 
@@ -1023,7 +1015,7 @@ export default function ProductDetailsClient({
                     review.user_id && review.user?.avatar
                       ? review.user.avatar
                       : review.avatar ||
-                        "/placeholder.svg?height=50&width=50&text=User";
+                      "/placeholder.svg?height=50&width=50&text=User";
 
                   return (
                     <div
@@ -1049,11 +1041,10 @@ export default function ProductDetailsClient({
                               {[...Array(5)].map((_, i) => (
                                 <Star
                                   key={i}
-                                  className={`h-4 w-4 ${
-                                    i < (review.rating || 0)
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-300"
-                                  }`}
+                                  className={`h-4 w-4 ${i < (review.rating || 0)
+                                    ? "text-yellow-400 fill-current"
+                                    : "text-gray-300"
+                                    }`}
                                 />
                               ))}
                             </div>

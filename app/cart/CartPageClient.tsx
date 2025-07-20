@@ -37,7 +37,7 @@ export default function CartPageClient() {
 
   const handleCheckout = async () => {
     if (cart.items.length === 0) {
-      toast.error("Your cart is empty");
+      toast.error(t("toast.cart.empty"));
       return;
     }
 
@@ -49,7 +49,7 @@ export default function CartPageClient() {
       // Clear cart after successful redirect
     } catch (error) {
       console.error("Checkout error:", error);
-      toast.error("Failed to proceed to checkout. Please try again.");
+      toast.error(t("toast.cart.checkoutFailed"));
     } finally {
       setIsCheckingOut(false);
     }

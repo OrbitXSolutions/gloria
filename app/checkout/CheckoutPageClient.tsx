@@ -218,7 +218,7 @@ export default function CheckoutPageClient({
     }
 
     if (cart.items.length === 0) {
-      toast.error("Your cart is empty");
+      toast.error(t("toast.cart.empty"));
       router.push("/cart");
       return;
     }
@@ -249,24 +249,23 @@ export default function CheckoutPageClient({
         // Clear cart
         clear();
 
-        toast.success("Order placed successfully!", {
-          description: `Order ${result.orderCode} has been created`,
+        toast.success(t("toast.checkout.orderPlaced"), {
+          description: t("toast.checkout.orderConfirmed", { orderCode: result.orderCode }),
           duration: 5000,
         });
 
         // Redirect to order confirmation
         router.push(`/orders/${result.orderCode}`);
       } else {
-        toast.error("Checkout failed", {
-          description: result.error || "An unexpected error occurred",
+        toast.error(t("toast.checkout.checkoutFailed"), {
+          description: result.error || t("toast.checkout.checkoutFailedDescription"),
           duration: 5000,
         });
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      toast.error("An unexpected error occurred", {
-        description:
-          "Please try again or contact support if the problem persists",
+      toast.error(t("toast.checkout.unexpectedError"), {
+        description: t("toast.checkout.unexpectedErrorDescription"),
         duration: 5000,
       });
     } finally {
@@ -312,9 +311,8 @@ export default function CheckoutPageClient({
             <Link href="/cart">
               <Button variant="ghost" className={``}>
                 <ArrowLeft
-                  className={`h-4 w-4 ${
-                    locale == "ar" ? "ml-2 rotate-180" : "mr-2"
-                  }`}
+                  className={`h-4 w-4 ${locale == "ar" ? "ml-2 rotate-180" : "mr-2"
+                    }`}
                 />
                 Back to Cart
               </Button>
@@ -449,11 +447,10 @@ export default function CheckoutPageClient({
                   {userAddresses.map((address) => (
                     <div
                       key={address.id}
-                      className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
-                        selectedAddressId === address.id
-                          ? "border-secondary-600 bg-secondary-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${selectedAddressId === address.id
+                        ? "border-secondary-600 bg-secondary-50"
+                        : "border-gray-200 hover:border-gray-300"
+                        }`}
                       onClick={() => setSelectedAddressId(address.id)}
                     >
                       <div className={`flex items-start justify-between `}>
@@ -484,11 +481,10 @@ export default function CheckoutPageClient({
                           )}
                         </div>
                         <div
-                          className={`w-4 h-4 rounded-full border-2 ${
-                            selectedAddressId === address.id
-                              ? "border-secondary-600 bg-secondary-600"
-                              : "border-gray-300"
-                          }`}
+                          className={`w-4 h-4 rounded-full border-2 ${selectedAddressId === address.id
+                            ? "border-secondary-600 bg-secondary-600"
+                            : "border-gray-300"
+                            }`}
                         >
                           {selectedAddressId === address.id && (
                             <div className="w-2 h-2 bg-white rounded-full m-0.5" />
@@ -512,122 +508,122 @@ export default function CheckoutPageClient({
               {(showNewAddressForm ||
                 (user && userAddresses.length === 0) ||
                 !user) && (
-                <div className="space-y-4">
-                  {user && userAddresses.length > 0 && (
-                    <div className={`flex items-center justify-between mb-4 `}>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        Add New Address
-                      </h3>
-                      <Button
-                        variant="ghost"
-                        onClick={() => setShowNewAddressForm(false)}
-                        className="text-gray-500"
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  )}
+                  <div className="space-y-4">
+                    {user && userAddresses.length > 0 && (
+                      <div className={`flex items-center justify-between mb-4 `}>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          Add New Address
+                        </h3>
+                        <Button
+                          variant="ghost"
+                          onClick={() => setShowNewAddressForm(false)}
+                          className="text-gray-500"
+                        >
+                          Cancel
+                        </Button>
+                      </div>
+                    )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label
+                          htmlFor="fullName"
+                          className="block text-sm font-medium text-gray-700 mb-2"
+                        >
+                          Full Name *
+                        </label>
+                        <Input
+                          id="fullName"
+                          value={formData.fullName}
+                          onChange={(e) =>
+                            handleInputChange("fullName", e.target.value)
+                          }
+                          placeholder="Enter full name"
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="phone"
+                          className="block text-sm font-medium text-gray-700 mb-2"
+                        >
+                          Phone Number *
+                        </label>
+                        <Input
+                          id="phone"
+                          value={formData.phone}
+                          onChange={(e) =>
+                            handleInputChange("phone", e.target.value)
+                          }
+                          placeholder="Enter phone number"
+                          required
+                        />
+                      </div>
+                    </div>
+
                     <div>
                       <label
-                        htmlFor="fullName"
+                        htmlFor="address"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        Full Name *
+                        Address *
                       </label>
                       <Input
-                        id="fullName"
-                        value={formData.fullName}
+                        id="address"
+                        value={formData.address}
                         onChange={(e) =>
-                          handleInputChange("fullName", e.target.value)
+                          handleInputChange("address", e.target.value)
                         }
-                        placeholder="Enter full name"
+                        placeholder="Enter full address"
                         required
                       />
                     </div>
 
                     <div>
                       <label
-                        htmlFor="phone"
+                        htmlFor="state"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        Phone Number *
+                        Emirate *
                       </label>
-                      <Input
-                        id="phone"
-                        value={formData.phone}
+                      <select
+                        id="state"
+                        value={formData.stateCode}
                         onChange={(e) =>
-                          handleInputChange("phone", e.target.value)
+                          handleInputChange("stateCode", e.target.value)
                         }
-                        placeholder="Enter phone number"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary-500 focus:border-secondary-500"
                         required
+                      >
+                        <option value="">Select Emirate</option>
+                        {uaeStates.map((state) => (
+                          <option key={state.code} value={state.code}>
+                            {locale === "ar" ? state.name_ar : state.name_en}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="notes"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
+                        Delivery Notes (Optional)
+                      </label>
+                      <Textarea
+                        id="notes"
+                        value={formData.notes}
+                        onChange={(e) =>
+                          handleInputChange("notes", e.target.value)
+                        }
+                        placeholder="Any special delivery instructions..."
+                        rows={3}
                       />
                     </div>
                   </div>
-
-                  <div>
-                    <label
-                      htmlFor="address"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Address *
-                    </label>
-                    <Input
-                      id="address"
-                      value={formData.address}
-                      onChange={(e) =>
-                        handleInputChange("address", e.target.value)
-                      }
-                      placeholder="Enter full address"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="state"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Emirate *
-                    </label>
-                    <select
-                      id="state"
-                      value={formData.stateCode}
-                      onChange={(e) =>
-                        handleInputChange("stateCode", e.target.value)
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary-500 focus:border-secondary-500"
-                      required
-                    >
-                      <option value="">Select Emirate</option>
-                      {uaeStates.map((state) => (
-                        <option key={state.code} value={state.code}>
-                          {locale === "ar" ? state.name_ar : state.name_en}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="notes"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Delivery Notes (Optional)
-                    </label>
-                    <Textarea
-                      id="notes"
-                      value={formData.notes}
-                      onChange={(e) =>
-                        handleInputChange("notes", e.target.value)
-                      }
-                      placeholder="Any special delivery instructions..."
-                      rows={3}
-                    />
-                  </div>
-                </div>
-              )}
+                )}
             </div>
           </div>
 

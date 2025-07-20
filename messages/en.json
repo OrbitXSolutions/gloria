@@ -4,14 +4,12 @@
     "nav": {
       "home": "Home",
       "products": "Products",
-      "gifts": "Gifts",
-      "about": "About"
+      "about": "About Us",
+      "contact": "Contact Us"
     },
     "search": "Search perfumes...",
     "topBar": {
-      "freeShipping": "Free shipping on orders over $100",
-      "trackOrder": "Track Order",
-      "help": "Help"
+      "freeShipping": "Free shipping on orders over AED 300"
     }
   },
   "hero": {
@@ -84,6 +82,7 @@
     "noResults": "No products found",
     "noResultsDescription": "Try adjusting your search or filters to find what you're looking for.",
     "clearFilters": "Clear Filters",
+    "buyNow": "Buy Now",
     "sort": {
       "newest": "Newest First",
       "oldest": "Oldest First",
@@ -208,6 +207,68 @@
     "added": "Added to favorites",
     "removed": "Removed from favorites"
   },
+  "toast": {
+    "profile": {
+      "updated": "Profile updated successfully",
+      "updateFailed": "Failed to update profile",
+      "loadFailed": "Unable to load user data"
+    },
+    "security": {
+      "passwordMismatch": "New passwords don't match",
+      "passwordTooShort": "Password must be at least 8 characters",
+      "passwordUpdated": "Password updated successfully",
+      "passwordUpdateFailed": "Failed to update password",
+      "settingEnabled": "{setting} enabled",
+      "settingDisabled": "{setting} disabled",
+      "sessionTerminated": "Session terminated",
+      "allSessionsTerminated": "All other sessions terminated",
+      "loginRequired": "Please log in to access security settings"
+    },
+    "favorites": {
+      "removed": "Removed from favorites",
+      "removeFailed": "Failed to remove from favorites",
+      "addedToCart": "Added to cart",
+      "addToCartFailed": "Failed to add to cart"
+    },
+    "addresses": {
+      "added": "Address added successfully",
+      "addFailed": "Failed to add address",
+      "deleted": "Address deleted successfully",
+      "deleteFailed": "Failed to delete address",
+      "defaultUpdated": "Default address updated",
+      "defaultUpdateFailed": "Failed to update default address"
+    },
+    "cart": {
+      "empty": "Your cart is empty",
+      "checkoutFailed": "Failed to proceed to checkout. Please try again."
+    },
+    "checkout": {
+      "orderNotFound": "Order not found",
+      "orderNotFoundDescription": "Please try again or contact support",
+      "orderPlaced": "Order placed successfully!",
+      "orderConfirmed": "Order {orderCode} has been confirmed",
+      "checkoutFailed": "Checkout failed",
+      "checkoutFailedDescription": "An unexpected error occurred",
+      "unexpectedError": "An unexpected error occurred",
+      "unexpectedErrorDescription": "Please try again or contact support if the problem persists"
+    },
+    "reviews": {
+      "invalidRating": "Please select a valid rating",
+      "emptyComment": "Please enter a review comment",
+      "submitError": "Failed to submit review. Please try again.",
+      "submitted": "Review submitted successfully!"
+    },
+    "auth": {
+      "signOutFailed": "Failed to sign out"
+    },
+    "phone": {
+      "otpSent": "Verification code sent to phone number",
+      "registrationFailed": "Registration failed"
+    },
+    "share": {
+      "linkCopied": "Link copied to clipboard"
+    }
+  },
   "cart": {
     "title": "Shopping Cart",
     "viewCart": "View Cart",
@@ -251,5 +312,47 @@
   },
   "common": {
     "back": "Back"
+  },
+  "seo": {
+    "title": {
+      "default": "Eleva - Premium Fragrances for Every Occasion",
+      "template": "%s | Eleva"
+    },
+    "description": "Discover our exquisite collection of premium perfumes. Fast delivery, 14-day returns, and authentic fragrances from top brands.",
+    "keywords": [
+      "perfumes",
+      "fragrances",
+      "luxury perfumes",
+      "designer perfumes",
+      "cologne",
+      "eau de parfum",
+      "beauty",
+      "cosmetics"
+    ],
+    "openGraph": {
+      "title": "Eleva - Premium Fragrances for Every Occasion",
+      "description": "Discover our exquisite collection of premium perfumes. Fast delivery, 14-day returns, and authentic fragrances from top brands.",
+      "siteName": "Eleva",
+      "locale": "en_US"
+    },
+    "twitter": {
+      "title": "Eleva - Premium Fragrances",
+      "description": "Discover our exquisite collection of premium perfumes",
+      "creator": "@eleva"
+    },
+    "product": {
+      "notFound": {
+        "title": "Product Not Found",
+        "description": "The requested product could not be found."
+      },
+      "defaultTitle": "Eleva Product",
+      "defaultDescription": "Discover our premium product {name}",
+      "defaultImageAlt": "Product Image",
+      "keywords": {
+        "perfume": "perfume",
+        "fragrance": "fragrance",
+        "luxury": "luxury"
+      }
+    }
   }
 }

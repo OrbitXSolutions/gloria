@@ -18,6 +18,7 @@ import { formatPrice } from "@/lib/common/cart";
 import { useCart } from "../_core/providers/cart-provider";
 import Link from "next/link";
 import Image from "next/image";
+import LoadingIndicator from "../atoms/LoadingIndicator";
 
 interface ProductCardProps {
   product: ProductWithUserData;
@@ -28,7 +29,7 @@ export default function ProductCard({
   product,
   showNewBadge = false,
 }: ProductCardProps) {
-  const t = useTranslations("");
+  const t = useTranslations("toast");
   const locale = useLocale();
   const { user } = useSupabaseUser();
   const { cart, addItem, updateQuantity, removeItem } = useCart();
@@ -73,7 +74,7 @@ export default function ProductCard({
     if (!isInStock) return;
 
     addItem(product, 1);
-    toast.success(t("addedToCart"), {
+    toast.success(t("favorites.addedToCart"), {
       description: getProductName(),
       action: {
         label: t("cart.viewCart"),
@@ -153,9 +154,8 @@ export default function ProductCard({
   };
 
   const currentSearchParams = searchParams.toString();
-  const productLink = `/products/${getProductSlug()}${
-    currentSearchParams ? `?${currentSearchParams}` : ""
-  }`;
+  const productLink = `/products/${getProductSlug()}${currentSearchParams ? `?${currentSearchParams}` : ""
+    }`;
   // return <></>;
   return (
     <Link href={productLink} className="block">
@@ -224,11 +224,10 @@ export default function ProductCard({
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-4 w-4 ${
-                      i < Math.floor(averageRating)
-                        ? "text-yellow-400 fill-current"
-                        : "text-gray-300"
-                    }`}
+                    className={`h-4 w-4 ${i < Math.floor(averageRating)
+                      ? "text-yellow-400 fill-current"
+                      : "text-gray-300"
+                      }`}
                   />
                 ))}
               </div>
@@ -252,11 +251,11 @@ export default function ProductCard({
                   </span>
                 )}
             </div>
-            {product.quantity && product.quantity <= 5 && (
+            {/* {product.quantity && product.quantity <= 5 && (
               <span className="text-sm text-gray-500">
                 {product.quantity} {t("products.inStock")}
               </span>
-            )}
+            )} */}
           </div>
 
           {isInStock ? (
@@ -283,14 +282,25 @@ export default function ProductCard({
                 </Button>
               </div>
             ) : (
-              <Button
-                className="w-full bg-primary hover:bg-secondary-700"
-                size="sm"
-                onClick={(e) => handleButtonClick(e, handleAddToCart)}
-              >
-                <ShoppingBag className={`h-4 w-4`} />
-                {t("products.addToCart")}
-              </Button>
+              <div className="flex gap-2">
+                <Button
+                  className="flex-1 bg-primary hover:bg-secondary-700"
+                  size="sm"
+                  onClick={(e) => handleButtonClick(e, handleAddToCart)}
+                >
+                  <ShoppingBag className={`h-4 w-4`} />
+                  {t("products.addToCart")}
+                </Button>
+
+                <Button className="flex-1 bg-secondary-600 hover:bg-secondary-700" size="sm" asChild>
+                  <Link href={`/checkout-now/${getProductSlug()}`}  >
+                    <LoadingIndicator />
+                    <a>{t("products.buyNow", { defaultValue: "Buy Now" })} </a>
+                  </Link>
+                </Button>
+
+
+              </div>
             )
           ) : (
             <Button className="w-full" size="sm" disabled>
