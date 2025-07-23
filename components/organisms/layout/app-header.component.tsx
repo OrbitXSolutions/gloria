@@ -48,7 +48,6 @@ export default function AppHeader() {
       return (
         pathname === "/" ||
         (!pathname.includes("/products") &&
-          !pathname.includes("/gifts") &&
           !pathname.includes("/about"))
       );
     }
@@ -58,16 +57,8 @@ export default function AppHeader() {
   return (
     <>
       <div className="max-md:hidden bg-secondary py-2">
-        <div className="container flex mx-auto text-white px-3 justify-between items-center text-sm">
+        <div className="container flex mx-auto text-white px-3 justify-center items-center text-sm">
           <div>{t("topBar.freeShipping")}</div>
-          <div className="flex gap-4">
-            <Link href="/track-order" className="hover:">
-              {t("topBar.trackOrder")}
-            </Link>
-            <Link href="/help" className="hover:">
-              {t("topBar.help")}
-            </Link>
-          </div>
         </div>
       </div>
 
@@ -82,53 +73,49 @@ export default function AppHeader() {
               href="/"
               className={cn("text-2xl font-bold ", kawoszehFont.className)}
             >
-              {t("brand").toUpperCase()}
+              ELEVA BOUTIQUE
             </Link>
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex gap-8">
               <Link
                 href="/"
-                className={`font-medium transition-colors flex items-center gap-2 ${
-                  isActiveLink("/")
-                    ? "text-secondary-100 border-b-2 border-secondary-300 pb-1"
-                    : "hover:text-secondary-100"
-                }`}
+                className={`font-medium transition-colors flex items-center gap-2 ${isActiveLink("/")
+                  ? "text-secondary-100 border-b-2 border-secondary-300 pb-1"
+                  : "hover:text-secondary-100"
+                  }`}
               >
                 {t("nav.home")}
                 <LoadingIndicator loaderClassName="text-white" />
               </Link>
               <Link
                 href="/products"
-                className={`font-medium transition-colors flex items-center gap-2 ${
-                  isActiveLink("/products")
-                    ? "text-secondary-100 border-b-2 border-secondary pb-1"
-                    : "hover:text-secondary-100"
-                }`}
+                className={`font-medium transition-colors flex items-center gap-2 ${isActiveLink("/products")
+                  ? "text-secondary-100 border-b-2 border-secondary pb-1"
+                  : "hover:text-secondary-100"
+                  }`}
               >
                 {t("nav.products")}
                 <LoadingIndicator loaderClassName="text-white" />
               </Link>
               <Link
-                href="/gifts"
-                className={`font-medium transition-colors flex items-center gap-2 ${
-                  isActiveLink("/gifts")
-                    ? "text-secondary-100 border-b-2 border-secondary pb-1"
-                    : "hover:text-secondary-100"
-                }`}
+                href="/about"
+                className={`font-medium transition-colors flex items-center gap-2 ${isActiveLink("/about")
+                  ? "text-secondary-100 border-b-2 border-secondary pb-1"
+                  : "hover:text-secondary-100"
+                  }`}
               >
-                {t("nav.gifts")}
+                {t("nav.about")}
                 <LoadingIndicator loaderClassName="text-white" />
               </Link>
               <Link
                 href="/about"
-                className={`font-medium transition-colors flex items-center gap-2 ${
-                  isActiveLink("/about")
-                    ? "text-secondary-100 border-b-2 border-secondary pb-1"
-                    : "hover:text-secondary-100"
-                }`}
+                className={`font-medium transition-colors flex items-center gap-2 ${isActiveLink("/about")
+                  ? "text-secondary-100 border-b-2 border-secondary pb-1"
+                  : "hover:text-secondary-100"
+                  }`}
               >
-                {t("nav.about")}
+                {t("nav.contact")}
                 <LoadingIndicator loaderClassName="text-white" />
               </Link>
             </nav>
@@ -199,46 +186,42 @@ export default function AppHeader() {
                 </div>
                 <Link
                   href="/"
-                  className={`font-medium transition-colors flex items-center gap-2 ${
-                    isActiveLink("/")
-                      ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
-                      : "hover:text-secondary/40"
-                  }`}
+                  className={`font-medium transition-colors flex items-center gap-2 ${isActiveLink("/")
+                    ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
+                    : "hover:text-secondary/40"
+                    }`}
                 >
                   {t("nav.home")}
                   <LoadingIndicator loaderClassName="text-white" />
                 </Link>
                 <Link
                   href="/products"
-                  className={`font-medium transition-colors flex items-center gap-2 ${
-                    isActiveLink("/products")
-                      ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
-                      : "hover:text-secondary/40"
-                  }`}
+                  className={`font-medium transition-colors flex items-center gap-2 ${isActiveLink("/products")
+                    ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
+                    : "hover:text-secondary/40"
+                    }`}
                 >
                   {t("nav.products")}
                   <LoadingIndicator loaderClassName="text-white" />
                 </Link>
                 <Link
-                  href="/gifts"
-                  className={`font-medium transition-colors flex items-center gap-2 ${
-                    isActiveLink("/gifts")
-                      ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
-                      : "hover:text-secondary/40"
-                  }`}
+                  href="/about"
+                  className={`font-medium transition-colors flex items-center gap-2 ${isActiveLink("/about")
+                    ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
+                    : "hover:text-secondary/40"
+                    }`}
                 >
-                  {t("nav.gifts")}
+                  {t("nav.about")}
                   <LoadingIndicator loaderClassName="text-white" />
                 </Link>
                 <Link
                   href="/about"
-                  className={`font-medium transition-colors flex items-center gap-2 ${
-                    isActiveLink("/about")
-                      ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
-                      : "hover:text-secondary/40"
-                  }`}
+                  className={`font-medium transition-colors flex items-center gap-2 ${isActiveLink("/about")
+                    ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
+                    : "hover:text-secondary/40"
+                    }`}
                 >
-                  {t("nav.about")}
+                  {t("nav.contact")}
                   <LoadingIndicator loaderClassName="text-white" />
                 </Link>
               </div>

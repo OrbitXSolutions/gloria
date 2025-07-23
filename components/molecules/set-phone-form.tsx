@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
+import { useTranslations } from "next-intl";
 
 import {
   Form,
@@ -32,6 +33,7 @@ import { Button } from "../ui/button";
 // ] as const;
 
 export default function SetPhoneForm() {
+  const t = useTranslations("toast");
   const {
     form,
     action,
@@ -40,11 +42,11 @@ export default function SetPhoneForm() {
   } = useHookFormAction(setPhoneAction, zodResolver(UserSetPhoneSchema), {
     actionProps: {
       onSuccess: ({ data }) => {
-        toast.info("تم إرسال رمز التحقق إلى رقم الهاتف");
+        toast.info(t("phone.otpSent"));
       },
       onError: ({ error }) => {
         console.error("Registration error:", error);
-        toast.error("فشل في التسجيل");
+        toast.error(t("phone.registrationFailed"));
       },
     },
 

@@ -1,150 +1,33 @@
-import { metadata } from "./../../layout";
-import { createSsrClient } from "@/lib/supabase/server";
-import { ProductWithUserData } from "@/lib/types/database.types";
-import { type NextRequest, NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
+import { filterProducts, ProductFilterParams } from "@/lib/queries/queries-product";
 
 export async function GET(request: NextRequest) {
   try {
     const { searchParams } = new URL(request.url);
-    const query = searchParams.get("q") || "";
-    const categorySlug = searchParams.get("category");
-    const page = Number.parseInt(searchParams.get("page") || "1");
-    const sort = searchParams.get("sort") || "newest";
-    const limit = 8; // Changed from 20 to 8
-    const offset = (page - 1) * limit;
 
-    const supabase = await createSsrClient();
+    // Parse query parameters
+    const params: ProductFilterParams = {
+      page: Number(searchParams.get("page") ?? 1),
+      pageSize: Number(searchParams.get("page_size") ?? 99),
+      sortBy: searchParams.get("sort_by") ?? "created_at",
+      sortOrder: searchParams.get("sort_order") === "asc",
+      showDeleted: searchParams.get("show_deleted") === "true",
+      queryString: searchParams.get("queryString") || undefined,
+      categoryId: searchParams.get("category_id") || undefined,
+      categorySlug: searchParams.get("category_slug") || undefined,
+      minPrice: searchParams.get("min_price") || undefined,
+      maxPrice: searchParams.get("max_price") || undefined,
+    };
 
-    // Get user for personalized data
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    let queryBuilder = supabase
-      .from("products")
-      .select(
-        `
-        *,
-        categories:categories(*),
-        currency:currencies(*),
-        cart_items!left(quantity, user_id),
-        favorites!left(user_id)
-      `
-      )
-      .eq("is_deleted", false)
-      .not("quantity", "is", null)
-      .gte("quantity", 0);
-
-    // Add user-specific filters if authenticated
-    if (user?.id) {
-      queryBuilder = queryBuilder
-        .eq("cart_items.user_id", user.user_metadata.user_id)
-        .eq("favorites.user_id", user.user_metadata.user_id);
-    }
-
-    // Add search filter
-    if (categorySlug) {
-      queryBuilder = queryBuilder
-        .ilike("categories.slug", `%${categorySlug}%`)
-        .ilike("categories.slug_ar", `%${categorySlug}%`);
-    }
-
-    // Add category filter
-    if (categorySlug) {
-      queryBuilder = queryBuilder.or(
-        `slug.eq.${categorySlug},slug_ar.eq.${categorySlug}`
-      );
-    }
-    // Add sorting
-    switch (sort) {
-      case "oldest":
-        queryBuilder = queryBuilder.order("created_at", { ascending: true });
-        break;
-      case "price-low":
-        queryBuilder = queryBuilder.order("price", { ascending: true });
-        break;
-      case "price-high":
-        queryBuilder = queryBuilder.order("price", { ascending: false });
-        break;
-      case "name-az":
-        queryBuilder = queryBuilder.order("name_en", { ascending: true });
-        break;
-      case "name-za":
-        queryBuilder = queryBuilder.order("name_en", { ascending: false });
-        break;
-      case "rating-high":
-        queryBuilder = queryBuilder.order("total_rates", { ascending: false });
-        break;
-      case "rating-low":
-        queryBuilder = queryBuilder.order("total_rates", { ascending: true });
-        break;
-      default: // newest
-        queryBuilder = queryBuilder.order("created_at", { ascending: false });
-    }
-
-    const { data, error } = await queryBuilder.range(
-      offset,
-      offset + limit - 1
-    );
-
-    if (error) {
-      console.error("Error fetching products:", error);
-      return NextResponse.json(
-        { error: "Failed to fetch products" },
-        { status: 500 }
-      );
-    }
-
-    // Get total count for pagination
-    let countQuery = supabase
-      .from("products")
-      .select("id", { count: "exact", head: true })
-      .eq("is_deleted", false)
-      .not("quantity", "is", null)
-      .gte("quantity", 0);
-
-    // Apply same filters for count
-    if (query) {
-      countQuery = countQuery
-        .ilike("categories.slug", `%${categorySlug}%`)
-        .ilike("categories.slug_ar", `%${categorySlug}%`);
-    }
-    if (categorySlug) {
-      countQuery = countQuery.or(
-        `categories.slug.eq.${categorySlug},categories.slug_ar.eq.${categorySlug}`
-      );
-    }
-
-    const { count, error: countError } = await countQuery;
-
-    if (countError) {
-      console.error("Error counting products:", countError);
-    }
-
-    const totalProducts = count || 0;
-    const totalPages = Math.ceil(totalProducts / limit);
-
-    // Transform the data to include user-specific flags
-    const products: ProductWithUserData[] = (data || []).map((product) => ({
-      ...product,
-      currency: product.currency === null ? undefined : product.currency,
-      in_cart: product.cart_items && product.cart_items.length > 0,
-      cart_quantity: product.cart_items?.[0]?.quantity || null,
-      is_favorite: product.favorites && product.favorites.length > 0,
-    }));
-
-    return NextResponse.json({
-      products,
-      total: totalProducts,
-      totalPages,
-      currentPage: page,
-      hasMore: page < totalPages,
-    });
+    const result = await filterProducts(params);
+    return NextResponse.json(result);
   } catch (error) {
-    console.error("API Error:", error);
+    console.error("Error in filter products API:", error);
     return NextResponse.json(
-      { error: "Internal server error" },
+      {
+        error: error instanceof Error ? error.message : "An error occurred",
+      },
       { status: 500 }
     );
   }
-}
+} 

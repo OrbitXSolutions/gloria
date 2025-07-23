@@ -21,9 +21,11 @@ import {
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { useTranslations } from "next-intl";
 
 export function FavoritesClient() {
   const { user: authUser } = useSupabaseUser();
+  const t = useTranslations("toast");
   const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -60,9 +62,9 @@ export function FavoritesClient() {
       setFavorites((prev) =>
         prev.filter((fav) => fav.product_id !== productId)
       );
-      toast.success("Removed from favorites");
+      toast.success(t("favorites.removed"));
     } else {
-      toast.error("Failed to remove from favorites");
+      toast.error(t("favorites.removeFailed"));
     }
   };
 
@@ -71,9 +73,9 @@ export function FavoritesClient() {
 
     const result = await addToCart(productId, Number.parseInt(authUser.id));
     if (result.success) {
-      toast.success("Added to cart");
+      toast.success(t("favorites.addedToCart"));
     } else {
-      toast.error("Failed to add to cart");
+      toast.error(t("favorites.addToCartFailed"));
     }
   };
 
