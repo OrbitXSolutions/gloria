@@ -7,6 +7,7 @@ import ProductsSortControls from '../molecules/products-sort-controls'
 import ViewModeToggle from '../atoms/view-mode-toggle'
 import ProductsActiveFilters from '../molecules/products-active-filters'
 import { ProductsFiltersPanelProps } from '@/lib/types/products-page'
+import { useState, useEffect } from 'react'
 
 export default function ProductsFiltersPanel({
     filters,
@@ -21,8 +22,24 @@ export default function ProductsFiltersPanel({
 }: ProductsFiltersPanelProps) {
     const locale = useLocale()
 
+    // Debounced search state
+    const [searchInput, setSearchInput] = useState(filters.query || '')
+
+    useEffect(() => {
+        setSearchInput(filters.query || '')
+    }, [filters.query])
+
+    useEffect(() => {
+        const handler = setTimeout(() => {
+            if (searchInput !== filters.query) {
+                onFiltersChange({ query: searchInput, page: 1 })
+            }
+        }, 500)
+        return () => clearTimeout(handler)
+    }, [searchInput])
+
     const handleSearchChange = (value: string) => {
-        onFiltersChange({ query: value, page: 1 })
+        setSearchInput(value)
     }
 
     const handleSearch = () => {
@@ -39,6 +56,7 @@ export default function ProductsFiltersPanel({
     }
 
     const handleRemoveSearch = () => {
+        setSearchInput('')
         onFiltersChange({ query: '', page: 1 })
     }
 
@@ -50,7 +68,7 @@ export default function ProductsFiltersPanel({
         <div className="bg-white rounded-2xl shadow-sm p-6 mb-8">
             <div className="space-y-4">
                 <ProductsSearchBar
-                    searchQuery={filters.query}
+                    searchQuery={searchInput}
                     onSearchChange={handleSearchChange}
                     onSearch={handleSearch}
                     onToggleFilters={onToggleFilters}
