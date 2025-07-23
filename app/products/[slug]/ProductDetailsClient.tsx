@@ -327,6 +327,23 @@ export default function ProductDetailsClient({
     }
   };
 
+  const getWhatsappDefaultMessage = () => {
+    const arabicMessage = `مرحبا! أنا أرغب في شراء المنتج: \n
+    اسم المنتج: ${getProductName()} \n
+    الكمية: ${quantity} \n
+    الرابط: ${window.location.href} \n
+    `
+
+    const englishMessage = `Hello! I am interested in buying the product: \n
+    Product Name: ${getProductName()} \n
+    Quantity: ${quantity} \n
+    Link: ${window.location.href} \n
+    `
+
+    return locale === 'ar' ? arabicMessage : englishMessage
+  }
+
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Breadcrumb */}
@@ -530,6 +547,19 @@ export default function ProductDetailsClient({
                     {t("products.addToCart")}
                   </Button>
                   <Button
+                    className="flex-1 bg-primary-600 hover:bg-primary-700"
+                    size="lg"
+                    onClick={() => {
+                      window.location.href = `/checkout-now/${selectedVariant.slug || selectedVariant.id}`
+                    }}
+                    disabled={!isInStock}
+                  >
+                    <span className="mr-2">
+                      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </span>
+                    {t('products.buyNow')}
+                  </Button>
+                  <Button
                     variant="outline"
                     size="lg"
                     onClick={handleToggleFavorite}
@@ -542,6 +572,19 @@ export default function ProductDetailsClient({
                   <Button variant="outline" size="lg" onClick={handleShare}>
                     <Share2 className="h-5 w-5" />
                   </Button>
+                </div>
+                <div className="mt-4 text-center">
+                  <a
+                    href={`https://wa.me/971505582551?text=${encodeURIComponent(
+                      getWhatsappDefaultMessage()
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-green-600 hover:underline font-medium"
+                  >
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M20.52 3.48A12 12 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.12.55 4.19 1.6 6.01L0 24l6.18-1.62A11.97 11.97 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52zM12 22c-1.85 0-3.68-.5-5.26-1.44l-.38-.22-3.67.96.98-3.58-.25-.37A9.94 9.94 0 0 1 2 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.2-7.6c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.34-.25.27-.97.95-.97 2.3 0 1.35.99 2.66 1.13 2.85.14.18 1.95 2.98 4.74 4.06.66.28 1.18.45 1.58.58.66.21 1.26.18 1.73.11.53-.08 1.65-.67 1.88-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.18-.53-.32z" /></svg>
+                    {locale === 'ar' ? 'تواصل معنا عبر واتساب' : 'Contact us on WhatsApp'}
+                  </a>
                 </div>
               </div>
             )}
@@ -662,29 +705,27 @@ export default function ProductDetailsClient({
             )}
 
             {/* Product Attributes */}
-            {selectedVariant.attributes &&
-              Object.keys(selectedVariant.attributes).length > 0 && (
+            {(locale === 'ar' ? selectedVariant.attributes_ar : selectedVariant.attributes) &&
+              Object.keys((locale === 'ar' ? selectedVariant.attributes_ar : selectedVariant.attributes) || {}).length > 0 && (
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    {t("products.details") || "Product Details"}
+                    {t('products.details') || 'Product Details'}
                   </h3>
                   <div className="bg-gray-50 rounded-lg p-4">
                     <div className="grid gap-3">
-                      {Object.entries(
-                        selectedVariant.attributes as Record<string, any>
-                      ).map(([key, value]) => (
+                      {Object.entries((locale === 'ar' ? selectedVariant.attributes_ar : selectedVariant.attributes) || {}).map(([key, value]) => (
                         <div
                           key={key}
                           className={`flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0`}
                         >
                           <span className="font-medium text-gray-700 capitalize">
                             {key
-                              .replace(/([A-Z])/g, " $1")
-                              .replace(/^./, (str) => str.toUpperCase())}
+                              .replace(/([A-Z])/g, ' $1')
+                              .replace(/^./, str => str.toUpperCase())}
                           </span>
                           <span className="text-gray-900 flex items-center gap-2">
-                            {key.toLowerCase() === "color" ? (
-                              typeof value === "object" && value?.hex ? (
+                            {key.toLowerCase() === 'color' ? (
+                              typeof value === 'object' && value?.hex ? (
                                 <>
                                   <div
                                     className="w-4 h-4 rounded-full border border-gray-300"
@@ -692,8 +733,7 @@ export default function ProductDetailsClient({
                                   />
                                   {value.name || value.hex}
                                 </>
-                              ) : typeof value === "string" &&
-                                value.startsWith("#") ? (
+                              ) : typeof value === 'string' && value.startsWith('#') ? (
                                 <>
                                   <div
                                     className="w-4 h-4 rounded-full border border-gray-300"
@@ -703,7 +743,7 @@ export default function ProductDetailsClient({
                                 </>
                               ) : (
                                 String(
-                                  typeof value === "object" && value?.name
+                                  typeof value === 'object' && value?.name
                                     ? value.name
                                     : value
                                 )
@@ -728,11 +768,11 @@ export default function ProductDetailsClient({
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
                 {t("products.description") || "Description"}
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <div className="text-gray-600 leading-relaxed">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {getProductDescription() || ""}
                 </ReactMarkdown>
-              </p>
+              </div>
             </div>
           )}
         </div>
