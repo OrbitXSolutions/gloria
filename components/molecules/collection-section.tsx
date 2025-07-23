@@ -15,107 +15,72 @@ export default function CollectionSection({ className }: Props) {
     const isAr = locale === 'ar';
 
     return (
-        <section className={`py-16 px-4 ${className}`}>
-            <div className="max-w-7xl mx-auto">
+        <section className={`relative py-8 px-4 overflow-hidden ${className} bg-primary-100`} style={{ minHeight: '220px' }}>
+
+
+            <div className="relative max-w-7xl mx-auto z-10">
                 {/* Header Section */}
-                <div className="text-center mb-12">
-                    <div className="flex items-center justify-center gap-2 mb-4">
-                        <Sparkles className="w-6 h-6 text-amber-500" />
-                        <Badge variant="secondary" className="text-sm font-medium">
+                <div className="text-center mb-8">
+                    <div className="flex items-center justify-center gap-2 mb-3">
+                        <Sparkles className="w-6 h-6 text-amber-500 drop-shadow" />
+                        <Badge variant="secondary" className="text-sm font-medium bg-secondary-400 backdrop-blur border border-secondary shadow">
                             {isAr ? 'مجموعة حصرية' : 'Exclusive Collection'}
                         </Badge>
-                        <Sparkles className="w-6 h-6 text-amber-500" />
+                        <Sparkles className="w-6 h-6 text-amber-500 drop-shadow" />
                     </div>
-
-                    <h2 className="text-4xl md:text-5xl font-bold mb-6 bg-gradient-to-r from-amber-600 via-rose-600 to-purple-600 bg-clip-text text-transparent">
+                    <h2 className="text-3xl md:text-4xl font-bold mb-3 text-primary  drop-shadow">
                         {isAr ? 'منتجاتنا' : 'Our Collection'}
                     </h2>
-
-                    <p className="text-lg md:text-xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+                    <p className="text-primary md:text-lg max-w-2xl mx-auto leading-relaxed">
                         {isAr
                             ? 'اكتشف مجموعتنا الحصرية من العطور – صُممت بعناية لتجسّد الأناقة والفخامة والتفرّد.'
-                            : 'Discover our exclusive range of perfumes – each crafted to express elegance, luxury, and individuality.'
-                        }
+                            : 'Discover our exclusive range of perfumes – each crafted to express elegance, luxury, and individuality.'}
                     </p>
-
-                    <p className="text-base text-muted-foreground mt-4 max-w-2xl mx-auto">
+                    <p className="text-sm text-primary mt-2 max-w-xl mx-auto">
                         {isAr
                             ? 'تصفّح أفضل العطور مبيعًا، واختيارات الموسم، والكلاسيكيات التي لا تفقد رونقها'
-                            : 'Explore bestsellers, seasonal favorites, and timeless classics designed for every moment.'
-                        }
+                            : 'Explore bestsellers, seasonal favorites, and timeless classics designed for every moment.'}
                     </p>
                 </div>
-
                 {/* Features Grid */}
-                <div className="grid md:grid-cols-3 gap-6 mb-12">
-                    <Card className="group hover:shadow-lg transition-all duration-300 border-amber-100 hover:border-amber-200">
-                        <CardContent className="p-6 text-center">
-                            <div className="w-12 h-12 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-amber-200 transition-colors">
-                                <Star className="w-6 h-6 text-amber-600" />
-                            </div>
-                            <h3 className="text-xl font-semibold mb-2">
-                                {isAr ? 'أفضل العطور مبيعًا' : 'Bestsellers'}
-                            </h3>
-                            <p className="text-muted-foreground">
-                                {isAr
-                                    ? 'اكتشف العطور الأكثر طلبًا من عملائنا'
-                                    : 'Discover our most loved fragrances'
-                                }
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="group hover:shadow-lg transition-all duration-300 border-rose-100 hover:border-rose-200">
-                        <CardContent className="p-6 text-center">
-                            <div className="w-12 h-12 bg-rose-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-rose-200 transition-colors">
-                                <TrendingUp className="w-6 h-6 text-rose-600" />
-                            </div>
-                            <h3 className="text-xl font-semibold mb-2">
-                                {isAr ? 'اختيارات الموسم' : 'Seasonal Favorites'}
-                            </h3>
-                            <p className="text-muted-foreground">
-                                {isAr
-                                    ? 'عطور تناسب كل فصل من فصول السنة'
-                                    : 'Fragrances perfect for every season'
-                                }
-                            </p>
-                        </CardContent>
-                    </Card>
-
-                    <Card className="group hover:shadow-lg transition-all duration-300 border-purple-100 hover:border-purple-200">
-                        <CardContent className="p-6 text-center">
-                            <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-purple-200 transition-colors">
-                                <Clock className="w-6 h-6 text-purple-600" />
-                            </div>
-                            <h3 className="text-xl font-semibold mb-2">
-                                {isAr ? 'كلاسيكيات خالدة' : 'Timeless Classics'}
-                            </h3>
-                            <p className="text-muted-foreground">
-                                {isAr
-                                    ? 'عطور كلاسيكية لا تفقد رونقها مع الزمن'
-                                    : 'Classic fragrances that never go out of style'
-                                }
-                            </p>
-                        </CardContent>
-                    </Card>
+                <div className="flex justify-center gap-6 mb-8">
+                    <div className="flex flex-col items-center">
+                        <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center shadow group-hover:bg-amber-200 transition-colors">
+                            <Star className="w-7 h-7 text-amber-600" />
+                        </div>
+                        <span className="mt-2 text-xs font-semibold text-primary">
+                            {isAr ? 'الأكثر مبيعًا' : 'Bestsellers'}
+                        </span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <div className="w-16 h-16 rounded-full bg-rose-100 flex items-center justify-center shadow group-hover:bg-rose-200 transition-colors">
+                            <TrendingUp className="w-7 h-7 text-rose-600" />
+                        </div>
+                        <span className="mt-2 text-xs font-semibold text-primary">
+                            {isAr ? 'الموسم' : 'Seasonal'}
+                        </span>
+                    </div>
+                    <div className="flex flex-col items-center">
+                        <div className="w-16 h-16 rounded-full bg-purple-100 flex items-center justify-center shadow group-hover:bg-purple-200 transition-colors">
+                            <Clock className="w-7 h-7 text-purple-600" />
+                        </div>
+                        <span className="mt-2 text-xs font-semibold text-primary">
+                            {isAr ? 'كلاسيكي' : 'Classic'}
+                        </span>
+                    </div>
                 </div>
-
                 {/* CTA Section */}
-                <div className="text-center">
+                {/* <div className="text-center">
                     <Button
                         size="lg"
-                        className="bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-700 hover:to-rose-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300"
+                        className="bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-700 hover:to-rose-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-full"
                     >
                         {isAr ? 'استكشف المجموعة' : 'Explore Collection'}
                     </Button>
-
-                    <p className="text-sm text-muted-foreground mt-4">
-                        {isAr
-                            ? 'شحن مجاني للطلبات فوق 500 ريال'
-                            : 'Free shipping on orders over $100'
-                        }
+                    <p className="text-xs text-muted-foreground mt-3">
+                        {isAr ? 'شحن مجاني للطلبات فوق 500 ريال' : 'Free shipping on orders over $100'}
                     </p>
-                </div>
+                </div> */}
             </div>
         </section>
     );
