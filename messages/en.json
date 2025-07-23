@@ -166,6 +166,7 @@
     }
   },
   "footer": {
+    "brand": "Eleva Boutique",
     "description": "Discover the world's finest fragrances. We curate premium perfumes from the most prestigious brands worldwide.",
     "quickLinks": {
       "title": "Quick Links",
@@ -183,7 +184,15 @@
       "unisex": "Unisex Fragrances",
       "luxury": "Luxury Collection",
       "newArrivals": "New Arrivals",
-      "sale": "Sale Items"
+      "sale": "Sale Items",
+      "unnamed": "Unnamed Category"
+    },
+    "customerSupport": {
+      "title": "Customer Support",
+      "description": "Have questions or need help with your order? We're here for you.",
+      "phone": "Phone",
+      "email": "Email",
+      "contactUs": "Contact Us"
     },
     "newsletter": {
       "title": "Newsletter",
@@ -191,11 +200,13 @@
       "placeholder": "Enter your email",
       "disclaimer": "By subscribing, you agree to our Privacy Policy and Terms of Service."
     },
-    "copyright": "Eleva. All rights reserved.",
+    "copyright": {
+      "rights": "All rights reserved © 2025 to Eleva Boutique.",
+      "developed": "Designed & Developed by OrbitX Solutions"
+    },
     "legal": {
       "privacy": "Privacy Policy",
-      "terms": "Terms of Service",
-      "cookies": "Cookie Policy"
+      "terms": "Terms & Conditions"
     }
   },
   "auth": {
@@ -267,6 +278,9 @@
     },
     "share": {
       "linkCopied": "Link copied to clipboard"
+    },
+    "cart": {
+      "viewCart": "View Cart"
     }
   },
   "cart": {
@@ -319,16 +333,7 @@
       "template": "%s | Eleva"
     },
     "description": "Discover our exquisite collection of premium perfumes. Fast delivery, 14-day returns, and authentic fragrances from top brands.",
-    "keywords": [
-      "perfumes",
-      "fragrances",
-      "luxury perfumes",
-      "designer perfumes",
-      "cologne",
-      "eau de parfum",
-      "beauty",
-      "cosmetics"
-    ],
+    "keywords": "perfumes, fragrances, luxury perfumes, designer perfumes, cologne, eau de parfum, beauty, cosmetics, eleva boutique, premium fragrances, men's cologne, women's perfume, unisex fragrances, arabic perfumes, middle eastern fragrances, oud perfumes, musk fragrances, floral perfumes, woody fragrances, oriental perfumes, fresh fragrances, gift perfumes, online perfume store, authentic perfumes, original fragrances",
     "openGraph": {
       "title": "Eleva - Premium Fragrances for Every Occasion",
       "description": "Discover our exquisite collection of premium perfumes. Fast delivery, 14-day returns, and authentic fragrances from top brands.",

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { filterProducts, ProductFilterParams } from "@/lib/common/queries-product";
+import { filterProducts, ProductFilterParams } from "@/lib/queries/queries-product";
 
 export async function GET(request: NextRequest) {
     try {

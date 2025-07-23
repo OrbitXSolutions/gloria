@@ -1,7 +1,6 @@
-"use client";
+'use client'
 
-import { Loader2 } from "lucide-react";
-import { useSearchParams } from "next/navigation";
+import { Loader2 } from 'lucide-react'
 import {
     Pagination,
     PaginationContent,
@@ -9,25 +8,12 @@ import {
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
-} from "@/components/ui/pagination";
-import ProductCard from "../molecules/product-card";
-import ProductListItem from "../../app/products/ProductListItem";
-import ProductsResultsHeader from "../molecules/products-results-header";
-import ProductsEmptyState from "../molecules/products-empty-state";
-import { ProductWithUserData } from "@/lib/types/database.types";
-import { ViewMode } from "@/lib/types/products-page";
-
-interface Props {
-    products: ProductWithUserData[];
-    viewMode: ViewMode;
-    currentPage: number;
-    totalPages: number;
-    totalProducts: number;
-    searchQuery: string;
-    hasMore: boolean;
-    isExecuting: boolean;
-    onClearFilters: () => void;
-}
+} from '@/components/ui/pagination'
+import ProductCard from '../molecules/product-card'
+import ProductListItem from '../../app/products/ProductListItem'
+import ProductsResultsHeader from '../molecules/products-results-header'
+import ProductsEmptyState from '../molecules/products-empty-state'
+import { ProductsDisplayProps } from '@/lib/types/products-page'
 
 export default function ProductsDisplay({
     products,
@@ -35,24 +21,41 @@ export default function ProductsDisplay({
     currentPage,
     totalPages,
     totalProducts,
-    searchQuery,
     hasMore,
-    isExecuting,
+    isLoading,
+    error,
+    onPageChange,
     onClearFilters,
-}: Props) {
-    const searchParams = useSearchParams();
-
-    if (isExecuting) {
+}: ProductsDisplayProps) {
+    if (isLoading) {
         return (
             <div className="flex justify-center items-center py-16">
                 <Loader2 className="h-8 w-8 animate-spin text-secondary-600" />
                 <span className="ml-2 text-gray-600">Loading products...</span>
             </div>
-        );
+        )
+    }
+
+    if (error) {
+        return (
+            <div className="text-center py-16">
+                <p className="text-red-600 mb-4">{error}</p>
+                <button
+                    onClick={onClearFilters}
+                    className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90"
+                >
+                    Clear Filters
+                </button>
+            </div>
+        )
     }
 
     if (products.length === 0) {
-        return <ProductsEmptyState onClearFilters={onClearFilters} />;
+        return <ProductsEmptyState onClearFilters={onClearFilters} />
+    }
+
+    const handlePageChange = (page: number) => {
+        onPageChange(page)
     }
 
     return (
@@ -62,11 +65,11 @@ export default function ProductsDisplay({
                 totalProducts={totalProducts}
                 currentPage={currentPage}
                 totalPages={totalPages}
-                searchQuery={searchQuery}
+                searchQuery=""
                 hasMore={hasMore}
             />
 
-            {viewMode === "grid" ? (
+            {viewMode === 'grid' ? (
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-8">
                     {products.map((product) => (
                         <ProductCard key={product.id} product={product} />
@@ -80,70 +83,43 @@ export default function ProductsDisplay({
                 </div>
             )}
 
-            {(totalPages > 1 || (products.length >= 8 && hasMore)) && (
+            {totalPages > 1 && (
                 <div className="flex justify-center mt-8">
                     <Pagination>
                         <PaginationContent>
                             <PaginationItem>
                                 <PaginationPrevious
-                                    href={
-                                        currentPage <= 1
-                                            ? undefined
-                                            : `?${new URLSearchParams({
-                                                ...Object.fromEntries(searchParams.entries()),
-                                                page: (currentPage - 1).toString(),
-                                            }).toString()}`
-                                    }
+                                    onClick={() => currentPage > 1 && handlePageChange(currentPage - 1)}
                                     className={
                                         currentPage <= 1
-                                            ? "pointer-events-none opacity-50"
-                                            : "cursor-pointer"
+                                            ? 'pointer-events-none opacity-50'
+                                            : 'cursor-pointer'
                                     }
                                 />
                             </PaginationItem>
 
-                            {Array.from(
-                                {
-                                    length: Math.max(
-                                        totalPages,
-                                        Math.ceil(products.length / 8)
-                                    ),
-                                },
-                                (_, i) => {
-                                    const pageNum = i + 1;
-                                    return (
-                                        <PaginationItem key={pageNum}>
-                                            <PaginationLink
-                                                href={`?${new URLSearchParams({
-                                                    ...Object.fromEntries(searchParams.entries()),
-                                                    page: pageNum.toString(),
-                                                }).toString()}`}
-                                                isActive={pageNum === currentPage}
-                                                className="cursor-pointer"
-                                            >
-                                                {pageNum}
-                                            </PaginationLink>
-                                        </PaginationItem>
-                                    );
-                                }
-                            )}
+                            {Array.from({ length: totalPages }, (_, i) => {
+                                const pageNum = i + 1
+                                return (
+                                    <PaginationItem key={pageNum}>
+                                        <PaginationLink
+                                            onClick={() => handlePageChange(pageNum)}
+                                            isActive={pageNum === currentPage}
+                                            className="cursor-pointer"
+                                        >
+                                            {pageNum}
+                                        </PaginationLink>
+                                    </PaginationItem>
+                                )
+                            })}
 
                             <PaginationItem>
                                 <PaginationNext
-                                    href={
-                                        currentPage >=
-                                            Math.max(totalPages, Math.ceil(products.length / 8))
-                                            ? undefined
-                                            : `?${new URLSearchParams({
-                                                ...Object.fromEntries(searchParams.entries()),
-                                                page: (currentPage + 1).toString(),
-                                            }).toString()}`
-                                    }
+                                    onClick={() => currentPage < totalPages && handlePageChange(currentPage + 1)}
                                     className={
-                                        currentPage >=
-                                            Math.max(totalPages, Math.ceil(products.length / 8))
-                                            ? "pointer-events-none opacity-50"
-                                            : "cursor-pointer"
+                                        currentPage >= totalPages
+                                            ? 'pointer-events-none opacity-50'
+                                            : 'cursor-pointer'
                                     }
                                 />
                             </PaginationItem>
@@ -152,5 +128,5 @@ export default function ProductsDisplay({
                 </div>
             )}
         </>
-    );
+    )
 } 

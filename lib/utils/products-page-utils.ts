@@ -12,17 +12,20 @@ export interface ProductsPageParams {
 
 export function parseProductsPageParams(
     searchParams: Record<string, string>
-): ProductsPageParams {
-    const searchParamsObj = new URLSearchParams(searchParams);
+) {
+    const searchParamsObj = new URLSearchParams(searchParams)
+
+    const pageParam = searchParamsObj.get('page')
+    const limitParam = searchParamsObj.get('limit')
 
     return {
-        query: searchParamsObj.get("q") || "",
-        categorySlug: searchParamsObj.get("category") ?? undefined,
-        page: Number.parseInt(searchParamsObj.get("page") || "1"),
-        limit: 8,
-        sort: searchParamsObj.get("sort") as "created_at" | "name" | "price" | "total_rates" | undefined,
-        order: searchParamsObj.get("order") as "asc" | "desc" | undefined,
-    };
+        queryString: searchParamsObj.get('q') || '',
+        category_slug: searchParamsObj.get('category') ?? undefined,
+        page: pageParam !== null ? Number.parseInt(pageParam) : undefined,
+        limit: limitParam !== null ? Number.parseInt(limitParam) : undefined,
+        sort: searchParamsObj.get('sort') as 'created_at' | 'name' | 'price' | 'total_rates' | undefined,
+        order: searchParamsObj.get('order') as 'asc' | 'desc' | undefined,
+    }
 }
 
 export async function generateProductsPageMetadata(): Promise<Metadata> {

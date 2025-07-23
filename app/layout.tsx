@@ -29,7 +29,7 @@ export async function generateMetadata(): Promise<Metadata> {
       template: t('title.template'),
     },
     description: t('description'),
-    keywords: t('keywords'),
+    keywords: t('keywords').split(','),
     authors: [{ name: "Eleva" }],
     creator: "Eleva",
     publisher: "Eleva",
@@ -38,7 +38,7 @@ export async function generateMetadata(): Promise<Metadata> {
       address: false,
       telephone: false,
     },
-    metadataBase: new URL("https://eleva-store.vercel.app"),
+    metadataBase: new URL("https://eleva-boutique.net"),
     alternates: {
       canonical: "/",
       languages: {
@@ -49,7 +49,7 @@ export async function generateMetadata(): Promise<Metadata> {
     openGraph: {
       title: t('openGraph.title'),
       description: t('openGraph.description'),
-      url: "https://eleva-store.vercel.app",
+      url: "https://eleva-boutique.net",
       siteName: t('openGraph.siteName'),
       images: [
         {
@@ -95,7 +95,8 @@ export default async function RootLayout({ children, searchParams }: Props) {
   const dir = locale === "ar" ? "rtl" : "ltr";
   return (
     <html lang={locale} dir={dir}>
-      <GoogleAnalytics gaId="'G-VHR5QKPREW'" />
+
+      <GoogleAnalytics gaId="G-VHR5QKPREW" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
