@@ -182,9 +182,24 @@ export default function CheckoutPageClient({
     (sum, item) => sum + (item.price ?? 0) * (item.quantity ?? 1),
     0
   );
-  const tax = subtotal * 0.05; // 5% VAT
-  const shipping = checkedState?.delivery_fee ?? 0; // Free shipping
-  const total = subtotal + tax + shipping;
+  const shipping = checkedState?.delivery_fee ?? 0; // Delivery fee based on selected state
+  const total = subtotal + shipping;
+
+  // Helper function to get primary currency for the order
+  const getPrimaryCurrency = () => {
+    if (!order.order_items || order.order_items.length === 0) return undefined;
+    const firstItem = order.order_items[0];
+    if (!firstItem?.product?.currency_code) return undefined;
+
+    // Create a currency object with the code
+    return {
+      code: firstItem.product.currency_code,
+      symbol_en: null,
+      symbol_ar: null
+    };
+  };
+
+  const primaryCurrency = getPrimaryCurrency();
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -202,9 +217,9 @@ export default function CheckoutPageClient({
               {t("cart.title")}
             </Link>
             <span>/</span>
-            <span className="text-gray-900">Checkout</span>
+            <span className="text-gray-900">{t("checkout.title")}</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t("checkout.title")}</h1>
         </div>
       </div>
 
@@ -223,7 +238,7 @@ export default function CheckoutPageClient({
                     className={`h-4 w-4 ${locale == "ar" ? "ml-2 rotate-180" : "mr-2"
                       }`}
                   />
-                  Back to Cart
+                  {t("checkout.backToCart")}
                 </Button>
               </Link>
 
@@ -235,7 +250,7 @@ export default function CheckoutPageClient({
                       <div className="w-8 h-8 bg-secondary-100 rounded-full flex items-center justify-center">
                         <User className="h-4 w-4 text-secondary-600" />
                       </div>
-                      <div className="px-3">Account Information</div>
+                      <div className="px-3">{t("checkout.account.title")}</div>
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
@@ -244,9 +259,9 @@ export default function CheckoutPageClient({
                       name="email"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Email Address *</FormLabel>
+                          <FormLabel>{t("checkout.account.email")}</FormLabel>
                           <FormControl>
-                            <Input placeholder="Enter your email" {...field} />
+                            <Input placeholder={t("checkout.account.emailPlaceholder")} {...field} />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -259,19 +274,19 @@ export default function CheckoutPageClient({
                         name="password"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Password *</FormLabel>
+                            <FormLabel>{t("checkout.account.password")}</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <Input
                                   type={showPassword ? "text" : "password"}
-                                  placeholder="Create a password"
+                                  placeholder={t("checkout.account.passwordPlaceholder")}
                                   {...field}
                                 />
                                 <Button
                                   type="button"
                                   variant="ghost"
                                   size="sm"
-                                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1"
+                                  className="absolute end-2 top-1/2 transform -translate-y-1/2 p-1"
                                   onClick={() => setShowPassword(!showPassword)}
                                 >
                                   {showPassword ? (
@@ -292,21 +307,21 @@ export default function CheckoutPageClient({
                         name="confirmPassword"
                         render={({ field }) => (
                           <FormItem>
-                            <FormLabel>Confirm Password *</FormLabel>
+                            <FormLabel>{t("checkout.account.confirmPassword")}</FormLabel>
                             <FormControl>
                               <div className="relative">
                                 <Input
                                   type={
                                     showConfirmPassword ? "text" : "password"
                                   }
-                                  placeholder="Confirm your password"
+                                  placeholder={t("checkout.account.confirmPasswordPlaceholder")}
                                   {...field}
                                 />
                                 <Button
                                   type="button"
                                   variant="ghost"
                                   size="sm"
-                                  className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1"
+                                  className="absolute end-2 top-1/2 transform -translate-y-1/2 p-1"
                                   onClick={() =>
                                     setShowConfirmPassword(!showConfirmPassword)
                                   }
@@ -326,8 +341,7 @@ export default function CheckoutPageClient({
                     </div>
 
                     <p className="text-sm text-gray-600">
-                      By creating an account, you agree to our Terms of Service
-                      and Privacy Policy.
+                      {t("checkout.account.termsNotice")}
                     </p>
                   </CardContent>
                 </Card>
@@ -340,7 +354,7 @@ export default function CheckoutPageClient({
                     <div className="w-8 h-8 bg-secondary-100 rounded-full flex items-center justify-center">
                       <MapPin className="h-4 w-4 text-secondary-600" />
                     </div>
-                    Delivery Address
+                    {t("checkout.deliveryAddress.title")}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
@@ -384,7 +398,7 @@ export default function CheckoutPageClient({
                                           variant="secondary"
                                           className="text-xs"
                                         >
-                                          Default
+                                          {t("checkout.deliveryAddress.default")}
                                         </Badge>
                                       )}
                                     </div>
@@ -427,7 +441,7 @@ export default function CheckoutPageClient({
                             />
                           </FormControl>
                           <div className="space-y-1 leading-none">
-                            <FormLabel>Use a new address</FormLabel>
+                            <FormLabel>{t("checkout.deliveryAddress.useNewAddress")}</FormLabel>
                           </div>
                         </FormItem>
                       )}
@@ -441,8 +455,8 @@ export default function CheckoutPageClient({
                       <div className="space-y-4 border-t pt-6">
                         <h3 className="text-lg font-semibold text-gray-900">
                           {user && userAddresses.length > 0
-                            ? t("checkout.newAddress")
-                            : t("checkout.deliveryAddress")}
+                            ? t("checkout.deliveryAddress.newAddress")
+                            : t("checkout.deliveryAddress.title")}
                         </h3>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -451,10 +465,10 @@ export default function CheckoutPageClient({
                             name="fullName"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Full Name *</FormLabel>
+                                <FormLabel>{t("checkout.deliveryAddress.fullName")}</FormLabel>
                                 <FormControl>
                                   <Input
-                                    placeholder="Enter full name"
+                                    placeholder={t("checkout.deliveryAddress.fullNamePlaceholder")}
                                     {...field}
                                   />
                                 </FormControl>
@@ -468,10 +482,10 @@ export default function CheckoutPageClient({
                             name="phone"
                             render={({ field }) => (
                               <FormItem>
-                                <FormLabel>Phone Number *</FormLabel>
+                                <FormLabel>{t("checkout.deliveryAddress.phone")}</FormLabel>
                                 <FormControl>
                                   <Input
-                                    placeholder="Enter phone number"
+                                    placeholder={t("checkout.deliveryAddress.phonePlaceholder")}
                                     {...field}
                                   />
                                 </FormControl>
@@ -486,10 +500,10 @@ export default function CheckoutPageClient({
                           name="address"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Address *</FormLabel>
+                              <FormLabel>{t("checkout.deliveryAddress.address")}</FormLabel>
                               <FormControl>
                                 <Input
-                                  placeholder="Enter full address"
+                                  placeholder={t("checkout.deliveryAddress.addressPlaceholder")}
                                   {...field}
                                 />
                               </FormControl>
@@ -503,7 +517,7 @@ export default function CheckoutPageClient({
                           name="stateCode"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Emirate *</FormLabel>
+                              <FormLabel>{t("checkout.deliveryAddress.emirate")}</FormLabel>
                               <Select
                                 onValueChange={(value) => {
                                   setCheckedState(
@@ -515,7 +529,7 @@ export default function CheckoutPageClient({
                               >
                                 <FormControl>
                                   <SelectTrigger>
-                                    <SelectValue placeholder="Select Emirate" />
+                                    <SelectValue placeholder={t("checkout.deliveryAddress.emiratePlaceholder")} />
                                   </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
@@ -541,10 +555,10 @@ export default function CheckoutPageClient({
                           name="notes"
                           render={({ field }) => (
                             <FormItem>
-                              <FormLabel>Delivery Notes (Optional)</FormLabel>
+                              <FormLabel>{t("checkout.deliveryAddress.notes")}</FormLabel>
                               <FormControl>
                                 <Textarea
-                                  placeholder="Any special delivery instructions..."
+                                  placeholder={t("checkout.deliveryAddress.notesPlaceholder")}
                                   rows={3}
                                   {...field}
                                 />
@@ -563,7 +577,7 @@ export default function CheckoutPageClient({
             <div className="lg:col-span-1">
               <Card className="sticky top-8">
                 <CardHeader>
-                  <CardTitle>Order Summary</CardTitle>
+                  <CardTitle>{t("checkout.orderSummary.title")}</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   {/* Order Items */}
@@ -594,12 +608,12 @@ export default function CheckoutPageClient({
                               {productName}
                             </h3>
                             <p className="text-sm text-gray-500">
-                              Qty: {item.quantity}
+                              {t("checkout.orderSummary.quantity")}: {item.quantity}
                             </p>
                             <p className="text-sm font-semibold text-gray-900">
                               {formatPrice(
                                 (item.price ?? 0) * (item.quantity ?? 1),
-                                { code: item.product?.currency_code },
+                                primaryCurrency,
                                 locale
                               )}
                             </p>
@@ -612,54 +626,35 @@ export default function CheckoutPageClient({
                   {/* Totals */}
                   <div className="space-y-3 border-t pt-4">
                     <div className={`flex justify-between `}>
-                      <span className="text-gray-600">Subtotal</span>
+                      <span className="text-gray-600">{t("checkout.orderSummary.subtotal")}</span>
                       <span className="font-semibold">
                         {formatPrice(
                           subtotal,
-                          {
-                            code: order.order_items[0]?.product?.currency_code,
-                          },
+                          primaryCurrency,
                           locale
                         )}
                       </span>
                     </div>
                     <div className={`flex justify-between`}>
-                      <span className="text-gray-600">Shipping</span>
+                      <span className="text-gray-600">{t("checkout.orderSummary.shipping")}</span>
                       <span className="font-semibold text-gray-600">
                         {!checkedState
-                          ? "Select State"
+                          ? t("checkout.orderSummary.selectState")
                           : formatPrice(
                             shipping,
-                            {
-                              code: order.order_items[0]?.product
-                                ?.currency_code,
-                            },
+                            primaryCurrency,
                             locale
                           )}
-                      </span>
-                    </div>
-                    <div className={`flex justify-between `}>
-                      <span className="text-gray-600">VAT (5%)</span>
-                      <span className="font-semibold">
-                        {formatPrice(
-                          tax,
-                          {
-                            code: order.order_items[0]?.product?.currency_code,
-                          },
-                          locale
-                        )}
                       </span>
                     </div>
                     <div
                       className={`flex justify-between text-lg font-bold border-t pt-3 `}
                     >
-                      <span>Total</span>
+                      <span>{t("checkout.orderSummary.total")}</span>
                       <span>
                         {formatPrice(
                           total,
-                          {
-                            code: order.order_items[0]?.product?.currency_code,
-                          },
+                          primaryCurrency,
                           locale
                         )}
                       </span>
@@ -676,12 +671,12 @@ export default function CheckoutPageClient({
                     {isLoading ? (
                       <div className="flex items-center gap-2">
                         <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                        Processing...
+                        {t("checkout.orderSummary.processing")}
                       </div>
                     ) : (
                       <div className={`flex items-center gap-2 `}>
                         <CreditCard className="h-5 w-5" />
-                        Complete Order
+                        {t("checkout.orderSummary.completeOrder")}
                       </div>
                     )}
                   </Button>
@@ -691,7 +686,7 @@ export default function CheckoutPageClient({
                     className={`flex items-center gap-2 text-xs text-gray-500`}
                   >
                     <Lock className="h-3 w-3" />
-                    <span>Secure checkout with SSL encryption</span>
+                    <span>{t("checkout.orderSummary.secureNotice")}</span>
                   </div>
                 </CardContent>
               </Card>

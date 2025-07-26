@@ -324,6 +324,53 @@
     "checkout": "Checkout",
     "clear": "Clear Cart"
   },
+  "checkout": {
+    "title": "Checkout",
+    "backToCart": "Back to Cart",
+    "account": {
+      "title": "Account Information",
+      "description": "Create an account for faster checkout and order tracking",
+      "email": "Email Address *",
+      "emailPlaceholder": "Enter your email",
+      "password": "Password *",
+      "passwordPlaceholder": "Create a password",
+      "confirmPassword": "Confirm Password *",
+      "confirmPasswordPlaceholder": "Confirm your password",
+      "termsNotice": "By creating an account, you agree to our Terms of Service and Privacy Policy."
+    },
+    "deliveryAddress": {
+      "title": "Delivery Address",
+      "newAddress": "New Address",
+      "useNewAddress": "Use a new address",
+      "fullName": "Full Name *",
+      "fullNamePlaceholder": "Enter full name",
+      "phone": "Phone Number *",
+      "phonePlaceholder": "Enter phone number",
+      "address": "Address *",
+      "addressPlaceholder": "Enter full address",
+      "emirate": "Emirate *",
+      "emiratePlaceholder": "Select Emirate",
+      "notes": "Delivery Notes (Optional)",
+      "notesPlaceholder": "Any special delivery instructions...",
+      "default": "Default"
+    },
+    "orderSummary": {
+      "title": "Order Summary",
+      "quantity": "Qty",
+      "quantityLabel": "Quantity:",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "selectState": "Select State",
+      "total": "Total",
+      "completeOrder": "Complete Order",
+      "processing": "Processing...",
+      "secureNotice": "Secure checkout with SSL encryption"
+    },
+    "guest": {
+      "title": "Guest Checkout",
+      "description": "Checkout without creating an account"
+    }
+  },
   "common": {
     "back": "Back"
   },
