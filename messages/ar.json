@@ -320,6 +320,53 @@
     "checkout": "الدفع",
     "clear": "مسح السلة"
   },
+  "checkout": {
+    "title": "الدفع",
+    "backToCart": "العودة للسلة",
+    "account": {
+      "title": "معلومات الحساب",
+      "description": "أنشئ حساباً للدفع السريع وتتبع الطلبات",
+      "email": "البريد الإلكتروني *",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "password": "كلمة المرور *",
+      "passwordPlaceholder": "أنشئ كلمة مرور",
+      "confirmPassword": "تأكيد كلمة المرور *",
+      "confirmPasswordPlaceholder": "أكد كلمة المرور",
+      "termsNotice": "بإنشاء حساب، أنت توافق على شروط الخدمة وسياسة الخصوصية."
+    },
+    "deliveryAddress": {
+      "title": "عنوان التوصيل",
+      "newAddress": "عنوان جديد",
+      "useNewAddress": "استخدم عنوان جديد",
+      "fullName": "الاسم الكامل *",
+      "fullNamePlaceholder": "أدخل الاسم الكامل",
+      "phone": "رقم الهاتف *",
+      "phonePlaceholder": "أدخل رقم الهاتف",
+      "address": "العنوان *",
+      "addressPlaceholder": "أدخل العنوان الكامل",
+      "emirate": "الإمارة *",
+      "emiratePlaceholder": "اختر الإمارة",
+      "notes": "ملاحظات التوصيل (اختياري)",
+      "notesPlaceholder": "أي تعليمات خاصة للتوصيل...",
+      "default": "افتراضي"
+    },
+    "orderSummary": {
+      "title": "ملخص الطلب",
+      "quantity": "الكمية",
+      "quantityLabel": "الكمية:",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "selectState": "اختر الإمارة",
+      "total": "المجموع",
+      "completeOrder": "إكمال الطلب",
+      "processing": "جاري المعالجة...",
+      "secureNotice": "دفع آمن مع تشفير SSL"
+    },
+    "guest": {
+      "title": "الدفع كضيف",
+      "description": "الدفع بدون إنشاء حساب"
+    }
+  },
   "common": {
     "back": "رجوع"
   },

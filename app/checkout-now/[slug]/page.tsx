@@ -3,6 +3,7 @@ import { createSsrClient } from "@/lib/supabase/server";
 import { getLocale, getTranslations } from "next-intl/server";
 import { getUAEStates, getUserAddresses } from "@/lib/common/checkout";
 import CheckoutNowPageClient from "./CheckoutNowPageClient";
+import { ProductWithUserData } from "@/lib/types/database.types";
 
 interface Props {
     params: Promise<{ slug: string }>;
@@ -16,7 +17,7 @@ export default async function Page({ params }: Props) {
     // Fetch product by slug
     const { data: product, error } = await supabase
         .from("products")
-        .select("*, currencies(*)")
+        .select("*, currency:currencies(*)")
         .eq("slug", slug)
         .single();
 
@@ -38,7 +39,7 @@ export default async function Page({ params }: Props) {
 
     return (
         <CheckoutNowPageClient
-            product={product}
+            product={product as ProductWithUserData}
             user={userData}
             userAddresses={userAddresses}
             uaeStates={states}
