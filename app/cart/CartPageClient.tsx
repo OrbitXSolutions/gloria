@@ -229,18 +229,8 @@ export default function CartPageClient() {
                     <span className="text-gray-600">
                       {t("summary.shipping")}
                     </span>
-                    <span className="flex items-center text-xs text-gray-600">
+                    <span className="flex items-center text-start ms-5 text-xs text-gray-600">
                       {t("shippingCalculated")}
-                    </span>
-                  </div>
-                  <div className={`flex justify-between`}>
-                    <span className="text-gray-600">{t("summary.tax")}</span>
-                    <span className="font-semibold">
-                      {formatPrice(
-                        cart.total * 0.05,
-                        cart.items[0]?.product.currency,
-                        locale
-                      )}
                     </span>
                   </div>
                   <div
@@ -249,7 +239,7 @@ export default function CartPageClient() {
                     <span>{t("summary.total")}</span>
                     <span>
                       {formatPrice(
-                        cart.total * 1.05,
+                        cart.total,
                         cart.items[0]?.product.currency,
                         locale
                       )}

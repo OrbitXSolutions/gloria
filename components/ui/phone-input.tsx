@@ -35,9 +35,9 @@ const PhoneInput: React.ForwardRefExoticComponent<PhoneInputProps> =
   React.forwardRef<React.ElementRef<typeof RPNInput.default>, PhoneInputProps>(
     ({ className, onChange, value, ...props }, ref) => {
       const locale = useLocale();
-      props.dir = locale === "ar" ? "rtl" : "ltr";
-      className = cn(className, locale === "ar" ? "text-right" : "text-left");
-      (props.style ??= {}).direction = locale === "ar" ? "rtl" : "ltr"; // Ensure that telephone inputs are always left-to-right
+      props.dir = "ltr";
+      className = cn(className, "text-left");
+      (props.style ??= {}).direction = "ltr"; // Ensure that telephone inputs are always left-to-right
       if (locale === "ar") {
         props.labels = ar;
       }
@@ -74,7 +74,7 @@ const InputComponent = React.forwardRef<
 >(({ className, ...props }, ref) => {
   return (
     <Input
-      className={cn("rounded-e-lg rounded-s-none", className, "text-right")}
+      className={cn("rounded-e-lg rounded-s-none", className, "text-left")}
       {...props}
       ref={ref}
     />

@@ -58,7 +58,7 @@ export default function OrderConfirmationClient({
               {t("header.nav.home")}
             </Link>
             <span>/</span>
-            <span className="text-gray-900">Order Confirmation</span>
+            <span className="text-gray-900">{t("orderConfirmation.breadcrumb")}</span>
           </div>
           <div className={`flex items-center gap-4`}>
             <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center">
@@ -66,9 +66,9 @@ export default function OrderConfirmationClient({
             </div>
             <div>
               <h1 className="text-3xl font-bold text-gray-900">
-                Order Confirmed!
+                {t("orderConfirmation.title")}
               </h1>
-              <p className="text-gray-600">Thank you for your purchase</p>
+              <p className="text-gray-600">{t("orderConfirmation.subtitle")}</p>
             </div>
           </div>
         </div>
@@ -85,7 +85,7 @@ export default function OrderConfirmationClient({
                   className={`h-4 w-4 ${locale == "ar" ? "ml-2 rotate-180" : "mr-2"
                     }`}
                 />
-                Continue Shopping
+                {t("orderConfirmation.continueShopping")}
               </Button>
             </Link>
 
@@ -96,20 +96,20 @@ export default function OrderConfirmationClient({
                   <Package className="h-4 w-4 text-secondary-600" />
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  Order Information
+                  {t("orderConfirmation.orderInformation")}
                 </h2>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">
-                    Order Number
+                    {t("orderConfirmation.orderNumber")}
                   </h3>
                   <p className="text-gray-600">{order.code}</p>
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">
-                    Order Date
+                    {t("orderConfirmation.orderDate")}
                   </h3>
                   <p className="text-gray-600">
                     {new Date(order.created_at).toLocaleDateString(
@@ -118,7 +118,7 @@ export default function OrderConfirmationClient({
                   </p>
                 </div>
                 <div>
-                  <h3 className="font-semibold text-gray-900 mb-2">Status</h3>
+                  <h3 className="font-semibold text-gray-900 mb-2">{t("orderConfirmation.status")}</h3>
                   <Badge className={getStatusColor(order.status)}>
                     {order.status.charAt(0).toUpperCase() +
                       order.status.slice(1)}
@@ -126,7 +126,7 @@ export default function OrderConfirmationClient({
                 </div>
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">
-                    Total Amount
+                    {t("orderConfirmation.totalAmount")}
                   </h3>
                   <p className="text-lg font-bold text-secondary-600">
                     {formatPrice(
@@ -148,7 +148,7 @@ export default function OrderConfirmationClient({
                   <MapPin className="h-4 w-4 text-secondary-600" />
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  Delivery Address
+                  {t("orderConfirmation.deliveryAddress")}
                 </h2>
               </div>
 
@@ -161,7 +161,7 @@ export default function OrderConfirmationClient({
                 <p className="text-gray-600">UAE</p>
                 {order.address.notes && (
                   <p className="text-sm text-gray-500 mt-2">
-                    <span className="font-medium">Notes:</span>{" "}
+                    <span className="font-medium">{t("orderConfirmation.notes")}:</span>{" "}
                     {order.address.notes}
                   </p>
                 )}
@@ -171,7 +171,7 @@ export default function OrderConfirmationClient({
             {/* Order Items */}
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
               <h2 className="text-xl font-bold text-gray-900 mb-6">
-                Order Items
+                {t("orderConfirmation.orderItems")}
               </h2>
 
               <div className="space-y-4">
@@ -199,7 +199,7 @@ export default function OrderConfirmationClient({
                           {getProductName(item.product)}
                         </h3>
                         <p className="text-sm text-gray-600 mb-2">
-                          Quantity: {item.quantity}
+                          {t("orderConfirmation.quantity")}: {item.quantity}
                         </p>
                         <div className={`flex items-center justify-between `}>
                           <span className="text-sm text-gray-600">
@@ -211,7 +211,7 @@ export default function OrderConfirmationClient({
                               },
                               locale
                             )}{" "}
-                            each
+                            {t("orderConfirmation.each")}
                           </span>
                           <span className="font-semibold text-gray-900">
                             {formatPrice(
@@ -236,12 +236,12 @@ export default function OrderConfirmationClient({
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-8">
               <h2 className="text-xl font-bold text-gray-900 mb-6">
-                Order Summary
+                {t("orderConfirmation.orderSummary")}
               </h2>
 
               <div className="space-y-3 mb-6">
                 <div className={`flex justify-between `}>
-                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-gray-600">{t("orderConfirmation.subtotal")}</span>
                   <span className="font-semibold">
                     {formatPrice(
                       order.subtotal || order.total_price,
@@ -253,25 +253,14 @@ export default function OrderConfirmationClient({
                   </span>
                 </div>
                 <div className={`flex justify-between `}>
-                  <span className="text-gray-600">Shipping</span>
-                  <span className="font-semibold text-green-600">Free</span>
+                  <span className="text-gray-600">{t("orderConfirmation.shipping")}</span>
+                  <span className="font-semibold text-green-600">{t("orderConfirmation.free")}</span>
                 </div>
-                <div className={`flex justify-between `}>
-                  <span className="text-gray-600">Tax</span>
-                  <span className="font-semibold">
-                    {formatPrice(
-                      order.total_price - (order.subtotal || order.total_price),
-                      {
-                        code: order.order_items[0]?.product?.currency_code,
-                      },
-                      locale
-                    )}
-                  </span>
-                </div>
+
                 <div
                   className={`flex justify-between text-lg font-bold border-t pt-3 `}
                 >
-                  <span>Total</span>
+                  <span>{t("orderConfirmation.total")}</span>
                   <span>
                     {formatPrice(
                       order.total_price,
@@ -287,12 +276,12 @@ export default function OrderConfirmationClient({
               {/* Next Steps */}
               <div className="bg-gray-50 rounded-lg p-4 mb-6">
                 <h3 className="font-semibold text-gray-900 mb-2">
-                  What's Next?
+                  {t("orderConfirmation.whatsNext")}
                 </h3>
                 <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• You'll receive an email confirmation shortly</li>
-                  <li>• We'll notify you when your order ships</li>
-                  <li>• Track your order status anytime</li>
+                  <li>• {t("orderConfirmation.emailConfirmation")}</li>
+                  <li>• {t("orderConfirmation.shipmentNotification")}</li>
+                  <li>• {t("orderConfirmation.trackOrderStatus")}</li>
                 </ul>
               </div>
 
@@ -305,7 +294,7 @@ export default function OrderConfirmationClient({
                 </Link>
                 <Link href="/products">
                   <Button className="w-full bg-secondary-600 hover:bg-secondary-700">
-                    Continue Shopping
+                    {t("orderConfirmation.continueShopping")}
                   </Button>
                 </Link>
               </div>

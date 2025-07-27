@@ -20,8 +20,7 @@ export async function createDraftOrder(cartItems: CartItem[]) {
       (sum, item) => sum + (item.product.price || 0) * item.quantity,
       0
     );
-    const tax = subtotal * 0.0; // 5% VAT
-    const total = subtotal + tax;
+    const total = subtotal; // No tax, only delivery fees will be added during checkout
 
     // Generate order code
     const orderCode = `ORD-${Date.now()}-${Math.random()
