@@ -48,6 +48,7 @@ import {
     getFirstImageUrl,
 } from "@/lib/constants/supabase-storage";
 import Image from "next/image";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 // Types
 type User = Database["public"]["Tables"]["users"]["Row"];
@@ -399,7 +400,11 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
                                                         <FormItem>
                                                             <FormLabel>{t("checkout.deliveryAddress.phone")}</FormLabel>
                                                             <FormControl>
-                                                                <Input placeholder={t("checkout.deliveryAddress.phonePlaceholder")} {...field} />
+                                                                <PhoneInput
+                                                                    placeholder={t("checkout.deliveryAddress.phonePlaceholder")}
+                                                                    value={field.value}
+                                                                    onChange={field.onChange}
+                                                                />
                                                             </FormControl>
                                                             <FormMessage />
                                                         </FormItem>

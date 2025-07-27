@@ -82,9 +82,8 @@ export default function OrderConfirmationClient({
             <Link href="/">
               <Button variant="ghost" className={``}>
                 <ArrowLeft
-                  className={`h-4 w-4 ${
-                    locale == "ar" ? "ml-2 rotate-180" : "mr-2"
-                  }`}
+                  className={`h-4 w-4 ${locale == "ar" ? "ml-2 rotate-180" : "mr-2"
+                    }`}
                 />
                 Continue Shopping
               </Button>
@@ -299,9 +298,11 @@ export default function OrderConfirmationClient({
 
               {/* Actions */}
               <div className="space-y-3">
-                <Button variant="outline" className="w-full">
-                  Track Order
-                </Button>
+                <Link href="/profile/orders">
+                  <Button variant="outline" className="w-full">
+                    {t("orders.title")}
+                  </Button>
+                </Link>
                 <Link href="/products">
                   <Button className="w-full bg-secondary-600 hover:bg-secondary-700">
                     Continue Shopping

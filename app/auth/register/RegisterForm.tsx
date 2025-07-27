@@ -14,6 +14,7 @@ import { Eye, EyeOff, Loader2, User, Mail, Phone } from "lucide-react";
 import Link from "next/link";
 import LoadingIndicator from "@/components/atoms/LoadingIndicator";
 import { useTranslations } from "next-intl";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 export default function RegisterForm() {
   const t = useTranslations();
@@ -49,6 +50,13 @@ export default function RegisterForm() {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
+    });
+  };
+
+  const handlePhoneChange = (value: string) => {
+    setFormData({
+      ...formData,
+      phone: value,
     });
   };
 
@@ -124,21 +132,14 @@ export default function RegisterForm() {
           <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
             {t("auth.forms.register.phone")}
           </Label>
-          <div className="relative">
-            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-              <Phone className="h-5 w-5 text-gray-400" />
-            </div>
-            <Input
-              id="phone"
-              name="phone"
-              type="tel"
-              required
-              value={formData.phone}
-              onChange={handleInputChange}
-              placeholder={t("auth.forms.register.phonePlaceholder")}
-              className="pl-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
-            />
-          </div>
+          <PhoneInput
+            id="phone"
+            name="phone"
+            value={formData.phone}
+            onChange={handlePhoneChange}
+            placeholder={t("auth.forms.register.phonePlaceholder")}
+            className="h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
+          />
         </div>
 
         <div className="space-y-2">

@@ -23,6 +23,7 @@ import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { useTranslations } from "next-intl";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 export function SettingsClient() {
   const { user: authUser } = useSupabaseUser();
@@ -158,7 +159,7 @@ export function SettingsClient() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">{profileT("phoneNumber")}</Label>
-                <Input
+                <PhoneInput
                   id="phone"
                   name="phone"
                   defaultValue={user.phone || ""}

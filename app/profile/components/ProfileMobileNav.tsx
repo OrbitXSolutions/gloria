@@ -8,10 +8,7 @@ import {
   User,
   Package,
   Heart,
-  Settings,
-  CreditCard,
   MapPin,
-  Bell,
   Shield,
   Menu,
 } from "lucide-react";
@@ -29,10 +26,7 @@ export function ProfileMobileNav() {
     { name: t("orders"), href: "/profile/orders", icon: Package },
     { name: t("favorites"), href: "/profile/favorites", icon: Heart },
     { name: t("addresses"), href: "/profile/addresses", icon: MapPin },
-    // { name: t("paymentMethods"), href: "/profile/payment", icon: CreditCard },
-    // { name: t("notifications"), href: "/profile/notifications", icon: Bell },
     { name: t("security"), href: "/profile/security", icon: Shield },
-    { name: t("settings"), href: "/profile/settings", icon: Settings },
   ];
 
   const currentPage = navigation.find((item) => item.href === pathname);

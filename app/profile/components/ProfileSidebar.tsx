@@ -7,10 +7,7 @@ import {
   User,
   Package,
   Heart,
-  Settings,
-  CreditCard,
   MapPin,
-  Bell,
   Shield,
   LogOut,
   Crown,
@@ -52,30 +49,15 @@ export function ProfileSidebar() {
       icon: MapPin,
       description: t("addressesDescription"),
     },
-    {
-      name: t("paymentMethods"),
-      href: "/profile/payment",
-      icon: CreditCard,
-      description: t("paymentMethodsDescription"),
-    },
-    {
-      name: t("notifications"),
-      href: "/profile/notifications",
-      icon: Bell,
-      description: t("notificationsDescription"),
-    },
+
+
     {
       name: t("security"),
       href: "/profile/security",
       icon: Shield,
       description: t("securityDescription"),
     },
-    {
-      name: t("settings"),
-      href: "/profile/settings",
-      icon: Settings,
-      description: t("settingsDescription"),
-    },
+
   ];
 
   const firstLetters = `${user?.user_metadata.first_name?.[0] ?? ""}${user?.user_metadata.last_name?.[0] ?? ""

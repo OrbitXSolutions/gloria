@@ -33,6 +33,7 @@ import {
   getFirstImageUrl,
 } from "@/lib/constants/supabase-storage";
 import Image from "next/image";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 type UserProfile = Database["public"]["Tables"]["users"]["Row"];
 type Order = OrderWithItems;
@@ -557,14 +558,11 @@ export default function CheckoutPageClient({
                         >
                           {t("checkout.deliveryAddress.phone")}
                         </label>
-                        <Input
+                        <PhoneInput
                           id="phone"
                           value={formData.phone}
-                          onChange={(e) =>
-                            handleInputChange("phone", e.target.value)
-                          }
+                          onChange={(value) => handleInputChange("phone", value)}
                           placeholder={t("checkout.deliveryAddress.phonePlaceholder")}
-                          required
                         />
                       </div>
                     </div>

@@ -53,6 +53,7 @@ import {
 } from "@/lib/constants/supabase-storage";
 import Image from "next/image";
 import { useCart } from "@/components/_core/providers/cart-provider";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 type UserProfile = Database["public"]["Tables"]["users"]["Row"];
 type Order = OrderWithItems;
@@ -484,9 +485,10 @@ export default function CheckoutPageClient({
                               <FormItem>
                                 <FormLabel>{t("checkout.deliveryAddress.phone")}</FormLabel>
                                 <FormControl>
-                                  <Input
+                                  <PhoneInput
                                     placeholder={t("checkout.deliveryAddress.phonePlaceholder")}
-                                    {...field}
+                                    value={field.value}
+                                    onChange={field.onChange}
                                   />
                                 </FormControl>
                                 <FormMessage />

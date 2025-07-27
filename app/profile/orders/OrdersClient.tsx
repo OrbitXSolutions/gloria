@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect } from "react";
+import Link from "next/link";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Package,
   Search,
@@ -28,6 +28,7 @@ import { getUserOrders } from "@/lib/common/profile-queries";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { Spinner } from "@/components/ui/spinner";
 import { useTranslations } from "next-intl";
+import { createClient } from "@/lib/supabase/client";
 
 const statusConfig = {
   draft: { label: "Draft", color: "bg-gray-100 text-gray-800", icon: Clock },
@@ -81,15 +82,26 @@ export function OrdersClient() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
-  const [activeTab, setActiveTab] = useState("all");
 
   useEffect(() => {
     async function loadOrders() {
       if (!authUser?.id) return;
 
       try {
-        const ordersData = await getUserOrders(Number.parseInt(authUser.id));
-        setOrders(ordersData);
+        // Get the user ID from the database users table
+        const supabase = createClient();
+        const { data: userData } = await supabase
+          .from('users')
+          .select('id')
+          .eq('auth_id', authUser.id)
+          .single();
+
+        if (userData?.id) {
+          const ordersData = await getUserOrders(userData.id);
+          setOrders(ordersData);
+        } else {
+          console.error("User not found in database");
+        }
       } catch (error) {
         console.error("Error loading orders:", error);
       } finally {
@@ -114,9 +126,8 @@ export function OrdersClient() {
       );
     const matchesStatus =
       statusFilter === "all" || order.status === statusFilter;
-    const matchesTab = activeTab === "all" || order.status === activeTab;
 
-    return matchesSearch && matchesStatus && matchesTab;
+    return matchesSearch && matchesStatus;
   });
 
   if (loading) {
@@ -173,110 +184,101 @@ export function OrdersClient() {
         </CardContent>
       </Card>
 
-      {/* Order Tabs */}
-      <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="all">{t("allOrders")}</TabsTrigger>
-          <TabsTrigger value="pending">Pending</TabsTrigger>
-          <TabsTrigger value="processing">Processing</TabsTrigger>
-          <TabsTrigger value="shipped">Shipped</TabsTrigger>
-          <TabsTrigger value="delivered">Delivered</TabsTrigger>
-          <TabsTrigger value="cancelled">Cancelled</TabsTrigger>
-        </TabsList>
+      {/* Orders List */}
+      <div className="space-y-4">
+        {filteredOrders.length === 0 ? (
+          <Card>
+            <CardContent className="p-12 text-center">
+              <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <h3 className="text-lg font-medium text-gray-900 mb-2">
+                {t("noOrders")}
+              </h3>
+              <p className="text-gray-600">
+                {t("noOrdersDescription")}
+              </p>
+            </CardContent>
+          </Card>
+        ) : (
+          filteredOrders.map((order) => {
+            const statusInfo =
+              statusConfig[order.status as keyof typeof statusConfig] ||
+              statusConfig.pending;
+            const StatusIcon = statusInfo.icon;
 
-        <TabsContent value={activeTab} className="space-y-4 mt-6">
-          {filteredOrders.length === 0 ? (
-            <Card>
-              <CardContent className="p-12 text-center">
-                <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  {t("noOrders")}
-                </h3>
-                <p className="text-gray-600">
-                  {t("noOrdersDescription")}
-                </p>
-              </CardContent>
-            </Card>
-          ) : (
-            filteredOrders.map((order) => {
-              const statusInfo =
-                statusConfig[order.status as keyof typeof statusConfig] ||
-                statusConfig.pending;
-              const StatusIcon = statusInfo.icon;
+            return (
+              <Card key={order.id}>
+                <CardContent className="p-6">
+                  <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
+                    <div className="flex-1 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {t("orderNumber", { number: order.code || `ORD-${order.id}` })}
+                        </h3>
+                        <Badge className={statusInfo.color}>
+                          <StatusIcon className="h-3 w-3 mr-1" />
+                          {statusInfo.label}
+                        </Badge>
+                      </div>
 
-              return (
-                <Card key={order.id}>
-                  <CardContent className="p-6">
-                    <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between space-y-4 lg:space-y-0">
-                      <div className="flex-1 space-y-3">
-                        <div className="flex items-center space-x-4">
-                          <h3 className="text-lg font-semibold text-gray-900">
-                            {t("orderNumber", { number: order.code || `ORD-${order.id}` })}
-                          </h3>
-                          <Badge className={statusInfo.color}>
-                            <StatusIcon className="h-3 w-3 mr-1" />
-                            {statusInfo.label}
-                          </Badge>
+                      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-gray-600">
+                        <div>
+                          <span className="font-medium">{t("orderDate")}:</span>
+                          <br />
+                          {new Date(order.created_at).toLocaleDateString()}
                         </div>
-
-                        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-gray-600">
-                          <div>
-                            <span className="font-medium">{t("orderDate")}:</span>
-                            <br />
-                            {new Date(order.created_at).toLocaleDateString()}
-                          </div>
-                          <div>
-                            <span className="font-medium">{t("orderTotal")}:</span>
-                            <br />${order.total_price?.toFixed(2) || "0.00"}
-                          </div>
-                          <div>
-                            <span className="font-medium">Payment:</span>
-                            <br />
-                            {order.payment_method === "cash"
-                              ? "Cash on Delivery"
-                              : "Card Payment"}
-                          </div>
+                        <div>
+                          <span className="font-medium">{t("orderTotal")}:</span>
+                          <br />${order.total_price?.toFixed(2) || "0.00"}
                         </div>
-
-                        <div className="space-y-2">
-                          <p className="font-medium text-gray-900">Items:</p>
-                          {order.order_items?.map(
-                            (item: any, index: number) => (
-                              <div
-                                key={index}
-                                className="flex justify-between text-sm text-gray-600"
-                              >
-                                <span>
-                                  {item.product?.name_en || t("seo.product.defaultTitle")} ×{" "}
-                                  {item.quantity}
-                                </span>
-                                <span>${item.price?.toFixed(2) || "0.00"}</span>
-                              </div>
-                            )
-                          )}
+                        <div>
+                          <span className="font-medium">Payment:</span>
+                          <br />
+                          {order.payment_method === "cash"
+                            ? "Cash on Delivery"
+                            : "Card Payment"}
                         </div>
                       </div>
 
-                      <div className="flex flex-col sm:flex-row gap-2 lg:ml-6">
+                      <div className="space-y-2">
+                        <p className="font-medium text-gray-900">Items:</p>
+                        {order.order_items?.map(
+                          (item: any, index: number) => (
+                            <div
+                              key={index}
+                              className="flex justify-between text-sm text-gray-600"
+                            >
+                              <span>
+                                {item.product?.name_en || t("seo.product.defaultTitle")} ×{" "}
+                                {item.quantity}
+                              </span>
+                              <span>${item.price?.toFixed(2) || "0.00"}</span>
+                            </div>
+                          )
+                        )}
+                      </div>
+                    </div>
+
+                    <div className="flex flex-col sm:flex-row gap-2 lg:ml-6">
+                      <Link href={`/orders/${order.code}`}>
                         <Button variant="outline" size="sm">
                           <Eye className="h-4 w-4 mr-2" />
                           {t("viewOrder")}
                         </Button>
-                        {order.status === "shipped" && (
-                          <Button variant="outline" size="sm">
-                            <Truck className="h-4 w-4 mr-2" />
-                            {t("trackOrder")}
-                          </Button>
-                        )}
-                      </div>
+                      </Link>
+                      {order.status === "shipped" && (
+                        <Button variant="outline" size="sm">
+                          <Truck className="h-4 w-4 mr-2" />
+                          {t("trackOrder")}
+                        </Button>
+                      )}
                     </div>
-                  </CardContent>
-                </Card>
-              );
-            })
-          )}
-        </TabsContent>
-      </Tabs>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })
+        )}
+      </div>
     </div>
   );
 }

@@ -25,6 +25,7 @@ import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
 import { useTranslations } from "next-intl";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 export function AddressesClient() {
   const { user: authUser } = useSupabaseUser();
@@ -184,7 +185,7 @@ export function AddressesClient() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
-                  <Input
+                  <PhoneInput
                     id="phone"
                     name="phone"
                     placeholder="+1 (555) 123-4567"
