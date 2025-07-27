@@ -27,6 +27,7 @@ import {
 import { getUserOrders } from "@/lib/common/profile-queries";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { Spinner } from "@/components/ui/spinner";
+import { useTranslations } from "next-intl";
 
 const statusConfig = {
   draft: { label: "Draft", color: "bg-gray-100 text-gray-800", icon: Clock },
@@ -75,6 +76,7 @@ const statusConfig = {
 
 export function OrdersClient() {
   const { user: authUser } = useSupabaseUser();
+  const t = useTranslations("profile.orders");
   const [orders, setOrders] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -126,13 +128,13 @@ export function OrdersClient() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Orders</h1>
-          <p className="text-gray-600 mt-1">Track and manage your orders</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
+          <p className="text-gray-600 mt-1">{t("subtitle")}</p>
         </div>
         <div className="flex items-center space-x-3 mt-4 sm:mt-0">
           <Button variant="outline" size="sm">
             <Download className="h-4 w-4 mr-2" />
-            Export
+            {t("downloadInvoice")}
           </Button>
         </div>
       </div>
@@ -145,7 +147,7 @@ export function OrdersClient() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search orders or products..."
+                  placeholder={t("searchOrders")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -155,10 +157,10 @@ export function OrdersClient() {
             <Select value={statusFilter} onValueChange={setStatusFilter}>
               <SelectTrigger className="w-full sm:w-48">
                 <Filter className="h-4 w-4 mr-2" />
-                <SelectValue placeholder="Filter by status" />
+                <SelectValue placeholder={t("filterByStatus")} />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="all">{t("allOrders")}</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
                 <SelectItem value="confirmed">Confirmed</SelectItem>
                 <SelectItem value="processing">Processing</SelectItem>
@@ -174,7 +176,7 @@ export function OrdersClient() {
       {/* Order Tabs */}
       <Tabs value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="grid w-full grid-cols-6">
-          <TabsTrigger value="all">All</TabsTrigger>
+          <TabsTrigger value="all">{t("allOrders")}</TabsTrigger>
           <TabsTrigger value="pending">Pending</TabsTrigger>
           <TabsTrigger value="processing">Processing</TabsTrigger>
           <TabsTrigger value="shipped">Shipped</TabsTrigger>
@@ -188,10 +190,10 @@ export function OrdersClient() {
               <CardContent className="p-12 text-center">
                 <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
                 <h3 className="text-lg font-medium text-gray-900 mb-2">
-                  No orders found
+                  {t("noOrders")}
                 </h3>
                 <p className="text-gray-600">
-                  Try adjusting your search or filter criteria.
+                  {t("noOrdersDescription")}
                 </p>
               </CardContent>
             </Card>
@@ -209,7 +211,7 @@ export function OrdersClient() {
                       <div className="flex-1 space-y-3">
                         <div className="flex items-center space-x-4">
                           <h3 className="text-lg font-semibold text-gray-900">
-                            #{order.code || `ORD-${order.id}`}
+                            {t("orderNumber", { number: order.code || `ORD-${order.id}` })}
                           </h3>
                           <Badge className={statusInfo.color}>
                             <StatusIcon className="h-3 w-3 mr-1" />
@@ -219,12 +221,12 @@ export function OrdersClient() {
 
                         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm text-gray-600">
                           <div>
-                            <span className="font-medium">Order Date:</span>
+                            <span className="font-medium">{t("orderDate")}:</span>
                             <br />
                             {new Date(order.created_at).toLocaleDateString()}
                           </div>
                           <div>
-                            <span className="font-medium">Total:</span>
+                            <span className="font-medium">{t("orderTotal")}:</span>
                             <br />${order.total_price?.toFixed(2) || "0.00"}
                           </div>
                           <div>
@@ -245,7 +247,7 @@ export function OrdersClient() {
                                 className="flex justify-between text-sm text-gray-600"
                               >
                                 <span>
-                                  {item.product?.name_en || "Product"} ×{" "}
+                                  {item.product?.name_en || t("seo.product.defaultTitle")} ×{" "}
                                   {item.quantity}
                                 </span>
                                 <span>${item.price?.toFixed(2) || "0.00"}</span>
@@ -258,12 +260,12 @@ export function OrdersClient() {
                       <div className="flex flex-col sm:flex-row gap-2 lg:ml-6">
                         <Button variant="outline" size="sm">
                           <Eye className="h-4 w-4 mr-2" />
-                          View Details
+                          {t("viewOrder")}
                         </Button>
                         {order.status === "shipped" && (
                           <Button variant="outline" size="sm">
                             <Truck className="h-4 w-4 mr-2" />
-                            Track Order
+                            {t("trackOrder")}
                           </Button>
                         )}
                       </div>

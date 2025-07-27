@@ -20,7 +20,7 @@ export async function createDraftOrder(cartItems: CartItem[]) {
       (sum, item) => sum + (item.product.price || 0) * item.quantity,
       0
     );
-    const tax = subtotal * 0.05; // 5% VAT
+    const tax = subtotal * 0.0; // 5% VAT
     const total = subtotal + tax;
 
     // Generate order code

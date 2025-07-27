@@ -29,6 +29,7 @@ import {
 } from "@/lib/common/profile-queries";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { Spinner } from "@/components/ui/spinner";
+import { useTranslations } from "next-intl";
 
 interface UserWithStats {
   id: number;
@@ -48,6 +49,7 @@ interface UserWithStats {
 
 export function ProfileOverview() {
   const { user: authUser, loading: authLoading } = useSupabaseUser();
+  const t = useTranslations("profile.overview");
   const [user, setUser] = useState<UserWithStats | null>(null);
   const [recentOrders, setRecentOrders] = useState<any[]>([]);
   const [recentFavorites, setRecentFavorites] = useState<any[]>([]);
@@ -59,7 +61,7 @@ export function ProfileOverview() {
       if (authLoading) return;
 
       if (!authUser?.id) {
-        setError("Please log in to view your profile");
+        setError(t("loginRequired"));
         setLoading(false);
         return;
       }
@@ -70,7 +72,7 @@ export function ProfileOverview() {
         // Get user profile with stats
         const userProfile = await getUserProfile(Number.parseInt(authUser.id));
         if (!userProfile) {
-          setError("Unable to load profile. Please try again.");
+          setError(t("loadError"));
           setLoading(false);
           return;
         }
@@ -98,7 +100,7 @@ export function ProfileOverview() {
         }
       } catch (error) {
         console.error("Error loading profile data:", error);
-        setError("Something went wrong. Please refresh the page.");
+        setError(t("loadDataError"));
       } finally {
         setLoading(false);
       }
@@ -161,25 +163,27 @@ export function ProfileOverview() {
           progress: 100,
           nextLevel: null,
           needed: 0,
-          message: "You've reached the highest tier!",
+          message: t("highestTier"),
         };
       case "Silver":
         return {
           progress: Math.min((spent / 1000) * 100, 99),
           nextLevel: "Gold",
           needed: Math.max(1000 - spent, 0),
-          message: `Spend $${(1000 - spent).toFixed(
-            2
-          )} more to reach Gold status`,
+          message: t("spendMore", {
+            amount: (1000 - spent).toFixed(2),
+            level: "Gold"
+          }),
         };
       default:
         return {
           progress: Math.min((spent / 500) * 100, 99),
           nextLevel: "Silver",
           needed: Math.max(500 - spent, 0),
-          message: `Spend $${(500 - spent).toFixed(
-            2
-          )} more to reach Silver status`,
+          message: t("spendMore", {
+            amount: (500 - spent).toFixed(2),
+            level: "Silver"
+          }),
         };
     }
   };
@@ -191,7 +195,7 @@ export function ProfileOverview() {
     if (user.first_name) {
       return user.first_name;
     }
-    return "Valued Customer";
+    return t("valuedCustomer");
   };
 
   const getUserInitials = (user: UserWithStats) => {
@@ -226,7 +230,7 @@ export function ProfileOverview() {
         </Alert>
         <div className="text-center mt-4">
           <Button onClick={() => window.location.reload()} variant="outline">
-            Try Again
+            {t("tryAgain")}
           </Button>
         </div>
       </div>
@@ -240,7 +244,7 @@ export function ProfileOverview() {
         <Alert className="max-w-md mx-auto">
           <AlertCircle className="h-4 w-4" />
           <AlertDescription>
-            Unable to load profile data. Please try refreshing the page.
+            {t("loadDataError")}
           </AlertDescription>
         </Alert>
       </div>
@@ -259,22 +263,22 @@ export function ProfileOverview() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Profile Overview</h1>
+          <h1 className="text-2xl font-bold text-gray-900">{t("title")}</h1>
           <p className="text-gray-600 mt-1">
-            Welcome back, {user.first_name || "Valued Customer"}!
+            {t("welcome", { name: user.first_name || t("valuedCustomer") })}
           </p>
         </div>
         <div className="flex gap-2 mt-4 sm:mt-0">
           <Link href="/profile/settings">
             <Button variant="outline">
               <Edit className="h-4 w-4 mr-2" />
-              Edit Profile
+              {t("editProfile")}
             </Button>
           </Link>
           <Link href="/profile/security">
             <Button variant="outline">
               <Shield className="h-4 w-4 mr-2" />
-              Security
+              {t("security")}
             </Button>
           </Link>
         </div>
@@ -285,8 +289,7 @@ export function ProfileOverview() {
         <Alert className="bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200">
           <Sparkles className="h-4 w-4 text-blue-600" />
           <AlertDescription className="text-blue-800">
-            Welcome to ELEVA! Complete your profile and start exploring our
-            luxury fragrance collection.
+            {t("welcomeMessage")}
           </AlertDescription>
         </Alert>
       )}
@@ -313,7 +316,7 @@ export function ProfileOverview() {
                   className={getVipBadgeColor(user.stats.vipStatus)}
                 >
                   <Crown className="h-3 w-3 mr-1" />
-                  {user.stats.vipStatus} Member
+                  {user.stats.vipStatus} {t("vipMember")}
                 </Badge>
               </div>
               <p className="text-gray-600">{user.email}</p>
@@ -321,7 +324,7 @@ export function ProfileOverview() {
               <div className="flex items-center space-x-4 text-sm text-gray-500">
                 <span className="flex items-center">
                   <Calendar className="h-4 w-4 mr-1" />
-                  Member since{" "}
+                  {t("memberSince")}{" "}
                   {new Date(user.created_at).toLocaleDateString("en-US", {
                     month: "short",
                     year: "numeric",
@@ -329,7 +332,7 @@ export function ProfileOverview() {
                 </span>
                 <span className="flex items-center">
                   <Star className="h-4 w-4 mr-1 text-yellow-500" />
-                  VIP Member
+                  {t("vipMember")}
                 </span>
               </div>
 
@@ -374,7 +377,7 @@ export function ProfileOverview() {
                 <p className="text-2xl font-bold text-gray-900">
                   {user.stats.totalOrders}
                 </p>
-                <p className="text-sm text-gray-600">Total Orders</p>
+                <p className="text-sm text-gray-600">{t("stats.totalOrders")}</p>
               </div>
             </div>
           </CardContent>
@@ -390,7 +393,7 @@ export function ProfileOverview() {
                 <p className="text-2xl font-bold text-gray-900">
                   {user.stats.totalFavorites}
                 </p>
-                <p className="text-sm text-gray-600">Favorites</p>
+                <p className="text-sm text-gray-600">{t("stats.totalFavorites")}</p>
               </div>
             </div>
           </CardContent>
@@ -406,7 +409,7 @@ export function ProfileOverview() {
                 <p className="text-2xl font-bold text-gray-900">
                   ${user.stats.totalSpent.toFixed(2)}
                 </p>
-                <p className="text-sm text-gray-600">Total Spent</p>
+                <p className="text-sm text-gray-600">{t("stats.totalSpent")}</p>
               </div>
             </div>
           </CardContent>
@@ -422,7 +425,7 @@ export function ProfileOverview() {
                 <p className="text-2xl font-bold text-gray-900">
                   {user.stats.vipStatus}
                 </p>
-                <p className="text-sm text-gray-600">VIP Status</p>
+                <p className="text-sm text-gray-600">{t("vipMember")}</p>
               </div>
             </div>
           </CardContent>
@@ -436,7 +439,7 @@ export function ProfileOverview() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Package className="h-5 w-5 mr-2" />
-              Recent Orders
+              {t("stats.recentOrders")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -455,9 +458,9 @@ export function ProfileOverview() {
                         </p>
                         <p className="text-sm text-gray-600">
                           {order.order_items?.[0]?.product?.name_en ||
-                            "Order items"}
+                            t("stats.orderItems")}
                           {order.order_items?.length > 1 &&
-                            ` +${order.order_items.length - 1} more`}
+                            ` ${t("stats.moreItems", { count: order.order_items.length - 1 })}`}
                         </p>
                         <p className="text-xs text-gray-500">
                           {new Date(order.created_at).toLocaleDateString()}
@@ -471,19 +474,19 @@ export function ProfileOverview() {
                 })}
                 <Link href="/profile/orders">
                   <Button variant="outline" className="w-full">
-                    View All Orders
+                    {t("stats.viewAllOrders")}
                   </Button>
                 </Link>
               </>
             ) : (
               <div className="text-center py-8">
                 <Package className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 mb-3">No orders yet</p>
+                <p className="text-gray-500 mb-3">{t("stats.noOrders")}</p>
                 <p className="text-sm text-gray-400 mb-4">
-                  Start your luxury fragrance journey
+                  {t("stats.startShopping")}
                 </p>
                 <Link href="/products">
-                  <Button className="w-full">Start Shopping</Button>
+                  <Button className="w-full">{t("stats.startShopping")}</Button>
                 </Link>
               </div>
             )}
@@ -495,7 +498,7 @@ export function ProfileOverview() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Heart className="h-5 w-5 mr-2" />
-              Favorite Items
+              {t("stats.recentFavorites")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -528,20 +531,20 @@ export function ProfileOverview() {
                 ))}
                 <Link href="/profile/favorites">
                   <Button variant="outline" className="w-full">
-                    View All Favorites
+                    {t("stats.viewAllFavorites")}
                   </Button>
                 </Link>
               </>
             ) : (
               <div className="text-center py-8">
                 <Heart className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500 mb-3">No favorites yet</p>
+                <p className="text-gray-500 mb-3">{t("stats.noFavorites")}</p>
                 <p className="text-sm text-gray-400 mb-4">
-                  Save products you love
+                  {t("stats.addFavorites")}
                 </p>
                 <Link href="/products">
                   <Button variant="outline" className="w-full">
-                    Browse Products
+                    {t("stats.startShopping")}
                   </Button>
                 </Link>
               </div>
@@ -554,7 +557,7 @@ export function ProfileOverview() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Shield className="h-5 w-5 mr-2" />
-              Account Security
+              {t("security")}
             </CardTitle>
           </CardHeader>
           <CardContent className="space-y-4">
@@ -601,7 +604,7 @@ export function ProfileOverview() {
 
             <Link href="/profile/security">
               <Button variant="outline" className="w-full">
-                Security Settings
+                {t("security")}
               </Button>
             </Link>
           </CardContent>
@@ -614,7 +617,7 @@ export function ProfileOverview() {
           <CardHeader>
             <CardTitle className="flex items-center">
               <Gift className="h-5 w-5 mr-2" />
-              Your VIP Benefits
+              {t("vipBenefits.title")}
             </CardTitle>
           </CardHeader>
           <CardContent>
@@ -622,26 +625,26 @@ export function ProfileOverview() {
               <div className="text-center p-4 bg-gradient-to-br from-yellow-50 to-yellow-100 rounded-lg">
                 <Crown className="h-8 w-8 text-yellow-600 mx-auto mb-2" />
                 <h3 className="font-semibold text-gray-900">
-                  Priority Support
+                  {t("vipBenefits.prioritySupport.title")}
                 </h3>
                 <p className="text-sm text-gray-600">
-                  24/7 dedicated customer service
+                  {t("vipBenefits.prioritySupport.description")}
                 </p>
               </div>
               <div className="text-center p-4 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
                 <Package className="h-8 w-8 text-blue-600 mx-auto mb-2" />
-                <h3 className="font-semibold text-gray-900">Free Shipping</h3>
+                <h3 className="font-semibold text-gray-900">{t("vipBenefits.freeShipping.title")}</h3>
                 <p className="text-sm text-gray-600">
-                  On all orders, no minimum
+                  {t("vipBenefits.freeShipping.description")}
                 </p>
               </div>
               <div className="text-center p-4 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
                 <Star className="h-8 w-8 text-purple-600 mx-auto mb-2" />
                 <h3 className="font-semibold text-gray-900">
-                  Exclusive Access
+                  {t("vipBenefits.exclusiveAccess.title")}
                 </h3>
                 <p className="text-sm text-gray-600">
-                  Early access to new collections
+                  {t("vipBenefits.exclusiveAccess.description")}
                 </p>
               </div>
             </div>

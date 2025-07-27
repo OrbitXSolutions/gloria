@@ -546,6 +546,182 @@
   "common": {
     "back": "رجوع"
   },
+  "profile": {
+    "overview": {
+      "title": "نظرة عامة على الملف الشخصي",
+      "welcome": "مرحباً بعودتك، {name}!",
+      "editProfile": "تعديل الملف الشخصي",
+      "security": "الأمان",
+      "welcomeMessage": "مرحباً بك في إليفا! أكمل ملفك الشخصي وابدأ في استكشاف مجموعتنا من العطور الفاخرة.",
+      "valuedCustomer": "عميل عزيز",
+      "memberSince": "عضو منذ",
+      "vipMember": "عضو VIP",
+      "highestTier": "لقد وصلت إلى أعلى مستوى!",
+      "spendMore": "أنفق ${amount} أكثر للوصول إلى مستوى {level}",
+      "tryAgain": "حاول مرة أخرى",
+      "loginRequired": "يرجى تسجيل الدخول لعرض ملفك الشخصي",
+      "loadError": "تعذر تحميل الملف الشخصي. يرجى المحاولة مرة أخرى.",
+      "loadDataError": "تعذر تحميل بيانات الملف الشخصي. يرجى تحديث الصفحة.",
+      "stats": {
+        "totalOrders": "إجمالي الطلبات",
+        "totalFavorites": "إجمالي المفضلة",
+        "totalSpent": "إجمالي الإنفاق",
+        "recentOrders": "الطلبات الحديثة",
+        "recentFavorites": "المفضلة الحديثة",
+        "viewAllOrders": "عرض جميع الطلبات",
+        "viewAllFavorites": "عرض جميع المفضلة",
+        "orderItems": "عناصر الطلب",
+        "moreItems": "+{count} أكثر",
+        "noOrders": "لا توجد طلبات بعد",
+        "noFavorites": "لا توجد مفضلة بعد",
+        "startShopping": "ابدأ التسوق لرؤية طلباتك هنا",
+        "addFavorites": "أضف عناصر إلى مفضلتك لرؤيتها هنا"
+      },
+      "vipBenefits": {
+        "title": "مزاياك كعضو VIP",
+        "prioritySupport": {
+          "title": "دعم ذو أولوية",
+          "description": "خدمة عملاء مخصصة على مدار الساعة"
+        },
+        "freeShipping": {
+          "title": "شحن مجاني",
+          "description": "على جميع الطلبات، بدون حد أدنى"
+        },
+        "exclusiveAccess": {
+          "title": "وصول حصري",
+          "description": "وصول مبكر للمجموعات الجديدة"
+        }
+      }
+    },
+    "sidebar": {
+      "overview": "نظرة عامة",
+      "overviewDescription": "ملخص الملف الشخصي",
+      "orders": "الطلبات",
+      "ordersDescription": "سجل الطلبات والتتبع",
+      "favorites": "المفضلة",
+      "favoritesDescription": "العناصر المحفوظة",
+      "addresses": "العناوين",
+      "addressesDescription": "عناوين الشحن",
+      "paymentMethods": "طرق الدفع",
+      "paymentMethodsDescription": "البطاقات والفواتير",
+      "notifications": "الإشعارات",
+      "notificationsDescription": "تفضيلات البريد الإلكتروني والرسائل النصية",
+      "security": "الأمان",
+      "securityDescription": "كلمة المرور والخصوصية",
+      "settings": "الإعدادات",
+      "settingsDescription": "تفضيلات الحساب",
+      "signOut": "تسجيل الخروج",
+      "signIn": "تسجيل الدخول",
+      "profileMenu": "قائمة الملف الشخصي"
+    },
+    "settings": {
+      "title": "إعدادات الحساب",
+      "subtitle": "إدارة تفضيلات وإعدادات حسابك",
+      "profileInformation": "معلومات الملف الشخصي",
+      "changePhoto": "تغيير الصورة",
+      "photoDescription": "JPG أو GIF أو PNG. الحد الأقصى 1 ميجابايت.",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "emailAddress": "عنوان البريد الإلكتروني",
+      "phoneNumber": "رقم الهاتف",
+      "saveChanges": "حفظ التغييرات",
+      "notifications": {
+        "title": "الإشعارات",
+        "subtitle": "إدارة تفضيلات الإشعارات",
+        "emailNotifications": "إشعارات البريد الإلكتروني",
+        "emailDescription": "استلام تحديثات الطلبات والعروض الترويجية عبر البريد الإلكتروني",
+        "smsNotifications": "إشعارات الرسائل النصية",
+        "smsDescription": "استلام تحديثات الطلبات عبر الرسائل النصية",
+        "marketingEmails": "رسائل البريد الإلكتروني التسويقية",
+        "marketingDescription": "استلام رسائل البريد الإلكتروني والعروض الترويجية"
+      },
+      "languageRegion": {
+        "title": "اللغة والمنطقة",
+        "language": "اللغة",
+        "timezone": "المنطقة الزمنية",
+        "saveSettings": "حفظ الإعدادات"
+      }
+    },
+    "security": {
+      "title": "إعدادات الأمان",
+      "subtitle": "إدارة أمان وخصوصية حسابك",
+      "changePassword": {
+        "title": "تغيير كلمة المرور",
+        "subtitle": "تحديث كلمة مرور حسابك",
+        "currentPassword": "كلمة المرور الحالية",
+        "newPassword": "كلمة المرور الجديدة",
+        "confirmPassword": "تأكيد كلمة المرور الجديدة",
+        "updatePassword": "تحديث كلمة المرور",
+        "updatingPassword": "جاري تحديث كلمة المرور..."
+      },
+      "twoFactorAuth": {
+        "title": "المصادقة الثنائية",
+        "subtitle": "إضافة طبقة أمان إضافية لحسابك",
+        "enabled": "المصادقة الثنائية مفعلة",
+        "disabled": "المصادقة الثنائية معطلة",
+        "enable": "تفعيل",
+        "disable": "إلغاء التفعيل"
+      },
+      "loginAlerts": {
+        "title": "تنبيهات تسجيل الدخول",
+        "subtitle": "احصل على إشعارات بمحاولات تسجيل الدخول الجديدة",
+        "enabled": "تنبيهات تسجيل الدخول مفعلة",
+        "disabled": "تنبيهات تسجيل الدخول معطلة"
+      },
+      "activeSessions": {
+        "title": "الجلسات النشطة",
+        "subtitle": "إدارة جلسات تسجيل الدخول النشطة",
+        "device": "الجهاز",
+        "location": "الموقع",
+        "lastActive": "آخر نشاط",
+        "current": "الحالي",
+        "activeNow": "نشط الآن",
+        "terminateSession": "إنهاء الجلسة",
+        "terminateAllSessions": "إنهاء جميع الجلسات الأخرى",
+        "terminatingSession": "جاري إنهاء الجلسة..."
+      }
+    },
+    "orders": {
+      "title": "طلباتي",
+      "subtitle": "تتبع طلباتك وعرض سجل الطلبات",
+      "searchOrders": "البحث في الطلبات...",
+      "filterByStatus": "تصفية حسب الحالة",
+      "allOrders": "جميع الطلبات",
+      "noOrders": "لا توجد طلبات",
+      "noOrdersDescription": "لم تقدم أي طلبات بعد.",
+      "startShopping": "ابدأ التسوق",
+      "orderNumber": "الطلب رقم #{number}",
+      "orderDate": "تاريخ الطلب",
+      "orderStatus": "حالة الطلب",
+      "orderTotal": "إجمالي الطلب",
+      "viewOrder": "عرض الطلب",
+      "downloadInvoice": "تحميل الفاتورة",
+      "trackOrder": "تتبع الطلب"
+    },
+    "favorites": {
+      "title": "مفضلتي",
+      "subtitle": "العناصر المحفوظة وقائمة الأمنيات",
+      "searchFavorites": "البحث في المفضلة...",
+      "noFavorites": "لا توجد مفضلة بعد",
+      "noFavoritesDescription": "لم تضيف أي عناصر إلى مفضلتك بعد.",
+      "startShopping": "ابدأ التسوق",
+      "removeFromFavorites": "إزالة من المفضلة",
+      "addToCart": "إضافة للسلة",
+      "moveToCart": "نقل للسلة"
+    },
+    "addresses": {
+      "title": "عناويني",
+      "subtitle": "إدارة عناوين الشحن",
+      "addNewAddress": "إضافة عنوان جديد",
+      "defaultAddress": "العنوان الافتراضي",
+      "setAsDefault": "تعيين كافتراضي",
+      "editAddress": "تعديل العنوان",
+      "deleteAddress": "حذف العنوان",
+      "noAddresses": "لا توجد عناوين محفوظة",
+      "noAddressesDescription": "لم تضيف أي عناوين شحن بعد.",
+      "addFirstAddress": "أضف عنوانك الأول"
+    }
+  },
   "seo": {
     "title": {
       "default": "إليفا - عطور فاخرة لكل مناسبة",

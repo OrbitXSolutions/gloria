@@ -26,6 +26,7 @@ import { useTranslations } from "next-intl";
 export function FavoritesClient() {
   const { user: authUser } = useSupabaseUser();
   const t = useTranslations("toast");
+  const favoritesT = useTranslations("profile.favorites");
   const [favorites, setFavorites] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -126,8 +127,8 @@ export function FavoritesClient() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">My Favorites</h1>
-          <p className="text-gray-600 mt-1">{favorites.length} saved items</p>
+          <h1 className="text-2xl font-bold text-gray-900">{favoritesT("title")}</h1>
+          <p className="text-gray-600 mt-1">{favorites.length} {favoritesT("subtitle")}</p>
         </div>
       </div>
 
@@ -139,7 +140,7 @@ export function FavoritesClient() {
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                 <Input
-                  placeholder="Search favorites..."
+                  placeholder={favoritesT("searchFavorites")}
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -168,11 +169,10 @@ export function FavoritesClient() {
           <CardContent className="p-12 text-center">
             <Heart className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No favorites found
+              {favoritesT("noFavorites")}
             </h3>
             <p className="text-gray-600">
-              Try adjusting your search or browse our collection to add
-              favorites.
+              {favoritesT("noFavoritesDescription")}
             </p>
           </CardContent>
         </Card>
@@ -194,7 +194,7 @@ export function FavoritesClient() {
                         product.primary_image ||
                         "/placeholder.svg?height=200&width=200"
                       }
-                      alt={product.name_en || "Product"}
+                      alt={product.name_en || t("seo.product.defaultTitle")}
                       className="w-full h-48 object-cover rounded-t-lg"
                     />
                     <Button
@@ -211,7 +211,7 @@ export function FavoritesClient() {
                           variant="secondary"
                           className="bg-white text-gray-900"
                         >
-                          Out of Stock
+                          {t("products.outOfStock")}
                         </Badge>
                       </div>
                     )}
@@ -249,7 +249,7 @@ export function FavoritesClient() {
                       onClick={() => handleAddToCart(product.id)}
                     >
                       <ShoppingCart className="h-4 w-4 mr-2" />
-                      {product.quantity === 0 ? "Out of Stock" : "Add to Cart"}
+                      {product.quantity === 0 ? t("products.outOfStock") : favoritesT("addToCart")}
                     </Button>
                   </div>
                 </CardContent>

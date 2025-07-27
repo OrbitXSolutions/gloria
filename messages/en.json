@@ -550,6 +550,182 @@
   "common": {
     "back": "Back"
   },
+  "profile": {
+    "overview": {
+      "title": "Profile Overview",
+      "welcome": "Welcome back, {name}!",
+      "editProfile": "Edit Profile",
+      "security": "Security",
+      "welcomeMessage": "Welcome to ELEVA! Complete your profile and start exploring our luxury fragrance collection.",
+      "valuedCustomer": "Valued Customer",
+      "memberSince": "Member since",
+      "vipMember": "VIP Member",
+      "highestTier": "You've reached the highest tier!",
+      "spendMore": "Spend ${amount} more to reach {level} status",
+      "tryAgain": "Try Again",
+      "loginRequired": "Please log in to view your profile",
+      "loadError": "Unable to load profile. Please try again.",
+      "loadDataError": "Unable to load profile data. Please try refreshing the page.",
+      "stats": {
+        "totalOrders": "Total Orders",
+        "totalFavorites": "Total Favorites",
+        "totalSpent": "Total Spent",
+        "recentOrders": "Recent Orders",
+        "recentFavorites": "Recent Favorites",
+        "viewAllOrders": "View All Orders",
+        "viewAllFavorites": "View All Favorites",
+        "orderItems": "Order items",
+        "moreItems": "+{count} more",
+        "noOrders": "No orders yet",
+        "noFavorites": "No favorites yet",
+        "startShopping": "Start shopping to see your orders here",
+        "addFavorites": "Add items to your favorites to see them here"
+      },
+      "vipBenefits": {
+        "title": "Your VIP Benefits",
+        "prioritySupport": {
+          "title": "Priority Support",
+          "description": "24/7 dedicated customer service"
+        },
+        "freeShipping": {
+          "title": "Free Shipping",
+          "description": "On all orders, no minimum"
+        },
+        "exclusiveAccess": {
+          "title": "Exclusive Access",
+          "description": "Early access to new collections"
+        }
+      }
+    },
+    "sidebar": {
+      "overview": "Overview",
+      "overviewDescription": "Profile summary",
+      "orders": "Orders",
+      "ordersDescription": "Order history & tracking",
+      "favorites": "Favorites",
+      "favoritesDescription": "Saved items",
+      "addresses": "Addresses",
+      "addressesDescription": "Shipping addresses",
+      "paymentMethods": "Payment Methods",
+      "paymentMethodsDescription": "Cards & billing",
+      "notifications": "Notifications",
+      "notificationsDescription": "Email & SMS preferences",
+      "security": "Security",
+      "securityDescription": "Password & privacy",
+      "settings": "Settings",
+      "settingsDescription": "Account preferences",
+      "signOut": "Sign Out",
+      "signIn": "Sign In",
+      "profileMenu": "Profile Menu"
+    },
+    "settings": {
+      "title": "Account Settings",
+      "subtitle": "Manage your account preferences and settings",
+      "profileInformation": "Profile Information",
+      "changePhoto": "Change Photo",
+      "photoDescription": "JPG, GIF or PNG. 1MB max.",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "emailAddress": "Email Address",
+      "phoneNumber": "Phone Number",
+      "saveChanges": "Save Changes",
+      "notifications": {
+        "title": "Notifications",
+        "subtitle": "Manage your notification preferences",
+        "emailNotifications": "Email Notifications",
+        "emailDescription": "Receive order updates and promotions via email",
+        "smsNotifications": "SMS Notifications",
+        "smsDescription": "Receive order updates via SMS",
+        "marketingEmails": "Marketing Emails",
+        "marketingDescription": "Receive promotional emails and offers"
+      },
+      "languageRegion": {
+        "title": "Language & Region",
+        "language": "Language",
+        "timezone": "Timezone",
+        "saveSettings": "Save Settings"
+      }
+    },
+    "security": {
+      "title": "Security Settings",
+      "subtitle": "Manage your account security and privacy",
+      "changePassword": {
+        "title": "Change Password",
+        "subtitle": "Update your account password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "updatePassword": "Update Password",
+        "updatingPassword": "Updating password..."
+      },
+      "twoFactorAuth": {
+        "title": "Two-Factor Authentication",
+        "subtitle": "Add an extra layer of security to your account",
+        "enabled": "Two-factor authentication is enabled",
+        "disabled": "Two-factor authentication is disabled",
+        "enable": "Enable",
+        "disable": "Disable"
+      },
+      "loginAlerts": {
+        "title": "Login Alerts",
+        "subtitle": "Get notified of new login attempts",
+        "enabled": "Login alerts are enabled",
+        "disabled": "Login alerts are disabled"
+      },
+      "activeSessions": {
+        "title": "Active Sessions",
+        "subtitle": "Manage your active login sessions",
+        "device": "Device",
+        "location": "Location",
+        "lastActive": "Last Active",
+        "current": "Current",
+        "activeNow": "Active now",
+        "terminateSession": "Terminate Session",
+        "terminateAllSessions": "Terminate All Other Sessions",
+        "terminatingSession": "Terminating session..."
+      }
+    },
+    "orders": {
+      "title": "My Orders",
+      "subtitle": "Track your orders and view order history",
+      "searchOrders": "Search orders...",
+      "filterByStatus": "Filter by status",
+      "allOrders": "All Orders",
+      "noOrders": "No orders found",
+      "noOrdersDescription": "You haven't placed any orders yet.",
+      "startShopping": "Start Shopping",
+      "orderNumber": "Order #{number}",
+      "orderDate": "Order Date",
+      "orderStatus": "Order Status",
+      "orderTotal": "Order Total",
+      "viewOrder": "View Order",
+      "downloadInvoice": "Download Invoice",
+      "trackOrder": "Track Order"
+    },
+    "favorites": {
+      "title": "My Favorites",
+      "subtitle": "Your saved items and wishlist",
+      "searchFavorites": "Search favorites...",
+      "noFavorites": "No favorites yet",
+      "noFavoritesDescription": "You haven't added any items to your favorites yet.",
+      "startShopping": "Start Shopping",
+      "removeFromFavorites": "Remove from Favorites",
+      "addToCart": "Add to Cart",
+      "moveToCart": "Move to Cart"
+    },
+    "addresses": {
+      "title": "My Addresses",
+      "subtitle": "Manage your shipping addresses",
+      "addNewAddress": "Add New Address",
+      "defaultAddress": "Default Address",
+      "setAsDefault": "Set as Default",
+      "editAddress": "Edit Address",
+      "deleteAddress": "Delete Address",
+      "noAddresses": "No addresses saved",
+      "noAddressesDescription": "You haven't added any shipping addresses yet.",
+      "addFirstAddress": "Add Your First Address"
+    }
+  },
   "seo": {
     "title": {
       "default": "Eleva - Premium Fragrances for Every Occasion",

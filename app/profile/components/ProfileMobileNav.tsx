@@ -17,21 +17,23 @@ import {
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
-
-const navigation = [
-  { name: "Overview", href: "/profile", icon: User },
-  { name: "Orders", href: "/profile/orders", icon: Package },
-  { name: "Favorites", href: "/profile/favorites", icon: Heart },
-  { name: "Addresses", href: "/profile/addresses", icon: MapPin },
-  // { name: "Payment", href: "/profile/payment", icon: CreditCard },
-  // { name: "Notifications", href: "/profile/notifications", icon: Bell },
-  { name: "Security", href: "/profile/security", icon: Shield },
-  { name: "Settings", href: "/profile/settings", icon: Settings },
-];
+import { useTranslations } from "next-intl";
 
 export function ProfileMobileNav() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const t = useTranslations("profile.sidebar");
+
+  const navigation = [
+    { name: t("overview"), href: "/profile", icon: User },
+    { name: t("orders"), href: "/profile/orders", icon: Package },
+    { name: t("favorites"), href: "/profile/favorites", icon: Heart },
+    { name: t("addresses"), href: "/profile/addresses", icon: MapPin },
+    // { name: t("paymentMethods"), href: "/profile/payment", icon: CreditCard },
+    // { name: t("notifications"), href: "/profile/notifications", icon: Bell },
+    { name: t("security"), href: "/profile/security", icon: Shield },
+    { name: t("settings"), href: "/profile/settings", icon: Settings },
+  ];
 
   const currentPage = navigation.find((item) => item.href === pathname);
 
@@ -42,7 +44,7 @@ export function ProfileMobileNav() {
           <currentPage.icon className="h-5 w-5 text-gray-600" />
         )}
         <h1 className="text-lg font-semibold text-gray-900">
-          {currentPage?.name || "Profile"}
+          {currentPage?.name || t("overview")}
         </h1>
       </div>
 
@@ -55,7 +57,7 @@ export function ProfileMobileNav() {
         <SheetContent side="left" className="w-80">
           <div className="py-6">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold">Profile Menu</h2>
+              <h2 className="text-lg font-semibold">{t("profileMenu")}</h2>
             </div>
             <nav className="space-y-1">
               {navigation.map((item) => {

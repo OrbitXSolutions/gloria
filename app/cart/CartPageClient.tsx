@@ -42,17 +42,15 @@ export default function CartPageClient() {
     }
 
     setIsCheckingOut(true);
-
-    try {
-      // clear();
-      await redirectToCheckout(cart.items);
-      // Clear cart after successful redirect
-    } catch (error) {
-      console.error("Checkout error:", error);
-      toast.error(t("toast.cart.checkoutFailed"));
-    } finally {
-      setIsCheckingOut(false);
+    const result = await redirectToCheckout(cart.items);
+    if (result.success) {
+      toast.success(t("toast.cart.checkoutSuccess"));
+    } else {
+      toast.error(result.error || t("toast.cart.checkoutFailed"));
     }
+    setIsCheckingOut(false);
+
+
   };
 
   if (cart.items.length === 0) {

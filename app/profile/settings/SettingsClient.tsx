@@ -27,6 +27,7 @@ import { useTranslations } from "next-intl";
 export function SettingsClient() {
   const { user: authUser } = useSupabaseUser();
   const t = useTranslations("toast");
+  const profileT = useTranslations("profile.settings");
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [emailNotifications, setEmailNotifications] = useState(true);
@@ -92,9 +93,9 @@ export function SettingsClient() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Account Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{profileT("title")}</h1>
         <p className="text-gray-600 mt-1">
-          Manage your account preferences and settings
+          {profileT("subtitle")}
         </p>
       </div>
 
@@ -103,7 +104,7 @@ export function SettingsClient() {
         <CardHeader>
           <CardTitle className="flex items-center">
             <User className="h-5 w-5 mr-2" />
-            Profile Information
+            {profileT("profileInformation")}
           </CardTitle>
         </CardHeader>
         <CardContent className="space-y-6">
@@ -120,10 +121,10 @@ export function SettingsClient() {
             <div>
               <Button variant="outline" size="sm">
                 <Upload className="h-4 w-4 mr-2" />
-                Change Photo
+                {profileT("changePhoto")}
               </Button>
               <p className="text-sm text-gray-500 mt-2">
-                JPG, GIF or PNG. 1MB max.
+                {profileT("photoDescription")}
               </p>
             </div>
           </div>
@@ -131,7 +132,7 @@ export function SettingsClient() {
           <form action={handleUpdateProfile} className="space-y-6">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-2">
-                <Label htmlFor="firstName">First Name</Label>
+                <Label htmlFor="firstName">{profileT("firstName")}</Label>
                 <Input
                   id="firstName"
                   name="firstName"
@@ -139,7 +140,7 @@ export function SettingsClient() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="lastName">Last Name</Label>
+                <Label htmlFor="lastName">{profileT("lastName")}</Label>
                 <Input
                   id="lastName"
                   name="lastName"
@@ -147,7 +148,7 @@ export function SettingsClient() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="email">Email Address</Label>
+                <Label htmlFor="email">{profileT("emailAddress")}</Label>
                 <Input
                   id="email"
                   name="email"
@@ -156,7 +157,7 @@ export function SettingsClient() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">{profileT("phoneNumber")}</Label>
                 <Input
                   id="phone"
                   name="phone"
@@ -167,7 +168,7 @@ export function SettingsClient() {
 
             <Button type="submit">
               <Save className="h-4 w-4 mr-2" />
-              Save Changes
+              {profileT("saveChanges")}
             </Button>
           </form>
         </CardContent>
