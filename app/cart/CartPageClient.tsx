@@ -96,7 +96,7 @@ export default function CartPageClient() {
           <div className={`flex items-center justify-between`}>
             <h1 className="text-3xl font-bold text-gray-900">{t("title")}</h1>
             <Badge variant="secondary" className="text-sm">
-              {cart.items.length} {cart.items.length === 1 ? "item" : "items"}
+              {cart.items.length} {cart.items.length === 1 ? t("item") : t("items")}
             </Badge>
           </div>
         </div>
@@ -127,7 +127,7 @@ export default function CartPageClient() {
                       <div className="w-24 h-24 flex-shrink-0">
                         <Image
                           src={primaryImage || "/placeholder.svg"}
-                          alt={productName || "Product"}
+                          alt={productName || t("seo.product.defaultTitle")}
                           width={96}
                           height={96}
                           className="w-full h-full object-cover rounded-lg"
@@ -232,7 +232,7 @@ export default function CartPageClient() {
                       {t("summary.shipping")}
                     </span>
                     <span className="flex items-center text-xs text-gray-600">
-                      {"Calculated during checkout"}
+                      {t("shippingCalculated")}
                     </span>
                   </div>
                   <div className={`flex justify-between`}>

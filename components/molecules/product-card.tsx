@@ -173,7 +173,7 @@ export default function ProductCard({
           />
           {/* <SafeImage
             src={primaryImage || "/placeholder.svg"}
-            alt={getProductName() || "Product"}
+            alt={getProductName() || t("seo.product.defaultTitle")}
             fill
             className="object-cover group-hover:scale-105 transition-transform duration-300"
             sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
@@ -285,7 +285,7 @@ export default function ProductCard({
                 </Button>
               </div>
             ) : (
-              <div className="flex gap-2">
+              <div className="flex flex-wrap gap-2">
                 <Button
                   className="flex-1 bg-primary hover:bg-secondary-700"
                   size="sm"

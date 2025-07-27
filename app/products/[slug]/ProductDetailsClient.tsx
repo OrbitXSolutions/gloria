@@ -373,7 +373,7 @@ export default function ProductDetailsClient({
           <ArrowLeft
             className={`h-4 w-4 ${locale == "ar" ? "ml-2 rotate-180" : "mr-2"}`}
           />
-          {t("common.back") || "Back"}
+          {t("common.back")}
         </Button>
 
         <div className={`grid lg:grid-cols-2 gap-12`}>
@@ -383,7 +383,7 @@ export default function ProductDetailsClient({
             <div className="aspect-square bg-white rounded-2xl overflow-hidden shadow-sm">
               <Image
                 src={allImages[selectedImageIndex]}
-                alt={getProductName() || "Product"}
+                alt={getProductName() || t("seo.product.defaultTitle")}
                 width={600}
                 height={600}
                 className="w-full h-full object-cover"
@@ -439,7 +439,7 @@ export default function ProductDetailsClient({
                   </div>
                   <span className="text-sm text-gray-600">
                     {averageRating.toFixed(1)} ({product.rates_count || 0}{" "}
-                    {t("reviews.reviews") || "reviews"})
+                    {t("reviews.reviews")})
                   </span>
                 </div>
               )}
@@ -490,7 +490,7 @@ export default function ProductDetailsClient({
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   <span className="text-green-600 font-medium">
                     {/* {t("products.inStock")} ({selectedVariant.quantity}{" "} */}
-                    {t("products.available") || "available"})
+                    {t("products.available")})
                   </span>
                 </div>
               ) : (
@@ -508,7 +508,7 @@ export default function ProductDetailsClient({
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t("products.quantity") || "Quantity"}
+                    {t("products.quantity")}
                   </label>
                   <div className={`flex items-center gap-3`}>
                     <Button
@@ -614,13 +614,13 @@ export default function ProductDetailsClient({
                         if (key.toLowerCase() === "color") {
                           if (typeof value === "object" && value?.name) {
                             displayAttributes.push({
-                              key: "Color",
+                              key: t("products.attributes.color"),
                               value: value.name,
                               hex: value.hex,
                             });
                           } else {
                             displayAttributes.push({
-                              key: "Color",
+                              key: t("products.attributes.color"),
                               value: String(value),
                             });
                           }
@@ -630,7 +630,7 @@ export default function ProductDetailsClient({
                           key.toLowerCase().includes("oz")
                         ) {
                           displayAttributes.push({
-                            key: "Size",
+                            key: t("products.attributes.size"),
                             value: String(value),
                           });
                         } else {
@@ -663,7 +663,7 @@ export default function ProductDetailsClient({
                                 {attr.key}
                               </span>
                               <div className="flex items-center gap-1">
-                                {attr.key === "Color" && attr.hex && (
+                                {attr.key === t("products.attributes.color") && attr.hex && (
                                   <div
                                     className="w-3 h-3 rounded-full border border-gray-300"
                                     style={{ backgroundColor: attr.hex }}
@@ -766,7 +766,7 @@ export default function ProductDetailsClient({
           {getProductDescription() && (
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {t("products.description") || "Description"}
+                {t("products.description")}
               </h3>
               <div className="text-gray-600 leading-relaxed">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
@@ -826,7 +826,7 @@ export default function ProductDetailsClient({
                     </p>
                     <p className="text-sm text-gray-500">
                       Based on {reviews.length} customer{" "}
-                      {reviews.length === 1 ? "review" : "reviews"}
+                      {reviews.length === 1 ? t("reviews.reviews").slice(0, -1) : t("reviews.reviews")}
                     </p>
                   </div>
 
@@ -919,7 +919,7 @@ export default function ProductDetailsClient({
                       name="reviewerName"
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary-500 focus:border-secondary-500"
-                      placeholder="Enter your full name"
+                      placeholder={t("contact.form.placeholders.firstName")}
                     />
                   </div>
                 )}
@@ -1049,7 +1049,7 @@ export default function ProductDetailsClient({
                     review.user_id && review.user
                       ? `${review.user.first_name || ""} ${review.user.last_name || ""
                         }`.trim() || review.user.email
-                      : review.name || "Anonymous";
+                      : review.name || t("reviews.anonymous");
 
                   const reviewerAvatar =
                     review.user_id && review.user?.avatar

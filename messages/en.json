@@ -100,7 +100,11 @@
     },
     "details": "Product Details",
     "quantity": "Quantity",
-    "available": "available"
+    "available": "available",
+    "attributes": {
+      "color": "Color",
+      "size": "Size"
+    }
   },
   "features": {
     "title": "Why Choose Us",
@@ -136,7 +140,8 @@
     "title": "What Our Customers Say",
     "description": "Don't just take our word for it - hear from our satisfied customers",
     "purchased": "Purchased",
-    "reviews": "reviews"
+    "reviews": "reviews",
+    "anonymous": "Anonymous"
   },
   "contact": {
     "title": "Get in Touch",
@@ -218,6 +223,29 @@
     "added": "Added to favorites",
     "removed": "Removed from favorites"
   },
+  "validation": {
+    "email": {
+      "required": "Email is required",
+      "invalid": "Please enter a valid email address"
+    },
+    "password": {
+      "required": "Password is required",
+      "confirmRequired": "Please confirm your password",
+      "mismatch": "Passwords do not match",
+      "tooShort": "Password must be at least 6 characters"
+    },
+    "address": {
+      "fullNameRequired": "Full name is required",
+      "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Please enter a valid phone number",
+      "addressRequired": "Address is required",
+      "emirateRequired": "Emirate is required",
+      "selectOrAdd": "Please select an address or add a new one"
+    },
+    "cart": {
+      "empty": "Your cart is empty"
+    }
+  },
   "toast": {
     "profile": {
       "updated": "Profile updated successfully",
@@ -251,7 +279,8 @@
     },
     "cart": {
       "empty": "Your cart is empty",
-      "checkoutFailed": "Failed to proceed to checkout. Please try again."
+      "checkoutFailed": "Failed to proceed to checkout. Please try again.",
+      "viewCart": "View Cart"
     },
     "checkout": {
       "orderNotFound": "Order not found",
@@ -278,9 +307,6 @@
     },
     "share": {
       "linkCopied": "Link copied to clipboard"
-    },
-    "cart": {
-      "viewCart": "View Cart"
     }
   },
   "cart": {

@@ -96,7 +96,11 @@
     "description": "الوصف",
     "details": "تفاصيل المنتج",
     "quantity": "الكمية",
-    "available": "متوفر"
+    "available": "متوفر",
+    "attributes": {
+      "color": "اللون",
+      "size": "المقاس"
+    }
   },
   "features": {
     "title": "لماذا تختارنا",
@@ -132,7 +136,8 @@
     "title": "ماذا يقول عملاؤنا",
     "description": "لا تأخذ كلامنا فقط - استمع لعملائنا الراضين",
     "purchased": "تم الشراء",
-    "reviews": "تقييم"
+    "reviews": "تقييم",
+    "anonymous": "مجهول"
   },
   "contact": {
     "title": "تواصل معنا",
@@ -214,6 +219,29 @@
     "added": "تم إضافته للمفضلة",
     "removed": "تم إزالته من المفضلة"
   },
+  "validation": {
+    "email": {
+      "required": "البريد الإلكتروني مطلوب",
+      "invalid": "يرجى إدخال عنوان بريد إلكتروني صحيح"
+    },
+    "password": {
+      "required": "كلمة المرور مطلوبة",
+      "confirmRequired": "يرجى تأكيد كلمة المرور",
+      "mismatch": "كلمات المرور غير متطابقة",
+      "tooShort": "كلمة المرور يجب أن تكون 6 أحرف على الأقل"
+    },
+    "address": {
+      "fullNameRequired": "الاسم الكامل مطلوب",
+      "phoneRequired": "رقم الهاتف مطلوب",
+      "phoneInvalid": "يرجى إدخال رقم هاتف صحيح",
+      "addressRequired": "العنوان مطلوب",
+      "emirateRequired": "الإمارة مطلوبة",
+      "selectOrAdd": "يرجى اختيار عنوان أو إضافة عنوان جديد"
+    },
+    "cart": {
+      "empty": "سلة التسوق فارغة"
+    }
+  },
   "toast": {
     "profile": {
       "updated": "تم تحديث الملف الشخصي بنجاح",
@@ -247,7 +275,8 @@
     },
     "cart": {
       "empty": "سلة التسوق فارغة",
-      "checkoutFailed": "فشل في المتابعة للدفع. يرجى المحاولة مرة أخرى."
+      "checkoutFailed": "فشل في المتابعة للدفع. يرجى المحاولة مرة أخرى.",
+      "viewCart": "عرض السلة"
     },
     "checkout": {
       "orderNotFound": "الطلب غير موجود",
@@ -274,9 +303,6 @@
     },
     "share": {
       "linkCopied": "تم نسخ الرابط إلى الحافظة"
-    },
-    "cart": {
-      "viewCart": "عرض السلة"
     }
   },
   "cart": {
