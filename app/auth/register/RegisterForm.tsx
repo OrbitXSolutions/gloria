@@ -13,8 +13,10 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Eye, EyeOff, Loader2, User, Mail, Phone } from "lucide-react";
 import Link from "next/link";
 import LoadingIndicator from "@/components/atoms/LoadingIndicator";
+import { useTranslations } from "next-intl";
 
 export default function RegisterForm() {
+  const t = useTranslations();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [formData, setFormData] = useState({
@@ -59,7 +61,7 @@ export default function RegisterForm() {
               htmlFor="firstName"
               className="text-sm font-medium text-gray-700"
             >
-              First Name
+              {t("auth.forms.register.firstName")}
             </Label>
             <div className="relative">
               <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -72,7 +74,7 @@ export default function RegisterForm() {
                 required
                 value={formData.firstName}
                 onChange={handleInputChange}
-                placeholder="First name"
+                placeholder={t("auth.forms.register.firstNamePlaceholder")}
                 className="pl-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
               />
             </div>
@@ -82,7 +84,7 @@ export default function RegisterForm() {
               htmlFor="lastName"
               className="text-sm font-medium text-gray-700"
             >
-              Last Name
+              {t("auth.forms.register.lastName")}
             </Label>
             <Input
               id="lastName"
@@ -91,7 +93,7 @@ export default function RegisterForm() {
               required
               value={formData.lastName}
               onChange={handleInputChange}
-              placeholder="Last name"
+              placeholder={t("auth.forms.register.lastNamePlaceholder")}
               className="h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
             />
           </div>
@@ -99,7 +101,7 @@ export default function RegisterForm() {
 
         <div className="space-y-2">
           <Label htmlFor="email" className="text-sm font-medium text-gray-700">
-            Email Address
+            {t("auth.forms.register.email")}
           </Label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -112,7 +114,7 @@ export default function RegisterForm() {
               required
               value={formData.email}
               onChange={handleInputChange}
-              placeholder="Enter your email"
+              placeholder={t("auth.forms.register.emailPlaceholder")}
               className="pl-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
             />
           </div>
@@ -120,7 +122,7 @@ export default function RegisterForm() {
 
         <div className="space-y-2">
           <Label htmlFor="phone" className="text-sm font-medium text-gray-700">
-            Phone Number
+            {t("auth.forms.register.phone")}
           </Label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -133,7 +135,7 @@ export default function RegisterForm() {
               required
               value={formData.phone}
               onChange={handleInputChange}
-              placeholder="Enter your phone number"
+              placeholder={t("auth.forms.register.phonePlaceholder")}
               className="pl-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
             />
           </div>
@@ -144,7 +146,7 @@ export default function RegisterForm() {
             htmlFor="password"
             className="text-sm font-medium text-gray-700"
           >
-            Password
+            {t("auth.forms.register.password")}
           </Label>
           <div className="relative">
             <Input
@@ -154,7 +156,7 @@ export default function RegisterForm() {
               required
               value={formData.password}
               onChange={handleInputChange}
-              placeholder="Create a password"
+              placeholder={t("auth.forms.register.passwordPlaceholder")}
               className="pr-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
             />
             <button
@@ -176,7 +178,7 @@ export default function RegisterForm() {
             htmlFor="confirmPassword"
             className="text-sm font-medium text-gray-700"
           >
-            Confirm Password
+            {t("auth.forms.register.confirmPassword")}
           </Label>
           <div className="relative">
             <Input
@@ -186,7 +188,7 @@ export default function RegisterForm() {
               required
               value={formData.confirmPassword}
               onChange={handleInputChange}
-              placeholder="Confirm your password"
+              placeholder={t("auth.forms.register.confirmPasswordPlaceholder")}
               className="pr-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
             />
             <button
@@ -206,19 +208,19 @@ export default function RegisterForm() {
 
       <div className="flex items-center">
         <label className="ml-2 block text-xs text-gray-700">
-          By clicking "Create Account," you agree to our{" "}
+          {t("auth.forms.register.termsAgreement")}{" "}
           <Link
             href="/terms"
             className="text-primary-700 hover:text-gray-700 font-medium"
           >
-            Terms of Service
+            {t("auth.forms.register.termsOfService")}
           </Link>{" "}
-          and{" "}
+          {t("auth.forms.register.and")}{" "}
           <Link
             href="/privacy"
             className="text-primary-700 hover:text-gray-700 font-medium"
           >
-            Privacy Policy
+            {t("auth.forms.register.privacyPolicy")}
           </Link>
         </label>
       </div>
@@ -247,10 +249,10 @@ export default function RegisterForm() {
         {isExecuting ? (
           <>
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Creating account...
+            {t("auth.forms.register.creatingAccount")}
           </>
         ) : (
-          "Create Account"
+          t("auth.forms.register.createAccountButton")
         )}
       </Button>
 
@@ -260,7 +262,7 @@ export default function RegisterForm() {
         </div>
         <div className="relative flex justify-center text-sm">
           <span className="px-4 bg-white text-gray-500">
-            Already have an account?
+            {t("auth.forms.register.alreadyHaveAccount")}
           </span>
         </div>
       </div>
@@ -272,7 +274,7 @@ export default function RegisterForm() {
       >
         <Link href="/auth/login">
           {" "}
-          Sign In
+          {t("auth.forms.register.signInButton")}
           <LoadingIndicator loaderClassName="text-primary" />
         </Link>
       </Button>
