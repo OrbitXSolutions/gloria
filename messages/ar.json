@@ -4,14 +4,12 @@
     "nav": {
       "home": "الرئيسية",
       "products": "المنتجات",
-      "gifts": "الهدايا",
-      "about": "من نحن"
+      "about": "من نحن",
+      "contact": "تواصل معنا"
     },
     "search": "البحث عن العطور...",
     "topBar": {
-      "freeShipping": "شحن مجاني للطلبات أكثر من 100 دولار",
-      "trackOrder": "تتبع الطلب",
-      "help": "المساعدة"
+      "freeShipping": "شحن مجاني للطلبات أكثر من 300 درهم"
     }
   },
   "hero": {
@@ -63,6 +61,7 @@
       "all": "جميع الفئات",
       "title": "اختر فئة"
     },
+    "buyNow": "شراء الآن",
     "search": "البحث عن المنتجات...",
     "description": "اكتشف مجموعتنا الكاملة من العطور الفاخرة",
     "addToCart": "أضف للسلة",
@@ -97,7 +96,11 @@
     "description": "الوصف",
     "details": "تفاصيل المنتج",
     "quantity": "الكمية",
-    "available": "متوفر"
+    "available": "متوفر",
+    "attributes": {
+      "color": "اللون",
+      "size": "المقاس"
+    }
   },
   "features": {
     "title": "لماذا تختارنا",
@@ -133,7 +136,23 @@
     "title": "ماذا يقول عملاؤنا",
     "description": "لا تأخذ كلامنا فقط - استمع لعملائنا الراضين",
     "purchased": "تم الشراء",
-    "reviews": "تقييم"
+    "reviews": "تقييم",
+    "anonymous": "مجهول",
+    "writeReview": "اكتب تقييم",
+    "fullName": "الاسم الكامل",
+    "rating": "التقييم",
+    "comment": "التعليق",
+    "submitReview": "إرسال التقييم",
+    "approvalNote": "* سيتم نشر تقييمك بعد موافقة الإدارة",
+    "approvalDescription": "سيتم نشر تقييمك بعد موافقة الإدارة.",
+    "outOf5Stars": "من 5 نجوم",
+    "basedOn": "بناءً على",
+    "customer": "عميل",
+    "customers": "عملاء",
+    "recommend": "يوصي",
+    "fiveStars": "5 نجوم",
+    "totalReviews": "إجمالي التقييمات",
+    "shareExperience": "شارك تجربتك مع هذا المنتج..."
   },
   "contact": {
     "title": "تواصل معنا",
@@ -163,6 +182,7 @@
     }
   },
   "footer": {
+    "brand": "إليفا بوتيك",
     "description": "اكتشف أجود العطور في العالم. نحن ننتقي العطور الفاخرة من أرقى العلامات التجارية عالمياً.",
     "quickLinks": {
       "title": "روابط سريعة",
@@ -180,7 +200,15 @@
       "unisex": "عطور للجنسين",
       "luxury": "المجموعة الفاخرة",
       "newArrivals": "وصل حديثاً",
-      "sale": "العروض"
+      "sale": "العروض",
+      "unnamed": "فئة غير مسماة"
+    },
+    "customerSupport": {
+      "title": "خدمة العملاء",
+      "description": "هل لديك أسئلة أو تحتاج مساعدة في طلبك؟ نحن هنا لمساعدتك.",
+      "phone": "الهاتف",
+      "email": "البريد الإلكتروني",
+      "contactUs": "اتصل بنا"
     },
     "newsletter": {
       "title": "النشرة الإخبارية",
@@ -188,21 +216,266 @@
       "placeholder": "أدخل بريدك الإلكتروني",
       "disclaimer": "بالاشتراك، أنت توافق على سياسة الخصوصية وشروط الخدمة."
     },
-    "copyright": "جلوريا. جميع الحقوق محفوظة.",
+    "copyright": {
+      "rights": "All rights reserved © 2025 to Eleva Boutique.",
+      "developed": "Designed & Developed by OrbitX Solutions"
+    },
     "legal": {
       "privacy": "سياسة الخصوصية",
-      "terms": "شروط الخدمة",
-      "cookies": "سياسة ملفات تعريف الارتباط"
+      "terms": "الشروط والأحكام"
     }
   },
   "auth": {
     "login": "تسجيل الدخول",
     "loginRequired": "تسجيل الدخول مطلوب",
-    "loginToAddFavorites": "يرجى تسجيل الدخول لإضافة العناصر إلى المفضلة"
+    "loginToAddFavorites": "يرجى تسجيل الدخول لإضافة العناصر إلى المفضلة",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "register": "تسجيل",
+    "createAccount": "إنشاء حساب",
+    "forgotPassword": "نسيت كلمة المرور",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "confirmEmail": "تأكيد البريد الإلكتروني",
+    "confirmPhone": "تأكيد رقم الهاتف",
+    "verifyOtp": "التحقق من رمز التحقق",
+    "setPhone": "تعيين رقم الهاتف",
+    "forms": {
+      "login": {
+        "title": "مرحباً بعودتك",
+        "subtitle": "سجل دخولك إلى حسابك",
+        "description": "خطو إلى عالم حيث يلتقي الفخامة بالابتكار. مجموعتك الحصرية تنتظرك.",
+        "features": {
+          "exclusiveCollections": "مجموعات المصممين الحصرية",
+          "personalizedExperience": "تجربة تسوق مخصصة",
+          "priorityAccess": "وصول أولوية للمنتجات الجديدة"
+        },
+        "emailOrPhone": "البريد الإلكتروني أو رقم الهاتف",
+        "emailOrPhonePlaceholder": "أدخل بريدك الإلكتروني أو رقم هاتفك",
+        "password": "كلمة المرور",
+        "passwordPlaceholder": "أدخل كلمة المرور",
+        "rememberMe": "تذكرني",
+        "forgotPassword": "نسيت كلمة المرور؟",
+        "signInButton": "تسجيل الدخول",
+        "signingIn": "جاري تسجيل الدخول...",
+        "newToEleva": "جديد في إليفا؟",
+        "createAccountButton": "إنشاء حساب",
+        "orDivider": "أو"
+      },
+      "register": {
+        "title": "إنشاء حساب",
+        "subtitle": "انضم إلى إليفا اليوم",
+        "firstName": "الاسم الأول",
+        "firstNamePlaceholder": "الاسم الأول",
+        "lastName": "اسم العائلة",
+        "lastNamePlaceholder": "اسم العائلة",
+        "email": "البريد الإلكتروني",
+        "emailPlaceholder": "أدخل بريدك الإلكتروني",
+        "phone": "رقم الهاتف",
+        "phonePlaceholder": "أدخل رقم هاتفك",
+        "password": "كلمة المرور",
+        "passwordPlaceholder": "أنشئ كلمة مرور",
+        "confirmPassword": "تأكيد كلمة المرور",
+        "confirmPasswordPlaceholder": "أكد كلمة المرور",
+        "createAccountButton": "إنشاء حساب",
+        "creatingAccount": "جاري إنشاء الحساب...",
+        "termsAgreement": "بالضغط على \"إنشاء حساب\"، أنت توافق على",
+        "termsOfService": "شروط الخدمة",
+        "and": "و",
+        "privacyPolicy": "سياسة الخصوصية",
+        "alreadyHaveAccount": "لديك حساب بالفعل؟",
+        "signInButton": "تسجيل الدخول"
+      },
+      "forgotPassword": {
+        "title": "نسيت كلمة المرور",
+        "subtitle": "أدخل بريدك الإلكتروني أو رقم هاتفك لإعادة تعيين كلمة المرور",
+        "emailOrPhone": "البريد الإلكتروني أو رقم الهاتف",
+        "emailOrPhonePlaceholder": "أدخل بريدك الإلكتروني أو رقم هاتفك",
+        "sendResetInstructions": "إرسال تعليمات إعادة التعيين",
+        "sendingInstructions": "جاري إرسال التعليمات...",
+        "backToSignIn": "العودة لتسجيل الدخول"
+      },
+      "resetPassword": {
+        "title": "إعادة تعيين كلمة المرور",
+        "subtitle": "أدخل كلمة المرور الجديدة",
+        "newPassword": "كلمة المرور الجديدة",
+        "newPasswordPlaceholder": "أدخل كلمة المرور الجديدة",
+        "confirmPassword": "تأكيد كلمة المرور",
+        "confirmPasswordPlaceholder": "أكد كلمة المرور الجديدة",
+        "resetPasswordButton": "إعادة تعيين كلمة المرور",
+        "resettingPassword": "جاري إعادة تعيين كلمة المرور...",
+        "redirecting": "جاري التوجيه لتسجيل الدخول..."
+      },
+      "confirmEmail": {
+        "title": "أكد بريدك الإلكتروني",
+        "subtitle": "لقد أرسلنا رابط التأكيد إلى بريدك الإلكتروني",
+        "emailSent": "تم إرسال بريد التأكيد إلى",
+        "checkEmail": "يرجى التحقق من بريدك الإلكتروني والضغط على رابط التأكيد",
+        "resendEmail": "إعادة إرسال بريد التأكيد",
+        "resendingEmail": "جاري إعادة الإرسال...",
+        "backToLogin": "العودة لتسجيل الدخول"
+      },
+      "confirmPhone": {
+        "title": "أكد رقم هاتفك",
+        "subtitle": "لقد أرسلنا رسالة تأكيد إلى هاتفك",
+        "phoneSent": "تم إرسال رسالة التأكيد إلى",
+        "checkSms": "يرجى التحقق من رسائل SMS والضغط على رابط التأكيد",
+        "resendSms": "إعادة إرسال رسالة التأكيد",
+        "resendingSms": "جاري إعادة الإرسال...",
+        "backToLogin": "العودة لتسجيل الدخول"
+      },
+      "verifyOtp": {
+        "title": "تحقق من هاتفك",
+        "subtitle": "أدخل رمز التحقق المرسل إلى هاتفك",
+        "otpSent": "تم إرسال رمز التحقق إلى",
+        "enterOtp": "أدخل الرمز المكون من 6 أرقام",
+        "otpPlaceholder": "أدخل رمز التحقق",
+        "verifyButton": "تحقق",
+        "verifying": "جاري التحقق...",
+        "resendOtp": "إعادة إرسال الرمز",
+        "resendingOtp": "جاري إعادة الإرسال...",
+        "resendIn": "إعادة إرسال الرمز خلال",
+        "otpResent": "تم إرسال رمز التحقق بنجاح!",
+        "resendError": "فشل في إعادة إرسال رمز التحقق",
+        "backToLogin": "العودة لتسجيل الدخول"
+      },
+      "setPhone": {
+        "title": "إدخال رقم الهاتف",
+        "description": "الرجاء إدخال رقم الهاتف الخاص بك للمتابعة. سوف نرسل لك رمز تحقق (OTP).",
+        "phoneLabel": "رقم الهاتف",
+        "sendOtpButton": "إرسال رمز التحقق",
+        "sending": "جاري الإرسال...",
+        "serverError": "حدث خطأ في الخادم"
+      }
+    },
+    "errors": {
+      "emailNotConfirmed": "البريد الإلكتروني غير مؤكد",
+      "phoneNotConfirmed": "رقم الهاتف غير مؤكد",
+      "invalidCredentials": "بريد إلكتروني/هاتف أو كلمة مرور غير صحيحة",
+      "userNotFound": "المستخدم غير موجود",
+      "emailAlreadyExists": "البريد الإلكتروني موجود بالفعل",
+      "phoneAlreadyExists": "رقم الهاتف موجود بالفعل",
+      "weakPassword": "كلمة المرور ضعيفة جداً",
+      "tooManyRequests": "طلبات كثيرة جداً. يرجى المحاولة لاحقاً",
+      "networkError": "خطأ في الشبكة. يرجى التحقق من الاتصال",
+      "otpExpired": "انتهت صلاحية رمز التحقق",
+      "otpInvalid": "رمز تحقق غير صحيح",
+      "otpTooManyAttempts": "محاولات كثيرة جداً. يرجى المحاولة لاحقاً"
+    },
+    "success": {
+      "loginSuccess": "تم تسجيل الدخول بنجاح",
+      "registerSuccess": "تم إنشاء الحساب بنجاح",
+      "passwordResetSent": "تم إرسال تعليمات إعادة تعيين كلمة المرور",
+      "passwordResetSuccess": "تم إعادة تعيين كلمة المرور بنجاح",
+      "emailConfirmed": "تم تأكيد البريد الإلكتروني بنجاح",
+      "phoneConfirmed": "تم تأكيد رقم الهاتف بنجاح",
+      "otpVerified": "تم التحقق من الهاتف بنجاح",
+      "phoneSet": "تم تعيين رقم الهاتف بنجاح"
+    },
+    "passwordStrength": {
+      "label": "قوة كلمة المرور",
+      "veryWeak": "ضعيفة جداً",
+      "weak": "ضعيفة",
+      "fair": "متوسطة",
+      "good": "جيدة",
+      "strong": "قوية",
+      "match": "كلمات المرور متطابقة",
+      "noMatch": "كلمات المرور غير متطابقة",
+      "requirements": "متطلبات كلمة المرور",
+      "minLength": "8 أحرف على الأقل",
+      "uppercase": "حرف كبير واحد",
+      "lowercase": "حرف صغير واحد",
+      "number": "رقم واحد"
+    }
   },
   "favorites": {
     "added": "تم إضافته للمفضلة",
     "removed": "تم إزالته من المفضلة"
+  },
+  "validation": {
+    "email": {
+      "required": "البريد الإلكتروني مطلوب",
+      "invalid": "يرجى إدخال عنوان بريد إلكتروني صحيح"
+    },
+    "password": {
+      "required": "كلمة المرور مطلوبة",
+      "confirmRequired": "يرجى تأكيد كلمة المرور",
+      "mismatch": "كلمات المرور غير متطابقة",
+      "tooShort": "كلمة المرور يجب أن تكون 6 أحرف على الأقل"
+    },
+    "address": {
+      "fullNameRequired": "الاسم الكامل مطلوب",
+      "phoneRequired": "رقم الهاتف مطلوب",
+      "phoneInvalid": "يرجى إدخال رقم هاتف صحيح",
+      "addressRequired": "العنوان مطلوب",
+      "emirateRequired": "الإمارة مطلوبة",
+      "selectOrAdd": "يرجى اختيار عنوان أو إضافة عنوان جديد"
+    },
+    "cart": {
+      "empty": "سلة التسوق فارغة"
+    }
+  },
+  "toast": {
+    "profile": {
+      "updated": "تم تحديث الملف الشخصي بنجاح",
+      "updateFailed": "فشل في تحديث الملف الشخصي",
+      "loadFailed": "تعذر تحميل بيانات المستخدم"
+    },
+    "security": {
+      "passwordMismatch": "كلمات المرور الجديدة غير متطابقة",
+      "passwordTooShort": "كلمة المرور يجب أن تكون 8 أحرف على الأقل",
+      "passwordUpdated": "تم تحديث كلمة المرور بنجاح",
+      "passwordUpdateFailed": "فشل في تحديث كلمة المرور",
+      "settingEnabled": "تم تفعيل {setting}",
+      "settingDisabled": "تم إلغاء تفعيل {setting}",
+      "sessionTerminated": "تم إنهاء الجلسة",
+      "allSessionsTerminated": "تم إنهاء جميع الجلسات الأخرى",
+      "loginRequired": "يرجى تسجيل الدخول للوصول إلى إعدادات الأمان"
+    },
+    "favorites": {
+      "removed": "تم إزالته من المفضلة",
+      "removeFailed": "فشل في إزالته من المفضلة",
+      "addedToCart": "تم إضافته للسلة",
+      "addToCartFailed": "فشل في إضافته للسلة"
+    },
+    "addresses": {
+      "added": "تم إضافة العنوان بنجاح",
+      "addFailed": "فشل في إضافة العنوان",
+      "deleted": "تم حذف العنوان بنجاح",
+      "deleteFailed": "فشل في حذف العنوان",
+      "defaultUpdated": "تم تحديث العنوان الافتراضي",
+      "defaultUpdateFailed": "فشل في تحديث العنوان الافتراضي"
+    },
+    "cart": {
+      "empty": "سلة التسوق فارغة",
+      "checkoutFailed": "فشل في المتابعة للدفع. يرجى المحاولة مرة أخرى.",
+      "viewCart": "عرض السلة"
+    },
+    "checkout": {
+      "orderNotFound": "الطلب غير موجود",
+      "orderNotFoundDescription": "يرجى المحاولة مرة أخرى أو التواصل مع الدعم",
+      "orderPlaced": "تم تقديم الطلب بنجاح!",
+      "orderConfirmed": "تم تأكيد الطلب {orderCode}",
+      "checkoutFailed": "فشل في الدفع",
+      "checkoutFailedDescription": "حدث خطأ غير متوقع",
+      "unexpectedError": "حدث خطأ غير متوقع",
+      "unexpectedErrorDescription": "يرجى المحاولة مرة أخرى أو التواصل مع الدعم إذا استمرت المشكلة"
+    },
+    "reviews": {
+      "invalidRating": "يرجى اختيار تقييم صحيح",
+      "emptyComment": "يرجى إدخال تعليق التقييم",
+      "submitError": "فشل في إرسال التقييم. يرجى المحاولة مرة أخرى.",
+      "submitted": "تم إرسال التقييم بنجاح!"
+    },
+    "auth": {
+      "signOutFailed": "فشل في تسجيل الخروج"
+    },
+    "phone": {
+      "otpSent": "تم إرسال رمز التحقق إلى رقم الهاتف",
+      "registrationFailed": "فشل في التسجيل"
+    },
+    "share": {
+      "linkCopied": "تم نسخ الرابط إلى الحافظة"
+    }
   },
   "cart": {
     "title": "سلة التسوق",
@@ -245,7 +518,308 @@
     "checkout": "الدفع",
     "clear": "مسح السلة"
   },
+  "checkout": {
+    "title": "الدفع",
+    "backToCart": "العودة للسلة",
+    "account": {
+      "title": "معلومات الحساب",
+      "description": "أنشئ حساباً للدفع السريع وتتبع الطلبات",
+      "email": "البريد الإلكتروني *",
+      "emailPlaceholder": "أدخل بريدك الإلكتروني",
+      "password": "كلمة المرور *",
+      "passwordPlaceholder": "أنشئ كلمة مرور",
+      "confirmPassword": "تأكيد كلمة المرور *",
+      "confirmPasswordPlaceholder": "أكد كلمة المرور",
+      "termsNotice": "بإنشاء حساب، أنت توافق على شروط الخدمة وسياسة الخصوصية."
+    },
+    "deliveryAddress": {
+      "title": "عنوان التوصيل",
+      "newAddress": "عنوان جديد",
+      "useNewAddress": "استخدم عنوان جديد",
+      "fullName": "الاسم الكامل *",
+      "fullNamePlaceholder": "أدخل الاسم الكامل",
+      "phone": "رقم الهاتف *",
+      "phonePlaceholder": "أدخل رقم الهاتف",
+      "address": "العنوان *",
+      "addressPlaceholder": "أدخل العنوان الكامل",
+      "emirate": "الإمارة *",
+      "emiratePlaceholder": "اختر الإمارة",
+      "notes": "ملاحظات التوصيل (اختياري)",
+      "notesPlaceholder": "أي تعليمات خاصة للتوصيل...",
+      "default": "افتراضي"
+    },
+    "orderSummary": {
+      "title": "ملخص الطلب",
+      "quantity": "الكمية",
+      "quantityLabel": "الكمية:",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "selectState": "اختر الإمارة",
+      "total": "المجموع",
+      "completeOrder": "إكمال الطلب",
+      "processing": "جاري المعالجة...",
+      "secureNotice": "دفع آمن مع تشفير SSL"
+    },
+    "guest": {
+      "title": "الدفع كضيف",
+      "description": "الدفع بدون إنشاء حساب"
+    }
+  },
   "common": {
     "back": "رجوع"
+  },
+  "profile": {
+    "overview": {
+      "title": "نظرة عامة على الملف الشخصي",
+      "welcome": "مرحباً بعودتك، {name}!",
+      "editProfile": "تعديل الملف الشخصي",
+      "security": "الأمان",
+      "welcomeMessage": "مرحباً بك في إليفا! أكمل ملفك الشخصي وابدأ في استكشاف مجموعتنا من العطور الفاخرة.",
+      "valuedCustomer": "عميل عزيز",
+      "memberSince": "عضو منذ",
+      "vipMember": "عضو VIP",
+      "highestTier": "لقد وصلت إلى أعلى مستوى!",
+      "spendMore": "أنفق ${amount} أكثر للوصول إلى مستوى {level}",
+      "tryAgain": "حاول مرة أخرى",
+      "loginRequired": "يرجى تسجيل الدخول لعرض ملفك الشخصي",
+      "loadError": "تعذر تحميل الملف الشخصي. يرجى المحاولة مرة أخرى.",
+      "loadDataError": "تعذر تحميل بيانات الملف الشخصي. يرجى تحديث الصفحة.",
+      "stats": {
+        "totalOrders": "إجمالي الطلبات",
+        "totalFavorites": "إجمالي المفضلة",
+        "totalSpent": "إجمالي الإنفاق",
+        "recentOrders": "الطلبات الحديثة",
+        "recentFavorites": "المفضلة الحديثة",
+        "viewAllOrders": "عرض جميع الطلبات",
+        "viewAllFavorites": "عرض جميع المفضلة",
+        "orderItems": "عناصر الطلب",
+        "moreItems": "+{count} أكثر",
+        "noOrders": "لا توجد طلبات بعد",
+        "noFavorites": "لا توجد مفضلة بعد",
+        "startShopping": "ابدأ التسوق لرؤية طلباتك هنا",
+        "addFavorites": "أضف عناصر إلى مفضلتك لرؤيتها هنا"
+      },
+      "vipBenefits": {
+        "title": "مزاياك كعضو VIP",
+        "prioritySupport": {
+          "title": "دعم ذو أولوية",
+          "description": "خدمة عملاء مخصصة على مدار الساعة"
+        },
+        "freeShipping": {
+          "title": "شحن مجاني",
+          "description": "على جميع الطلبات، بدون حد أدنى"
+        },
+        "exclusiveAccess": {
+          "title": "وصول حصري",
+          "description": "وصول مبكر للمجموعات الجديدة"
+        }
+      }
+    },
+    "sidebar": {
+      "overview": "نظرة عامة",
+      "overviewDescription": "ملخص الملف الشخصي",
+      "orders": "الطلبات",
+      "ordersDescription": "سجل الطلبات والتتبع",
+      "favorites": "المفضلة",
+      "favoritesDescription": "العناصر المحفوظة",
+      "addresses": "العناوين",
+      "addressesDescription": "عناوين الشحن",
+      "paymentMethods": "طرق الدفع",
+      "paymentMethodsDescription": "البطاقات والفواتير",
+      "notifications": "الإشعارات",
+      "notificationsDescription": "تفضيلات البريد الإلكتروني والرسائل النصية",
+      "security": "الأمان",
+      "securityDescription": "كلمة المرور والخصوصية",
+      "settings": "الإعدادات",
+      "settingsDescription": "تفضيلات الحساب",
+      "signOut": "تسجيل الخروج",
+      "signIn": "تسجيل الدخول",
+      "profileMenu": "قائمة الملف الشخصي"
+    },
+    "settings": {
+      "title": "إعدادات الحساب",
+      "subtitle": "إدارة تفضيلات وإعدادات حسابك",
+      "profileInformation": "معلومات الملف الشخصي",
+      "changePhoto": "تغيير الصورة",
+      "photoDescription": "JPG أو GIF أو PNG. الحد الأقصى 1 ميجابايت.",
+      "firstName": "الاسم الأول",
+      "lastName": "اسم العائلة",
+      "emailAddress": "عنوان البريد الإلكتروني",
+      "phoneNumber": "رقم الهاتف",
+      "saveChanges": "حفظ التغييرات",
+      "notifications": {
+        "title": "الإشعارات",
+        "subtitle": "إدارة تفضيلات الإشعارات",
+        "emailNotifications": "إشعارات البريد الإلكتروني",
+        "emailDescription": "استلام تحديثات الطلبات والعروض الترويجية عبر البريد الإلكتروني",
+        "smsNotifications": "إشعارات الرسائل النصية",
+        "smsDescription": "استلام تحديثات الطلبات عبر الرسائل النصية",
+        "marketingEmails": "رسائل البريد الإلكتروني التسويقية",
+        "marketingDescription": "استلام رسائل البريد الإلكتروني والعروض الترويجية"
+      },
+      "languageRegion": {
+        "title": "اللغة والمنطقة",
+        "language": "اللغة",
+        "timezone": "المنطقة الزمنية",
+        "saveSettings": "حفظ الإعدادات"
+      }
+    },
+    "security": {
+      "title": "إعدادات الأمان",
+      "subtitle": "إدارة أمان وخصوصية حسابك",
+      "changePassword": {
+        "title": "تغيير كلمة المرور",
+        "subtitle": "تحديث كلمة مرور حسابك",
+        "currentPassword": "كلمة المرور الحالية",
+        "newPassword": "كلمة المرور الجديدة",
+        "confirmPassword": "تأكيد كلمة المرور الجديدة",
+        "updatePassword": "تحديث كلمة المرور",
+        "updatingPassword": "جاري تحديث كلمة المرور..."
+      },
+      "twoFactorAuth": {
+        "title": "المصادقة الثنائية",
+        "subtitle": "إضافة طبقة أمان إضافية لحسابك",
+        "enabled": "المصادقة الثنائية مفعلة",
+        "disabled": "المصادقة الثنائية معطلة",
+        "enable": "تفعيل",
+        "disable": "إلغاء التفعيل"
+      },
+      "loginAlerts": {
+        "title": "تنبيهات تسجيل الدخول",
+        "subtitle": "احصل على إشعارات بمحاولات تسجيل الدخول الجديدة",
+        "enabled": "تنبيهات تسجيل الدخول مفعلة",
+        "disabled": "تنبيهات تسجيل الدخول معطلة"
+      },
+      "activeSessions": {
+        "title": "الجلسات النشطة",
+        "subtitle": "إدارة جلسات تسجيل الدخول النشطة",
+        "device": "الجهاز",
+        "location": "الموقع",
+        "lastActive": "آخر نشاط",
+        "current": "الحالي",
+        "activeNow": "نشط الآن",
+        "terminateSession": "إنهاء الجلسة",
+        "terminateAllSessions": "إنهاء جميع الجلسات الأخرى",
+        "terminatingSession": "جاري إنهاء الجلسة..."
+      }
+    },
+    "orders": {
+      "title": "طلباتي",
+      "subtitle": "تتبع طلباتك وعرض سجل الطلبات",
+      "searchOrders": "البحث في الطلبات...",
+      "filterByStatus": "تصفية حسب الحالة",
+      "allOrders": "جميع الطلبات",
+      "noOrders": "لا توجد طلبات",
+      "noOrdersDescription": "لم تقدم أي طلبات بعد.",
+      "startShopping": "ابدأ التسوق",
+      "orderNumber": "الطلب رقم #{number}",
+      "orderDate": "تاريخ الطلب",
+      "orderStatus": "حالة الطلب",
+      "orderTotal": "إجمالي الطلب",
+      "viewOrder": "عرض الطلب",
+      "downloadInvoice": "تحميل الفاتورة",
+      "trackOrder": "تتبع الطلب",
+      "authenticationRequired": "مطلوب تسجيل الدخول",
+      "pleaseLoginToViewOrders": "يرجى تسجيل الدخول لعرض طلباتك.",
+      "errorLoadingOrders": "خطأ في تحميل الطلبات",
+      "tryAgain": "حاول مرة أخرى",
+      "payment": "الدفع",
+      "cashOnDelivery": "الدفع عند الاستلام",
+      "cardPayment": "الدفع بالبطاقة",
+      "items": "العناصر"
+    },
+    "orderConfirmation": {
+      "title": "تم تأكيد الطلب!",
+      "subtitle": "شكراً لك على الشراء",
+      "breadcrumb": "تأكيد الطلب",
+      "continueShopping": "متابعة التسوق",
+      "orderInformation": "معلومات الطلب",
+      "orderNumber": "رقم الطلب",
+      "orderDate": "تاريخ الطلب",
+      "status": "الحالة",
+      "totalAmount": "المبلغ الإجمالي",
+      "deliveryAddress": "عنوان التوصيل",
+      "notes": "ملاحظات",
+      "orderItems": "عناصر الطلب",
+      "quantity": "الكمية",
+      "each": "لكل قطعة",
+      "orderSummary": "ملخص الطلب",
+      "subtotal": "المجموع الفرعي",
+      "shipping": "الشحن",
+      "free": "مجاني",
+      "total": "المجموع",
+      "whatsNext": "ما التالي؟",
+      "emailConfirmation": "ستتلقى تأكيداً بالبريد الإلكتروني قريباً",
+      "shipmentNotification": "سنخطرك عند شحن طلبك",
+      "trackOrderStatus": "تتبع حالة طلبك في أي وقت"
+    },
+    "favorites": {
+      "title": "مفضلتي",
+      "subtitle": "العناصر المحفوظة وقائمة الأمنيات",
+      "searchFavorites": "البحث في المفضلة...",
+      "noFavorites": "لا توجد مفضلة بعد",
+      "noFavoritesDescription": "لم تضيف أي عناصر إلى مفضلتك بعد.",
+      "startShopping": "ابدأ التسوق",
+      "removeFromFavorites": "إزالة من المفضلة",
+      "addToCart": "إضافة للسلة",
+      "moveToCart": "نقل للسلة"
+    },
+    "addresses": {
+      "title": "عناويني",
+      "subtitle": "إدارة عناوين الشحن",
+      "addNewAddress": "إضافة عنوان جديد",
+      "defaultAddress": "العنوان الافتراضي",
+      "setAsDefault": "تعيين كافتراضي",
+      "editAddress": "تعديل العنوان",
+      "deleteAddress": "حذف العنوان",
+      "noAddresses": "لا توجد عناوين محفوظة",
+      "noAddressesDescription": "لم تضيف أي عناوين شحن بعد.",
+      "addFirstAddress": "أضف عنوانك الأول"
+    }
+  },
+  "seo": {
+    "title": {
+      "default": "إليفا - عطور فاخرة لكل مناسبة",
+      "template": "%s | إليفا"
+    },
+    "description": "اكتشف مجموعتنا المنتقاة من العطور الفاخرة. توصيل سريع، إرجاع خلال 14 يوم، وعطور أصلية من أرقى العلامات التجارية.",
+    "keywords": "عطور, روائح, عطور فاخرة, عطور مصممين, كولونيا, أو دو برفوم, جمال, مستحضرات تجميل, إليفا بوتيك, عطور فاخرة, عطور رجالية, عطور نسائية, عطور للجنسين, عطور عربية, عطور شرق أوسطية, عطور العود, عطور المسك, عطور زهرية, عطور خشبية, عطور شرقية, عطور منعشة, عطور هدايا, متجر عطور إلكتروني, عطور أصلية, عطور حقيقية",
+    "openGraph": {
+      "title": "إليفا - عطور فاخرة لكل مناسبة",
+      "description": "اكتشف مجموعتنا المنتقاة من العطور الفاخرة. توصيل سريع، إرجاع خلال 14 يوم، وعطور أصلية من أرقى العلامات التجارية.",
+      "siteName": "إليفا",
+      "locale": "ar_SA"
+    },
+    "twitter": {
+      "title": "إليفا - عطور فاخرة",
+      "description": "اكتشف مجموعتنا المنتقاة من العطور الفاخرة",
+      "creator": "@eleva"
+    },
+    "product": {
+      "notFound": {
+        "title": "المنتج غير موجود",
+        "description": "المنتج المطلوب غير موجود."
+      },
+      "defaultTitle": "منتج إليفا",
+      "defaultDescription": "اكتشف منتجنا الفاخر {name}",
+      "defaultImageAlt": "صورة المنتج",
+      "keywords": {
+        "perfume": "عطر",
+        "fragrance": "رائحة",
+        "luxury": "فاخر"
+      }
+    }
+  },
+  "orderStatus": {
+    "draft": "مسودة",
+    "pending": "قيد المعالجة",
+    "confirmed": "تم التأكيد",
+    "processing": "جاري المعالجة",
+    "shipped": "تم الشحن",
+    "delivered": "تم التسليم",
+    "cancelled": "تم الإلغاء",
+    "failed": "فشل",
+    "refunded": "مسترجع",
+    "returned": "مسترجع"
   }
 }

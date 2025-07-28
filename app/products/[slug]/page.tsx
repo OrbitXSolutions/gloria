@@ -14,7 +14,7 @@ import { Toaster } from "sonner";
 import ProductDetailsClient from "./ProductDetailsClient";
 import { useLocale } from "next-intl";
 import { getProductImageUrl } from "@/lib/constants/supabase-storage";
-import { getLocale } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -28,13 +28,14 @@ export async function generateMetadata({
   const { slug } = await params;
   const searchParams = await sp;
   const locale = await getLocale();
+  const t = await getTranslations({ locale, namespace: "seo" });
 
   const product = await getProductBySlug(slug);
 
   if (!product) {
     return {
-      title: "Product Not Found",
-      description: "The requested product could not be found.",
+      title: t("product.notFound.title"),
+      description: t("product.notFound.description"),
     };
   }
 
@@ -61,16 +62,23 @@ export async function generateMetadata({
       url: imageUrl,
       width: 1200,
       height: 630,
-      alt: metaTitle || "Product Image",
+      alt: metaTitle || t("product.defaultImageAlt"),
     },
   ];
 
   return {
-    title: metaTitle || "Gloria Product",
-    description: metaDescription || `Discover our premium product ${metaTitle}`,
+    title: metaTitle || t("product.defaultTitle"),
+    description:
+      metaDescription ||
+      t("product.defaultDescription", { name: metaTitle || "" }),
     keywords:
       product.keywords ||
-      ["perfume", "fragrance", "luxury", metaTitle].join(", "),
+      [
+        t("product.keywords.perfume"),
+        t("product.keywords.fragrance"),
+        t("product.keywords.luxury"),
+        metaTitle,
+      ].join(", "),
     alternates: {
       canonical: `/products/${slug}${locale !== "en" ? `?lang=${locale}` : ""}`,
       languages: {
@@ -80,11 +88,12 @@ export async function generateMetadata({
       },
     },
     openGraph: {
-      title: metaTitle || "Gloria Product",
+      title: metaTitle || t("product.defaultTitle"),
       description:
-        metaDescription || `Discover our premium product ${metaTitle}`,
+        metaDescription ||
+        t("product.defaultDescription", { name: metaTitle || "" }),
       url: `/products/${slug}${locale !== "en" ? `?lang=${locale}` : ""}`,
-      type: "website",
+      type: "website" as const,
       locale: locale === "ar" ? "ar_SA" : "en_US",
       images: images,
       ...(product.price && {
@@ -100,9 +109,10 @@ export async function generateMetadata({
     },
     twitter: {
       card: "summary_large_image",
-      title: metaTitle || "Gloria Product",
+      title: metaTitle || t("product.defaultTitle"),
       description:
-        metaDescription || `Discover our premium product ${metaTitle}`,
+        metaDescription ||
+        t("product.defaultDescription", { name: metaTitle || "" }),
       images: [imageUrl],
     },
     robots: {

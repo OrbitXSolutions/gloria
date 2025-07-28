@@ -11,7 +11,7 @@ interface CheckoutPageProps {
 export default async function Page({ params }: CheckoutPageProps) {
   const { orderCode } = await params;
   const supabase = await createSsrClient();
-  debugger;
+
   // Get current user
   const {
     data: { user: supaUser },
@@ -20,10 +20,10 @@ export default async function Page({ params }: CheckoutPageProps) {
   const { data: user } = !supaUser
     ? { data: null }
     : await supabase
-        .from("users")
-        .select("*")
-        .eq("user_id", supaUser.id)
-        .single();
+      .from("users")
+      .select("*")
+      .eq("user_id", supaUser.id)
+      .single();
 
   // Get order details
   const { data: order, error: orderError } = await supabase

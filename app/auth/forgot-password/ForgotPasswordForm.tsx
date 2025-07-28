@@ -12,8 +12,10 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Loader2, ArrowLeft, Mail } from "lucide-react"
 import Link from "next/link"
+import { useTranslations } from "next-intl"
 
 export default function ForgotPasswordForm() {
+  const t = useTranslations();
   const [emailOrPhone, setEmailOrPhone] = useState("")
   const router = useRouter()
 
@@ -35,7 +37,7 @@ export default function ForgotPasswordForm() {
       <div className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="emailOrPhone" className="text-sm font-medium text-gray-700">
-            Email or Phone Number
+            {t("auth.forms.forgotPassword.emailOrPhone")}
           </Label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -48,7 +50,7 @@ export default function ForgotPasswordForm() {
               required
               value={emailOrPhone}
               onChange={(e) => setEmailOrPhone(e.target.value)}
-              placeholder="Enter your email or phone number"
+              placeholder={t("auth.forms.forgotPassword.emailOrPhonePlaceholder")}
               className="pl-10 h-12 border-gray-200 focus:border-gray-900 focus:ring-gray-900 rounded-lg"
             />
           </div>
@@ -75,10 +77,10 @@ export default function ForgotPasswordForm() {
         {isExecuting ? (
           <>
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Sending instructions...
+            {t("auth.forms.forgotPassword.sendingInstructions")}
           </>
         ) : (
-          "Send Reset Instructions"
+          t("auth.forms.forgotPassword.sendResetInstructions")
         )}
       </Button>
 
@@ -88,7 +90,7 @@ export default function ForgotPasswordForm() {
           className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to sign in
+          {t("auth.forms.forgotPassword.backToSignIn")}
         </Link>
       </div>
     </form>

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LoginForm from "./LoginForm";
+import { useTranslations } from "next-intl";
 
 export const metadata: Metadata = {
   title: "Login - Gloria",
@@ -7,6 +8,8 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
+  const t = useTranslations();
+
   return (
     <div className="min-h-screen flex">
       {/* Left side - Image/Promo */}
@@ -23,13 +26,15 @@ export default function LoginPage() {
         {/* Promo Content */}
         <div className="relative z-10 flex flex-col justify-between p-12 text-white">
           <div>
-            <h1 className="text-4xl font-bold mb-2">GLORIA</h1>
+            <h1 className="text-4xl font-bold mb-2">ELEVA</h1>
             <p className="text-lg opacity-90">Luxury Fashion Redefined</p>
           </div>
 
           <div className="space-y-6">
             <div>
-              <h2 className="text-3xl font-light mb-4">Welcome Back</h2>
+              <h2 className="text-3xl font-light mb-4">
+                {t("auth.forms.login.title")}
+              </h2>
               <p className="text-lg opacity-80 leading-relaxed">
                 Step into a world where luxury meets innovation. Your exclusive
                 collection awaits.
@@ -59,7 +64,7 @@ export default function LoginPage() {
           </div>
 
           <div className="text-xs opacity-60">
-            © 2024 Gloria. All rights reserved.
+            © 2024 Eleva. All rights reserved.
           </div>
         </div>
       </div>
@@ -69,7 +74,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Mobile header */}
           <div className="lg:hidden text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">GLORIA</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">ELEVA</h1>
             <p className="text-gray-600">Luxury Fashion Redefined</p>
           </div>
 

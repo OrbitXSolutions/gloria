@@ -45,7 +45,7 @@ export async function getUserProfile(userId: number) {
           .select("total_price")
           .eq("user_id", userId)
           .eq("is_deleted", false)
-          .in("status", ["delivered", "delivered"]),
+          .in("status", ["delivered", "confirmed", "processing", "shipped"]),
       ]);
 
     // Handle results with fallbacks
@@ -60,9 +60,9 @@ export async function getUserProfile(userId: number) {
     const totalSpent =
       totalSpentResult.status === "fulfilled"
         ? totalSpentResult.value.data?.reduce(
-            (sum, order) => sum + (order.total_price || 0),
-            0
-          ) || 0
+          (sum, order) => sum + (order.total_price || 0),
+          0
+        ) || 0
         : 0;
 
     const getVipStatus = (spent: number) => {
@@ -120,6 +120,8 @@ export async function getUserOrders(
   const supabase = await createSsrClient();
 
   try {
+    console.log("Fetching orders for user ID:", userId);
+
     let query = supabase
       .from("orders")
       .select(
@@ -127,7 +129,7 @@ export async function getUserOrders(
         *,
         order_items(
           *,
-          product:products(*)
+          products(*)
         ),
         address:addresses(*),
         user:users(*)
@@ -153,6 +155,7 @@ export async function getUserOrders(
       return [];
     }
 
+    console.log("Successfully fetched orders:", data?.length || 0, "orders");
     return data || [];
   } catch (error) {
     console.error("Error in getUserOrders:", error);
@@ -199,13 +202,13 @@ export async function getUserFavorites(userId: number, categoryId?: number) {
         ...favorite,
         product: favorite.product
           ? {
-              ...favorite.product,
-              in_cart:
-                favorite.product.cart_items &&
-                favorite.product.cart_items.length > 0,
-              cart_quantity: favorite.product.cart_items?.[0]?.quantity || null,
-              is_favorite: true,
-            }
+            ...favorite.product,
+            in_cart:
+              favorite.product.cart_items &&
+              favorite.product.cart_items.length > 0,
+            cart_quantity: favorite.product.cart_items?.[0]?.quantity || null,
+            is_favorite: true,
+          }
           : null,
       }))
       .filter((fav) => fav.product !== null); // Filter out favorites with deleted products

@@ -3,6 +3,7 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { toast } from "sonner";
 import { useHookFormAction } from "@next-safe-action/adapter-react-hook-form/hooks";
+import { useTranslations } from "next-intl";
 
 import {
   Form,
@@ -20,6 +21,7 @@ import {
   UserSetPhoneSchema,
 } from "@/lib/schemas/set-phone-schema";
 import { Button } from "../ui/button";
+import { PhoneInput } from "../ui/phone-input";
 
 // const setphoneFields: SetPhoneFieldData[] = [
 //   {
@@ -32,6 +34,8 @@ import { Button } from "../ui/button";
 // ] as const;
 
 export default function SetPhoneForm() {
+  const t = useTranslations("toast");
+  const formT = useTranslations("auth.forms.setPhone");
   const {
     form,
     action,
@@ -40,11 +44,11 @@ export default function SetPhoneForm() {
   } = useHookFormAction(setPhoneAction, zodResolver(UserSetPhoneSchema), {
     actionProps: {
       onSuccess: ({ data }) => {
-        toast.info("تم إرسال رمز التحقق إلى رقم الهاتف");
+        toast.info(t("phone.otpSent"));
       },
       onError: ({ error }) => {
         console.error("Registration error:", error);
-        toast.error("فشل في التسجيل");
+        toast.error(t("phone.registrationFailed"));
       },
     },
 
@@ -63,7 +67,7 @@ export default function SetPhoneForm() {
             <p className="text-sm text-destructive text-center">
               {typeof action.result?.serverError === "string"
                 ? action.result.serverError
-                : "حدث خطأ في الخادم"}
+                : formT("serverError")}
             </p>
           </div>
         )}
@@ -75,14 +79,14 @@ export default function SetPhoneForm() {
             control={form.control}
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel htmlFor={field.name}>{"رقم الهاتف"}</FormLabel>
+                <FormLabel htmlFor={field.name}>{formT("phoneLabel")}</FormLabel>
                 <FormControl>
-                  <Input
+                  <PhoneInput
                     id={field.name}
-                    type="tel"
                     placeholder="+201234567890"
                     disabled={action.isPending}
-                    {...field}
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 </FormControl>
                 <FormMessage />
@@ -99,11 +103,11 @@ export default function SetPhoneForm() {
         >
           {action.isPending ? (
             <>
-              جاري التسجيل...
+              {formT("sending")}
               <Spinner size="small" />
             </>
           ) : (
-            "إرسال رمز التحقق"
+            formT("sendOtpButton")
           )}
         </Button>
       </form>
