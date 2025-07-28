@@ -33,6 +33,7 @@ import {
   getFirstImageUrl,
 } from "@/lib/constants/supabase-storage";
 import Image from "next/image";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 type UserProfile = Database["public"]["Tables"]["users"]["Row"];
 type Order = OrderWithItems;
@@ -63,6 +64,7 @@ export default function CheckoutPageClient({
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isCheckoutComplete, setIsCheckoutComplete] = useState(false);
 
   // Form data
   const [formData, setFormData] = useState({
@@ -81,7 +83,7 @@ export default function CheckoutPageClient({
 
   // Initialize form data and address selection
   useEffect(() => {
-    if (cart.items.length === 0) {
+    if (cart.items.length === 0 && !isCheckoutComplete) {
       router.push("/cart");
       return;
     }
@@ -103,6 +105,11 @@ export default function CheckoutPageClient({
       const defaultAddress = userAddresses.find((addr) => addr.is_default);
       if (defaultAddress) {
         setSelectedAddressId(defaultAddress.id);
+        // Set state code from default address
+        setFormData(prev => ({
+          ...prev,
+          stateCode: defaultAddress.state_code || ""
+        }));
       } else if (userAddresses.length === 0) {
         setShowNewAddressForm(true);
       }
@@ -125,6 +132,7 @@ export default function CheckoutPageClient({
     cart.items.length,
     router,
     formData.stateCode,
+    isCheckoutComplete,
   ]);
 
   const handleInputChange = (field: string, value: string) => {
@@ -152,7 +160,7 @@ export default function CheckoutPageClient({
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || "Checkout failed");
+      throw new Error(errorData.error || t("toast.checkout.checkoutFailed"));
     }
 
     return await response.json();
@@ -169,7 +177,7 @@ export default function CheckoutPageClient({
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || "Checkout failed");
+      throw new Error(errorData.error || t("toast.checkout.checkoutFailed"));
     }
 
     return await response.json();
@@ -178,33 +186,38 @@ export default function CheckoutPageClient({
   const validateForm = (): string | null => {
     if (!user) {
       // Guest checkout validation
-      if (!formData.email) return "Email is required";
+      if (!formData.email) return t("validation.email.required");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-        return "Please enter a valid email address";
-      if (!formData.password) return "Password is required";
-      if (!formData.confirmPassword) return "Please confirm your password";
+        return t("validation.email.invalid");
+      if (!formData.password) return t("validation.password.required");
+      if (!formData.confirmPassword) return t("validation.password.confirmRequired");
       if (formData.password !== formData.confirmPassword)
-        return "Passwords do not match";
+        return t("validation.password.mismatch");
       if (formData.password.length < 6)
-        return "Password must be at least 6 characters";
+        return t("validation.password.tooShort");
     }
 
     if (showNewAddressForm || !selectedAddressId) {
       // Address validation
-      if (!formData.fullName.trim()) return "Full name is required";
-      if (!formData.phone.trim()) return "Phone number is required";
+      if (!formData.fullName.trim()) return t("validation.address.fullNameRequired");
+      if (!formData.phone.trim()) return t("validation.address.phoneRequired");
       if (!/^[+]?[0-9\s\-$$$$]{7,15}$/.test(formData.phone.replace(/\s/g, "")))
-        return "Please enter a valid phone number";
-      if (!formData.address.trim()) return "Address is required";
-      if (!formData.stateCode) return "Emirate is required";
+        return t("validation.address.phoneInvalid");
+      if (!formData.address.trim()) return t("validation.address.addressRequired");
+      if (!formData.stateCode) return t("validation.address.emirateRequired");
+    }
+
+    // Ensure state is selected for shipping calculation
+    if (!formData.stateCode) {
+      return t("validation.address.emirateRequired");
     }
 
     if (!selectedAddressId && !showNewAddressForm && user) {
-      return "Please select an address or add a new one";
+      return t("validation.address.selectOrAdd");
     }
 
     if (cart.items.length === 0) {
-      return "Your cart is empty";
+      return t("validation.cart.empty");
     }
 
     return null;
@@ -218,7 +231,7 @@ export default function CheckoutPageClient({
     }
 
     if (cart.items.length === 0) {
-      toast.error("Your cart is empty");
+      toast.error(t("toast.cart.empty"));
       router.push("/cart");
       return;
     }
@@ -226,6 +239,13 @@ export default function CheckoutPageClient({
     setIsLoading(true);
 
     try {
+      // Get state code from selected address if using existing address
+      let stateCode = formData.stateCode;
+      if (selectedAddressId && !showNewAddressForm) {
+        const selectedAddress = userAddresses.find(addr => addr.id === selectedAddressId);
+        stateCode = selectedAddress?.state_code || formData.stateCode;
+      }
+
       const checkoutData: CheckoutData = {
         email: formData.email,
         password: formData.password,
@@ -233,12 +253,13 @@ export default function CheckoutPageClient({
         fullName: formData.fullName,
         phone: formData.phone,
         address: formData.address,
-        stateCode: formData.stateCode,
+        stateCode: stateCode,
         notes: formData.notes,
         selectedAddressId: selectedAddressId || undefined,
         cartItems: cart.items,
       };
       let result;
+      debugger;
       if (user) {
         result = await handleAuthenticatedCheckout(checkoutData);
       } else {
@@ -246,27 +267,29 @@ export default function CheckoutPageClient({
       }
 
       if (result.success && result.orderCode) {
+        // Set checkout complete flag to prevent cart redirect
+        setIsCheckoutComplete(true);
+
         // Clear cart
         clear();
 
-        toast.success("Order placed successfully!", {
-          description: `Order ${result.orderCode} has been created`,
+        toast.success(t("toast.checkout.orderPlaced"), {
+          description: t("toast.checkout.orderConfirmed", { orderCode: result.orderCode }),
           duration: 5000,
         });
 
         // Redirect to order confirmation
         router.push(`/orders/${result.orderCode}`);
       } else {
-        toast.error("Checkout failed", {
-          description: result.error || "An unexpected error occurred",
+        toast.error(t("toast.checkout.checkoutFailed"), {
+          description: result.error || t("toast.checkout.checkoutFailedDescription"),
           duration: 5000,
         });
       }
     } catch (error) {
       console.error("Checkout error:", error);
-      toast.error("An unexpected error occurred", {
-        description:
-          "Please try again or contact support if the problem persists",
+      toast.error(t("toast.checkout.unexpectedError"), {
+        description: t("toast.checkout.unexpectedErrorDescription"),
         duration: 5000,
       });
     } finally {
@@ -276,9 +299,18 @@ export default function CheckoutPageClient({
 
   // Calculate totals
   const subtotal = cart.total;
-  const tax = subtotal * 0.08; // 8% tax
-  const shipping = 0; // Free shipping
-  const total = subtotal + tax + shipping;
+  const shipping = formData.stateCode ?
+    uaeStates.find(s => s.code === formData.stateCode)?.delivery_fee || 0 : 0;
+  const total = subtotal + shipping;
+
+  // Helper function to get primary currency for the cart
+  const getPrimaryCurrency = () => {
+    if (cart.items.length === 0) return undefined;
+    // Use the first item's currency as primary, assuming all items have same currency
+    return cart.items[0]?.product.currency || undefined;
+  };
+
+  const primaryCurrency = getPrimaryCurrency();
 
   if (cart.items.length === 0) {
     return null; // Will redirect in useEffect
@@ -298,9 +330,9 @@ export default function CheckoutPageClient({
               {t("cart.title")}
             </Link>
             <span>/</span>
-            <span className="text-gray-900">Checkout</span>
+            <span className="text-gray-900">{t("checkout.title")}</span>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900">Checkout</h1>
+          <h1 className="text-3xl font-bold text-gray-900">{t("checkout.title")}</h1>
         </div>
       </div>
 
@@ -312,11 +344,10 @@ export default function CheckoutPageClient({
             <Link href="/cart">
               <Button variant="ghost" className={``}>
                 <ArrowLeft
-                  className={`h-4 w-4 ${
-                    locale == "ar" ? "ml-2 rotate-180" : "mr-2"
-                  }`}
+                  className={`h-4 w-4 ${locale == "ar" ? "ml-2 rotate-180" : "mr-2"
+                    }`}
                 />
-                Back to Cart
+                {t("checkout.backToCart")}
               </Button>
             </Link>
 
@@ -328,7 +359,7 @@ export default function CheckoutPageClient({
                     <User className="h-4 w-4 text-secondary-600" />
                   </div>
                   <h2 className="text-xl mx-3 font-bold text-gray-900">
-                    Account Information
+                    {t("checkout.account.title")}
                   </h2>
                 </div>
 
@@ -338,7 +369,7 @@ export default function CheckoutPageClient({
                       htmlFor="email"
                       className="block text-sm font-medium text-gray-700 mb-2"
                     >
-                      Email Address *
+                      {t("checkout.account.email")}
                     </label>
                     <Input
                       id="email"
@@ -347,7 +378,7 @@ export default function CheckoutPageClient({
                       onChange={(e) =>
                         handleInputChange("email", e.target.value)
                       }
-                      placeholder="Enter your email"
+                      placeholder={t("checkout.account.emailPlaceholder")}
                       required
                     />
                   </div>
@@ -358,7 +389,7 @@ export default function CheckoutPageClient({
                         htmlFor="password"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        Password *
+                        {t("checkout.account.password")}
                       </label>
                       <div className="relative">
                         <Input
@@ -368,14 +399,14 @@ export default function CheckoutPageClient({
                           onChange={(e) =>
                             handleInputChange("password", e.target.value)
                           }
-                          placeholder="Create a password"
+                          placeholder={t("checkout.account.passwordPlaceholder")}
                           required
                         />
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1"
+                          className="absolute end-2 top-1/2 transform -translate-y-1/2 p-1"
                           onClick={() => setShowPassword(!showPassword)}
                         >
                           {showPassword ? (
@@ -392,7 +423,7 @@ export default function CheckoutPageClient({
                         htmlFor="confirmPassword"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        Confirm Password *
+                        {t("checkout.account.confirmPassword")}
                       </label>
                       <div className="relative">
                         <Input
@@ -402,14 +433,14 @@ export default function CheckoutPageClient({
                           onChange={(e) =>
                             handleInputChange("confirmPassword", e.target.value)
                           }
-                          placeholder="Confirm your password"
+                          placeholder={t("checkout.account.confirmPasswordPlaceholder")}
                           required
                         />
                         <Button
                           type="button"
                           variant="ghost"
                           size="sm"
-                          className="absolute right-2 top-1/2 transform -translate-y-1/2 p-1"
+                          className="absolute end-2 top-1/2 transform -translate-y-1/2 p-1"
                           onClick={() =>
                             setShowConfirmPassword(!showConfirmPassword)
                           }
@@ -425,8 +456,7 @@ export default function CheckoutPageClient({
                   </div>
 
                   <p className="text-sm text-gray-600">
-                    By creating an account, you agree to our Terms of Service
-                    and Privacy Policy.
+                    {t("checkout.account.termsNotice")}
                   </p>
                 </div>
               </div>
@@ -439,7 +469,7 @@ export default function CheckoutPageClient({
                   <MapPin className="h-4 w-4 text-secondary-600" />
                 </div>
                 <h2 className="text-xl font-bold text-gray-900">
-                  Delivery Address
+                  {t("checkout.deliveryAddress.title")}
                 </h2>
               </div>
 
@@ -449,11 +479,10 @@ export default function CheckoutPageClient({
                   {userAddresses.map((address) => (
                     <div
                       key={address.id}
-                      className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${
-                        selectedAddressId === address.id
-                          ? "border-secondary-600 bg-secondary-50"
-                          : "border-gray-200 hover:border-gray-300"
-                      }`}
+                      className={`border-2 rounded-lg p-4 cursor-pointer transition-colors ${selectedAddressId === address.id
+                        ? "border-secondary-600 bg-secondary-50"
+                        : "border-gray-200 hover:border-gray-300"
+                        }`}
                       onClick={() => setSelectedAddressId(address.id)}
                     >
                       <div className={`flex items-start justify-between `}>
@@ -464,7 +493,7 @@ export default function CheckoutPageClient({
                             </h3>
                             {address.is_default && (
                               <Badge variant="secondary" className="text-xs">
-                                Default
+                                {t("checkout.deliveryAddress.default")}
                               </Badge>
                             )}
                           </div>
@@ -484,11 +513,10 @@ export default function CheckoutPageClient({
                           )}
                         </div>
                         <div
-                          className={`w-4 h-4 rounded-full border-2 ${
-                            selectedAddressId === address.id
-                              ? "border-secondary-600 bg-secondary-600"
-                              : "border-gray-300"
-                          }`}
+                          className={`w-4 h-4 rounded-full border-2 ${selectedAddressId === address.id
+                            ? "border-secondary-600 bg-secondary-600"
+                            : "border-gray-300"
+                            }`}
                         >
                           {selectedAddressId === address.id && (
                             <div className="w-2 h-2 bg-white rounded-full m-0.5" />
@@ -503,7 +531,7 @@ export default function CheckoutPageClient({
                     onClick={() => setShowNewAddressForm(true)}
                     className="w-full"
                   >
-                    Add New Address
+                    {t("checkout.deliveryAddress.newAddress")}
                   </Button>
                 </div>
               )}
@@ -512,122 +540,119 @@ export default function CheckoutPageClient({
               {(showNewAddressForm ||
                 (user && userAddresses.length === 0) ||
                 !user) && (
-                <div className="space-y-4">
-                  {user && userAddresses.length > 0 && (
-                    <div className={`flex items-center justify-between mb-4 `}>
-                      <h3 className="text-lg font-semibold text-gray-900">
-                        Add New Address
-                      </h3>
-                      <Button
-                        variant="ghost"
-                        onClick={() => setShowNewAddressForm(false)}
-                        className="text-gray-500"
-                      >
-                        Cancel
-                      </Button>
-                    </div>
-                  )}
+                  <div className="space-y-4">
+                    {user && userAddresses.length > 0 && (
+                      <div className={`flex items-center justify-between mb-4 `}>
+                        <h3 className="text-lg font-semibold text-gray-900">
+                          {t("checkout.deliveryAddress.newAddress")}
+                        </h3>
+                        <Button
+                          variant="ghost"
+                          onClick={() => setShowNewAddressForm(false)}
+                          className="text-gray-500"
+                        >
+                          {t("common.back")}
+                        </Button>
+                      </div>
+                    )}
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <label
+                          htmlFor="fullName"
+                          className="block text-sm font-medium text-gray-700 mb-2"
+                        >
+                          {t("checkout.deliveryAddress.fullName")}
+                        </label>
+                        <Input
+                          id="fullName"
+                          value={formData.fullName}
+                          onChange={(e) =>
+                            handleInputChange("fullName", e.target.value)
+                          }
+                          placeholder={t("checkout.deliveryAddress.fullNamePlaceholder")}
+                          required
+                        />
+                      </div>
+
+                      <div>
+                        <label
+                          htmlFor="phone"
+                          className="block text-sm font-medium text-gray-700 mb-2"
+                        >
+                          {t("checkout.deliveryAddress.phone")}
+                        </label>
+                        <PhoneInput
+                          id="phone"
+                          value={formData.phone}
+                          onChange={(value) => handleInputChange("phone", value)}
+                          placeholder={t("checkout.deliveryAddress.phonePlaceholder")}
+                        />
+                      </div>
+                    </div>
+
                     <div>
                       <label
-                        htmlFor="fullName"
+                        htmlFor="address"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        Full Name *
+                        {t("checkout.deliveryAddress.address")}
                       </label>
                       <Input
-                        id="fullName"
-                        value={formData.fullName}
+                        id="address"
+                        value={formData.address}
                         onChange={(e) =>
-                          handleInputChange("fullName", e.target.value)
+                          handleInputChange("address", e.target.value)
                         }
-                        placeholder="Enter full name"
+                        placeholder={t("checkout.deliveryAddress.addressPlaceholder")}
                         required
                       />
                     </div>
 
                     <div>
                       <label
-                        htmlFor="phone"
+                        htmlFor="state"
                         className="block text-sm font-medium text-gray-700 mb-2"
                       >
-                        Phone Number *
+                        {t("checkout.deliveryAddress.emirate")}
                       </label>
-                      <Input
-                        id="phone"
-                        value={formData.phone}
+                      <select
+                        id="state"
+                        value={formData.stateCode}
                         onChange={(e) =>
-                          handleInputChange("phone", e.target.value)
+                          handleInputChange("stateCode", e.target.value)
                         }
-                        placeholder="Enter phone number"
+                        className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary-500 focus:border-secondary-500"
                         required
+                      >
+                        <option value="">{t("checkout.deliveryAddress.emiratePlaceholder")}</option>
+                        {uaeStates.map((state) => (
+                          <option key={state.code} value={state.code}>
+                            {locale === "ar" ? state.name_ar : state.name_en}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label
+                        htmlFor="notes"
+                        className="block text-sm font-medium text-gray-700 mb-2"
+                      >
+                        {t("checkout.deliveryAddress.notes")}
+                      </label>
+                      <Textarea
+                        id="notes"
+                        value={formData.notes}
+                        onChange={(e) =>
+                          handleInputChange("notes", e.target.value)
+                        }
+                        placeholder={t("checkout.deliveryAddress.notesPlaceholder")}
+                        rows={3}
                       />
                     </div>
                   </div>
-
-                  <div>
-                    <label
-                      htmlFor="address"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Address *
-                    </label>
-                    <Input
-                      id="address"
-                      value={formData.address}
-                      onChange={(e) =>
-                        handleInputChange("address", e.target.value)
-                      }
-                      placeholder="Enter full address"
-                      required
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="state"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Emirate *
-                    </label>
-                    <select
-                      id="state"
-                      value={formData.stateCode}
-                      onChange={(e) =>
-                        handleInputChange("stateCode", e.target.value)
-                      }
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary-500 focus:border-secondary-500"
-                      required
-                    >
-                      <option value="">Select Emirate</option>
-                      {uaeStates.map((state) => (
-                        <option key={state.code} value={state.code}>
-                          {locale === "ar" ? state.name_ar : state.name_en}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div>
-                    <label
-                      htmlFor="notes"
-                      className="block text-sm font-medium text-gray-700 mb-2"
-                    >
-                      Delivery Notes (Optional)
-                    </label>
-                    <Textarea
-                      id="notes"
-                      value={formData.notes}
-                      onChange={(e) =>
-                        handleInputChange("notes", e.target.value)
-                      }
-                      placeholder="Any special delivery instructions..."
-                      rows={3}
-                    />
-                  </div>
-                </div>
-              )}
+                )}
             </div>
           </div>
 
@@ -635,7 +660,7 @@ export default function CheckoutPageClient({
           <div className="lg:col-span-1">
             <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 sticky top-8">
               <h2 className="text-xl font-bold text-gray-900 mb-6">
-                Order Summary
+                {t("checkout.orderSummary.title")}
               </h2>
 
               {/* Cart Items */}
@@ -655,7 +680,7 @@ export default function CheckoutPageClient({
                       <div className="w-16 h-16 flex-shrink-0">
                         <Image
                           src={primaryImage || "/placeholder.svg"}
-                          alt={productName || "Product"}
+                          alt={productName || t("seo.product.defaultTitle")}
                           width={64}
                           height={64}
                           className="w-full h-full object-cover rounded-lg"
@@ -666,7 +691,7 @@ export default function CheckoutPageClient({
                           {productName}
                         </h3>
                         <p className="text-sm text-gray-500">
-                          Qty: {item.quantity}
+                          {t("checkout.orderSummary.quantity")}: {item.quantity}
                         </p>
                         <p className="text-sm font-semibold text-gray-900">
                           {formatPrice(
@@ -684,33 +709,35 @@ export default function CheckoutPageClient({
               {/* Totals */}
               <div className="space-y-3 mb-6 border-t pt-4">
                 <div className={`flex justify-between `}>
-                  <span className="text-gray-600">Subtotal</span>
+                  <span className="text-gray-600">{t("checkout.orderSummary.subtotal")}</span>
                   <span className="font-semibold">
                     {formatPrice(
                       subtotal,
-                      cart.items[0]?.product.currency,
+                      primaryCurrency,
                       locale
                     )}
                   </span>
                 </div>
                 <div className={`flex justify-between`}>
-                  <span className="text-gray-600">Shipping</span>
-                  <span className="font-semibold text-green-600">Free</span>
-                </div>
-                <div className={`flex justify-between`}>
-                  <span className="text-gray-600">Tax</span>
-                  <span className="font-semibold">
-                    {formatPrice(tax, cart.items[0]?.product.currency, locale)}
+                  <span className="text-gray-600">{t("checkout.orderSummary.shipping")}</span>
+                  <span className="font-semibold text-gray-600">
+                    {!formData.stateCode
+                      ? t("checkout.orderSummary.selectState")
+                      : formatPrice(
+                        shipping,
+                        primaryCurrency,
+                        locale
+                      )}
                   </span>
                 </div>
                 <div
                   className={`flex justify-between text-lg font-bold border-t pt-3`}
                 >
-                  <span>Total</span>
+                  <span>{t("checkout.orderSummary.total")}</span>
                   <span>
                     {formatPrice(
                       total,
-                      cart.items[0]?.product.currency,
+                      primaryCurrency,
                       locale
                     )}
                   </span>
@@ -727,12 +754,12 @@ export default function CheckoutPageClient({
                 {isLoading ? (
                   <div className="flex items-center gap-2">
                     <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                    Processing...
+                    {t("checkout.orderSummary.processing")}
                   </div>
                 ) : (
                   <div className={`flex items-center gap-2 `}>
                     <CreditCard className="h-5 w-5" />
-                    Place Order
+                    {t("checkout.orderSummary.completeOrder")}
                   </div>
                 )}
               </Button>
@@ -740,7 +767,7 @@ export default function CheckoutPageClient({
               {/* Security Notice */}
               <div className={`flex items-center gap-2 text-xs text-gray-500 `}>
                 <Lock className="h-3 w-3" />
-                <span>Secure checkout with SSL encryption</span>
+                <span>{t("checkout.orderSummary.secureNotice")}</span>
               </div>
             </div>
           </div>

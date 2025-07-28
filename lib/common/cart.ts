@@ -15,7 +15,7 @@ export interface Cart {
   itemCount: number;
 }
 
-const CART_STORAGE_KEY = "eleva_cart";
+const CART_STORAGE_KEY = "gloria_cart";
 
 export function getCart(): Cart {
   if (typeof window === "undefined") {

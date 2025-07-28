@@ -18,7 +18,7 @@ export default function ConfirmPhonePage() {
         <div className="relative z-10 flex flex-col justify-end p-12 text-white">
           <div className="mb-8">
             <h1 className="text-4xl font-light mb-4">GLORIA</h1>
-            <p className="text-xl font-light opacity-90">Elevate Your Style</p>
+            <p className="text-xl font-light opacity-90">Gloriate Your Style</p>
           </div>
 
           <div className="space-y-4">
@@ -37,7 +37,7 @@ export default function ConfirmPhonePage() {
           {/* Mobile header */}
           <div className="lg:hidden text-center mb-8">
             <h1 className="text-3xl font-light text-gray-900 mb-2">GLORIA</h1>
-            <p className="text-gray-600">Elevate Your Style</p>
+            <p className="text-gray-600">Gloriate Your Style</p>
           </div>
 
           <div className="text-center mb-8">

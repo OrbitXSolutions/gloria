@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import LoginForm from "./LoginForm";
+import { useTranslations } from "next-intl";
 
 export const metadata: Metadata = {
   title: "Login - Gloria",
@@ -7,6 +8,8 @@ export const metadata: Metadata = {
 };
 
 export default function LoginPage() {
+  const t = useTranslations();
+
   return (
     <div className="min-h-screen flex">
       {/* Left side - Image/Promo */}
@@ -29,7 +32,9 @@ export default function LoginPage() {
 
           <div className="space-y-6">
             <div>
-              <h2 className="text-3xl font-light mb-4">Welcome Back</h2>
+              <h2 className="text-3xl font-light mb-4">
+                {t("auth.forms.login.title")}
+              </h2>
               <p className="text-lg opacity-80 leading-relaxed">
                 Step into a world where luxury meets innovation. Your exclusive
                 collection awaits.

@@ -16,7 +16,7 @@ const reviews = [
       "Absolutely love my new perfume! The scent lasts all day and I get compliments everywhere I go.",
     product_en: "Midnight Rose",
     product_ar: "وردة منتصف الليل",
-    avatar: "users/sarah-johnson.jpg",
+    avatar: "avatar.png",
   },
   {
     id: 2,
@@ -26,7 +26,7 @@ const reviews = [
       "Fast delivery and authentic products. The packaging was beautiful and perfect for gifting.",
     product_en: "Ocean Breeze",
     product_ar: "نسيم المحيط",
-    avatar: "users/michael-chen.jpg",
+    avatar: "avatar.png",
   },
   {
     id: 3,
@@ -36,7 +36,7 @@ const reviews = [
       "Great selection of fragrances. Customer service was very helpful in choosing the right scent.",
     product_en: "Golden Amber",
     product_ar: "العنبر الذهبي",
-    avatar: "users/emma-davis.jpg",
+    avatar: "avatar.png",
   },
   {
     id: 4,
@@ -46,7 +46,7 @@ const reviews = [
       "Premium quality perfumes at competitive prices. Will definitely order again!",
     product_en: "Royal Oud",
     product_ar: "العود الملكي",
-    avatar: "users/david-wilson.jpg",
+    avatar: "avatar.png",
   },
   {
     id: 5,
@@ -56,7 +56,7 @@ const reviews = [
       "The fragrance is exactly as described. Long-lasting and beautiful scent. Highly recommend!",
     product_en: "Vanilla Dreams",
     product_ar: "أحلام الفانيليا",
-    avatar: "users/lisa-thompson.jpg",
+    avatar: "avatar.png",
   },
 ];
 
@@ -117,11 +117,10 @@ export default function Reviews() {
                 {[...Array(5)].map((_, i) => (
                   <Star
                     key={i}
-                    className={`h-6 w-6 ${
-                      i < reviews[currentIndex].rating
+                    className={`h-6 w-6 ${i < reviews[currentIndex].rating
                         ? "text-yellow-400 fill-current"
                         : "text-gray-300"
-                    }`}
+                      }`}
                   />
                 ))}
               </div>
@@ -181,9 +180,8 @@ export default function Reviews() {
             {reviews.map((_, index) => (
               <button
                 key={index}
-                className={`w-3 h-3 rounded-full transition-colors duration-300 ${
-                  index === currentIndex ? "bg-secondary" : "bg-gray-300"
-                }`}
+                className={`w-3 h-3 rounded-full transition-colors duration-300 ${index === currentIndex ? "bg-secondary" : "bg-gray-300"
+                  }`}
                 onClick={() => {
                   setIsAutoPlaying(false);
                   setCurrentIndex(index);

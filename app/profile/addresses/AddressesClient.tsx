@@ -24,9 +24,12 @@ import {
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { toast } from "sonner";
 import { Spinner } from "@/components/ui/spinner";
+import { useTranslations } from "next-intl";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 export function AddressesClient() {
   const { user: authUser } = useSupabaseUser();
+  const t = useTranslations("toast");
   const [addresses, setAddresses] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
@@ -69,7 +72,7 @@ export function AddressesClient() {
       Number.parseInt(authUser.id)
     );
     if (result.success) {
-      toast.success("Address added successfully");
+      toast.success(t("addresses.added"));
       setIsAddDialogOpen(false);
       // Reload addresses
       const addressesData = await getUserAddresses(
@@ -77,7 +80,7 @@ export function AddressesClient() {
       );
       setAddresses(addressesData);
     } else {
-      toast.error("Failed to add address");
+      toast.error(t("addresses.addFailed"));
     }
   };
 
@@ -86,10 +89,10 @@ export function AddressesClient() {
 
     const result = await deleteAddress(addressId, Number.parseInt(authUser.id));
     if (result.success) {
-      toast.success("Address deleted successfully");
+      toast.success(t("addresses.deleted"));
       setAddresses((prev) => prev.filter((addr) => addr.id !== addressId));
     } else {
-      toast.error("Failed to delete address");
+      toast.error(t("addresses.deleteFailed"));
     }
   };
 
@@ -102,14 +105,14 @@ export function AddressesClient() {
       Number.parseInt(authUser.id)
     );
     if (result.success) {
-      toast.success("Default address updated");
+      toast.success(t("addresses.defaultUpdated"));
       // Reload addresses to update UI
       const addressesData = await getUserAddresses(
         Number.parseInt(authUser.id)
       );
       setAddresses(addressesData);
     } else {
-      toast.error("Failed to update default address");
+      toast.error(t("addresses.defaultUpdateFailed"));
     }
   };
 
@@ -182,7 +185,7 @@ export function AddressesClient() {
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="phone">Phone Number</Label>
-                  <Input
+                  <PhoneInput
                     id="phone"
                     name="phone"
                     placeholder="+1 (555) 123-4567"

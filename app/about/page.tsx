@@ -63,7 +63,7 @@ export default function Page() {
           <p className="text-lg text-gray-700 leading-relaxed mb-6">
             At Gloria, we are dedicated to bringing you the finest fragrances
             from around the world. Our mission is to provide premium perfumes
-            that elevate your everyday experiences and special occasions.
+            that gloriate your everyday experiences and special occasions.
           </p>
           <p className="text-lg text-gray-700 leading-relaxed mb-6">
             With a commitment to quality, authenticity, and customer

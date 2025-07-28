@@ -37,22 +37,20 @@ export default function CartPageClient() {
 
   const handleCheckout = async () => {
     if (cart.items.length === 0) {
-      toast.error("Your cart is empty");
+      toast.error(t("toast.cart.empty"));
       return;
     }
 
     setIsCheckingOut(true);
-
-    try {
-      // clear();
-      await redirectToCheckout(cart.items);
-      // Clear cart after successful redirect
-    } catch (error) {
-      console.error("Checkout error:", error);
-      toast.error("Failed to proceed to checkout. Please try again.");
-    } finally {
-      setIsCheckingOut(false);
+    const result = await redirectToCheckout(cart.items);
+    if (result.success) {
+      toast.success(t("toast.cart.checkoutSuccess"));
+    } else {
+      toast.error(result.error || t("toast.cart.checkoutFailed"));
     }
+    setIsCheckingOut(false);
+
+
   };
 
   if (cart.items.length === 0) {
@@ -96,7 +94,7 @@ export default function CartPageClient() {
           <div className={`flex items-center justify-between`}>
             <h1 className="text-3xl font-bold text-gray-900">{t("title")}</h1>
             <Badge variant="secondary" className="text-sm">
-              {cart.items.length} {cart.items.length === 1 ? "item" : "items"}
+              {cart.items.length} {cart.items.length === 1 ? t("item") : t("items")}
             </Badge>
           </div>
         </div>
@@ -127,7 +125,7 @@ export default function CartPageClient() {
                       <div className="w-24 h-24 flex-shrink-0">
                         <Image
                           src={primaryImage || "/placeholder.svg"}
-                          alt={productName || "Product"}
+                          alt={productName || t("seo.product.defaultTitle")}
                           width={96}
                           height={96}
                           className="w-full h-full object-cover rounded-lg"
@@ -231,18 +229,8 @@ export default function CartPageClient() {
                     <span className="text-gray-600">
                       {t("summary.shipping")}
                     </span>
-                    <span className="flex items-center text-xs text-gray-600">
-                      {"Calculated during checkout"}
-                    </span>
-                  </div>
-                  <div className={`flex justify-between`}>
-                    <span className="text-gray-600">{t("summary.tax")}</span>
-                    <span className="font-semibold">
-                      {formatPrice(
-                        cart.total * 0.05,
-                        cart.items[0]?.product.currency,
-                        locale
-                      )}
+                    <span className="flex items-center text-start ms-5 text-xs text-gray-600">
+                      {t("shippingCalculated")}
                     </span>
                   </div>
                   <div
@@ -251,7 +239,7 @@ export default function CartPageClient() {
                     <span>{t("summary.total")}</span>
                     <span>
                       {formatPrice(
-                        cart.total * 1.05,
+                        cart.total,
                         cart.items[0]?.product.currency,
                         locale
                       )}
@@ -268,7 +256,7 @@ export default function CartPageClient() {
                   {isCheckingOut ? (
                     <div className="flex items-center gap-2">
                       <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                      Processing...
+                      {t("processing")}
                     </div>
                   ) : (
                     <div className={`flex items-center gap-2`}>

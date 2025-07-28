@@ -4,21 +4,26 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getCategories } from "@/lib/common/supabase-queries";
 import { ContactInfo } from "@/lib/constants/contact-info";
+import { getLocale, getTranslations } from "next-intl/server";
 
 export default async function AppFooter() {
   const categories = await getCategories();
+  const t = await getTranslations('footer');
+  const locale = await getLocale();
+  const isArabic = locale === "ar";
 
   return (
-    <footer className="bg-gray-900 text-white">
+    <footer className="bg-primary text-white">
       <div className="container mx-auto px-4 py-16">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {/* Company Info */}
           <div className="space-y-6">
             <div>
-              <h3 className="text-2xl font-bold mb-4">Luxe Perfumes</h3>
-              <p className="text-gray-400 leading-relaxed">
-                Discover the world's finest fragrances. We curate premium
-                perfumes from the most prestigious brands worldwide.
+              <h3 className="text-2xl font-bold mb-4">
+                {t('brand')}
+              </h3>
+              <p className="text-gray-300 leading-relaxed">
+                {t('description')}
               </p>
             </div>
             <div className="flex space-x-4">
@@ -26,7 +31,7 @@ export default async function AppFooter() {
                 asChild
                 variant="ghost"
                 size="sm"
-                className="text-gray-400 hover:text-white p-2"
+                className="text-gray-300 hover:text-white p-2"
               >
                 <Link
                   href={ContactInfo.FACEBOOK}
@@ -40,7 +45,7 @@ export default async function AppFooter() {
                 variant="ghost"
                 asChild
                 size="sm"
-                className="text-gray-400 hover:text-white p-2"
+                className="text-gray-300 hover:text-white p-2"
               >
                 <Link
                   href={ContactInfo.INSTAGRAM}
@@ -55,7 +60,7 @@ export default async function AppFooter() {
                 variant="ghost"
                 asChild
                 size="sm"
-                className="text-gray-400 hover:text-white p-2"
+                className="text-gray-300 hover:text-white p-2"
               >
                 <Link
                   href={ContactInfo.WHATSAPP}
@@ -79,7 +84,7 @@ export default async function AppFooter() {
                 variant="ghost"
                 asChild
                 size="sm"
-                className="text-gray-400 hover:text-white p-2"
+                className="text-gray-300 hover:text-white p-2"
               >
                 <Link
                   href={`mailto:${ContactInfo.EMAIL}`}
@@ -89,74 +94,61 @@ export default async function AppFooter() {
                   <Mail className="h-5 w-5" />
                 </Link>
               </Button>
-
-              {/* <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-400 hover:text-white p-2"
-              >
-                <Twitter className="h-5 w-5" />
-              </Button> */}
-              {/* <Button
-                variant="ghost"
-                size="sm"
-                className="text-gray-400 hover:text-white p-2"
-              >
-                <Youtube className="h-5 w-5" />
-              </Button> */}
             </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">Quick Links</h4>
+            <h4 className="text-lg font-semibold mb-6">
+              {t('quickLinks.title')}
+            </h4>
             <ul className="space-y-3">
               <li>
                 <Link
                   href="/about"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  About Us
+                  {t('quickLinks.about')}
                 </Link>
               </li>
               <li>
                 <Link
                   href="/contact"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  Contact
+                  {t('quickLinks.contact')}
                 </Link>
               </li>
               <li>
                 <Link
                   href="/shipping"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  Shipping Info
+                  {t('quickLinks.shipping')}
                 </Link>
               </li>
               <li>
                 <Link
                   href="/returns"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  Returns
+                  {t('quickLinks.returns')}
                 </Link>
               </li>
               <li>
                 <Link
                   href="/size-guide"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  Size Guide
+                  {t('quickLinks.sizeGuide')}
                 </Link>
               </li>
               <li>
                 <Link
                   href="/faq"
-                  className="text-gray-400 hover:text-white transition-colors"
+                  className="text-gray-300 hover:text-white transition-colors"
                 >
-                  FAQ
+                  {t('quickLinks.faq')}
                 </Link>
               </li>
             </ul>
@@ -164,16 +156,21 @@ export default async function AppFooter() {
 
           {/* Categories */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">Categories</h4>
+            <h4 className="text-lg font-semibold mb-6">
+              {t('categories.title')}
+            </h4>
             <ul className="space-y-3">
               {categories.length > 0 ? (
-                categories.slice(0, 6).map((category) => (
+                categories.map((category) => (
                   <li key={category.id}>
                     <Link
                       href={`/category/${category.slug || category.id}`}
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
-                      {category.name_en || "Unnamed Category"}
+                      {isArabic
+                        ? (category.name_ar || category.name_en || t('categories.unnamed'))
+                        : (category.name_en || category.name_ar || t('categories.unnamed'))
+                      }
                     </Link>
                   </li>
                 ))
@@ -182,49 +179,49 @@ export default async function AppFooter() {
                   <li>
                     <Link
                       href="/women"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
-                      Women's Perfumes
+                      {t('categories.women')}
                     </Link>
                   </li>
                   <li>
                     <Link
                       href="/men"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
-                      Men's Cologne
+                      {t('categories.men')}
                     </Link>
                   </li>
                   <li>
                     <Link
                       href="/unisex"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
-                      Unisex Fragrances
+                      {t('categories.unisex')}
                     </Link>
                   </li>
                   <li>
                     <Link
                       href="/luxury"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
-                      Luxury Collection
+                      {t('categories.luxury')}
                     </Link>
                   </li>
                   <li>
                     <Link
                       href="/new-arrivals"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
-                      New Arrivals
+                      {t('categories.newArrivals')}
                     </Link>
                   </li>
                   <li>
                     <Link
                       href="/sale"
-                      className="text-gray-400 hover:text-white transition-colors"
+                      className="text-gray-300 hover:text-white transition-colors"
                     >
-                      Sale Items
+                      {t('categories.sale')}
                     </Link>
                   </li>
                 </>
@@ -232,38 +229,19 @@ export default async function AppFooter() {
             </ul>
           </div>
 
-          {/* Newsletter */}
-          {/* <div>
-            <h4 className="text-lg font-semibold mb-6">Newsletter</h4>
-            <p className="text-gray-400 mb-4">
-              Subscribe to get updates on new arrivals and exclusive offers.
-            </p>
-            <div className="space-y-4">
-              <div className="flex">
-                <Input
-                  type="email"
-                  placeholder="Enter your email"
-                  className="bg-gray-800 border-gray-700 text-white placeholder-gray-400 rounded-r-none"
-                />
-                <Button className="bg-secondary hover:bg-purple-700 rounded-l-none">
-                  <Mail className="h-4 w-4" />
-                </Button>
-              </div>
-              <p className="text-xs text-gray-500">
-                By subscribing, you agree to our Privacy Policy and Terms of
-                Service.
-              </p>
-            </div>
-          </div> */}
           {/* Customer Support */}
           <div>
-            <h4 className="text-lg font-semibold mb-6">Customer Support</h4>
-            <p className="text-gray-400 mb-4">
-              Have questions or need help with your order? We're here for you.
+            <h4 className="text-lg font-semibold mb-6">
+              {t('customerSupport.title')}
+            </h4>
+            <p className="text-gray-300 mb-4">
+              {t('customerSupport.description')}
             </p>
-            <ul className="space-y-3 text-gray-400">
+            <ul className="space-y-3 text-gray-300">
               <li>
-                <span className="font-medium text-white">Phone:</span>{" "}
+                <span className="font-medium text-white">
+                  {t('customerSupport.phone')}:
+                </span>{" "}
                 <a
                   href={`tel:${ContactInfo.PHONE}`}
                   className="hover:text-white"
@@ -272,7 +250,9 @@ export default async function AppFooter() {
                 </a>
               </li>
               <li>
-                <span className="font-medium text-white">Email:</span>{" "}
+                <span className="font-medium text-white">
+                  {t('customerSupport.email')}:
+                </span>{" "}
                 <a
                   href={`mailto:${ContactInfo.EMAIL}`}
                   className="hover:text-white"
@@ -283,36 +263,43 @@ export default async function AppFooter() {
             </ul>
             <div className="mt-4">
               <Link href="/contact" className="inline-block">
-                <Button variant="secondary">Contact Us</Button>
+                <Button variant="secondary">
+                  {t('customerSupport.contactUs')}
+                </Button>
               </Link>
             </div>
           </div>
         </div>
 
         {/* Bottom Section */}
-        <div className="border-t border-gray-800 mt-12 pt-8">
+        <div className="border-t border-purple-800 mt-12 pt-8">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-gray-400 text-sm">
-              © {new Date().getFullYear()} Luxe Perfumes. All rights reserved.
+            <div className="text-gray-300 text-sm text-center md:text-left">
+              {t('copyright.rights')}
+              <br />
+              {t('copyright.developed').split('OrbitX Solutions')[0]}
+              <a
+                href="https://orbitxsolutions.com"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-gray-300 hover:text-white transition-colors"
+              >
+                OrbitX Solutions
+              </a>
+              {t('copyright.developed').split('OrbitX Solutions')[1]}
             </div>
             <div className="flex space-x-6 text-sm">
               <Link
                 href="/privacy"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-300 hover:text-white transition-colors"
               >
-                Privacy Policy
+                {t('legal.privacy')}
               </Link>
               <Link
                 href="/terms"
-                className="text-gray-400 hover:text-white transition-colors"
+                className="text-gray-300 hover:text-white transition-colors"
               >
-                Terms of Service
-              </Link>
-              <Link
-                href="/cookies"
-                className="text-gray-400 hover:text-white transition-colors"
-              >
-                Cookie Policy
+                {t('legal.terms')}
               </Link>
             </div>
           </div>

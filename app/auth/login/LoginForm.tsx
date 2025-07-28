@@ -14,8 +14,10 @@ import { Eye, EyeOff, Loader2, Mail } from "lucide-react";
 import Link from "next/link";
 import LoadingIndicator from "@/components/atoms/LoadingIndicator";
 import SignInWithGoogle from "@/components/_common/sign-in-with-google";
+import { useTranslations } from "next-intl";
 
 export default function LoginForm() {
+  const t = useTranslations();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     emailOrPhone: "",
@@ -130,7 +132,7 @@ export default function LoginForm() {
             htmlFor="emailOrPhone"
             className="text-sm font-medium text-gray-700"
           >
-            Email or Phone Number
+            {t("auth.forms.login.emailOrPhone")}
           </Label>
           <div className="relative">
             <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
@@ -143,7 +145,7 @@ export default function LoginForm() {
               required
               value={formData.emailOrPhone}
               onChange={handleInputChange}
-              placeholder="Enter your email or phone"
+              placeholder={t("auth.forms.login.emailOrPhonePlaceholder")}
               className="pl-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
             />
           </div>
@@ -154,7 +156,7 @@ export default function LoginForm() {
             htmlFor="password"
             className="text-sm font-medium text-gray-700"
           >
-            Password
+            {t("auth.forms.login.password")}
           </Label>
           <div className="relative">
             <Input
@@ -164,7 +166,7 @@ export default function LoginForm() {
               required
               value={formData.password}
               onChange={handleInputChange}
-              placeholder="Enter your password"
+              placeholder={t("auth.forms.login.passwordPlaceholder")}
               className="pr-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
             />
             <button
@@ -194,7 +196,7 @@ export default function LoginForm() {
             htmlFor="remember-me"
             className="ml-2 block text-sm text-gray-700"
           >
-            Remember me
+            {t("auth.forms.login.rememberMe")}
           </label>
         </div>
 
@@ -202,7 +204,7 @@ export default function LoginForm() {
           href="/auth/forgot-password"
           className="text-sm font-medium text-primary-700 hover:text-gray-700 transition-colors"
         >
-          Forgot password?
+          {t("auth.forms.login.forgotPassword")}
         </Link>
       </div>
 
@@ -230,10 +232,10 @@ export default function LoginForm() {
         {isExecuting ? (
           <>
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Signing in...
+            {t("auth.forms.login.signingIn")}
           </>
         ) : (
-          "Sign In"
+          t("auth.forms.login.signInButton")
         )}
       </Button>
       <SignInWithGoogle />
@@ -242,7 +244,9 @@ export default function LoginForm() {
           <div className="w-full border-t border-gray-200" />
         </div>
         <div className="relative flex justify-center text-sm">
-          <span className="px-4 bg-white text-gray-500">New to Gloria?</span>
+          <span className="px-4 bg-white text-gray-500">
+            {t("auth.forms.login.newToGloria")}
+          </span>
         </div>
       </div>
 
@@ -253,7 +257,7 @@ export default function LoginForm() {
         className="w-full h-12 border-primary-700 text-primary-700  hover:bg-primary-700 hover:text-white font-medium rounded-lg transition-all duration-200"
       >
         <Link href="/auth/register">
-          Create Account
+          {t("auth.forms.login.createAccountButton")}
           <LoadingIndicator loaderClassName="text-primary" />
         </Link>
       </Button>

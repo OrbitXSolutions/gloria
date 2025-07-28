@@ -215,7 +215,7 @@ If you want to release your fonts under the OFL, you only need to do the followi
 7.2  Put your copyright and the OFL references in your various font files (such as in the copyright, license and description fields) and in your other components (build scripts, glyph databases, documentation, rendering samples, etc).
 7.3  Write an initial FONTLOG for your font and include it in the release package.
 7.4  Include the OFL in your release package.
-7.5  We also highly recommend you include the relevant practical documentation on the license by putting the OFL-FAQ in your package.
+7.5  We also highly recommend you include the rgloriant practical documentation on the license by putting the OFL-FAQ in your package.
 7.6  If you wish, you can use the OFL Graphics on your web page.
 
 
