@@ -47,7 +47,9 @@ export default function AppHeader() {
     if (href === "/") {
       return (
         pathname === "/" ||
-        (!pathname.includes("/products") && !pathname.includes("/about"))
+        (!pathname.includes("/products") &&
+          !pathname.includes("/gifts") &&
+          !pathname.includes("/about"))
       );
     }
     return pathname.startsWith(href);
@@ -56,8 +58,16 @@ export default function AppHeader() {
   return (
     <>
       <div className="max-md:hidden bg-secondary py-2">
-        <div className="container flex mx-auto text-white px-3 justify-center items-center text-sm">
+        <div className="container flex mx-auto text-white px-3 justify-between items-center text-sm">
           <div>{t("topBar.freeShipping")}</div>
+          <div className="flex gap-4">
+            <Link href="/track-order" className="hover:">
+              {t("topBar.trackOrder")}
+            </Link>
+            <Link href="/help" className="hover:">
+              {t("topBar.help")}
+            </Link>
+          </div>
         </div>
       </div>
 
@@ -72,7 +82,14 @@ export default function AppHeader() {
               href="/"
               className={cn("text-2xl font-bold ", kawoszehFont.className)}
             >
-              ELEVA BOUTIQUE
+              <Image
+                src="/images/logo_white.png"
+                width={100}
+                height={40}
+                className="h-10 w-auto"
+                objectFit="contain"
+                alt="Gloria"
+              />
             </Link>
 
             {/* Desktop Navigation */}
@@ -100,14 +117,14 @@ export default function AppHeader() {
                 <LoadingIndicator loaderClassName="text-white" />
               </Link>
               <Link
-                href="/about"
+                href="/gifts"
                 className={`font-medium transition-colors flex items-center gap-2 ${
-                  isActiveLink("/about")
+                  isActiveLink("/gifts")
                     ? "text-secondary-100 border-b-2 border-secondary pb-1"
                     : "hover:text-secondary-100"
                 }`}
               >
-                {t("nav.about")}
+                {t("nav.gifts")}
                 <LoadingIndicator loaderClassName="text-white" />
               </Link>
               <Link
@@ -118,7 +135,7 @@ export default function AppHeader() {
                     : "hover:text-secondary-100"
                 }`}
               >
-                {t("nav.contact")}
+                {t("nav.about")}
                 <LoadingIndicator loaderClassName="text-white" />
               </Link>
             </nav>
@@ -210,14 +227,14 @@ export default function AppHeader() {
                   <LoadingIndicator loaderClassName="text-white" />
                 </Link>
                 <Link
-                  href="/about"
+                  href="/gifts"
                   className={`font-medium transition-colors flex items-center gap-2 ${
-                    isActiveLink("/about")
+                    isActiveLink("/gifts")
                       ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
                       : "hover:text-secondary/40"
                   }`}
                 >
-                  {t("nav.about")}
+                  {t("nav.gifts")}
                   <LoadingIndicator loaderClassName="text-white" />
                 </Link>
                 <Link
@@ -228,7 +245,7 @@ export default function AppHeader() {
                       : "hover:text-secondary/40"
                   }`}
                 >
-                  {t("nav.contact")}
+                  {t("nav.about")}
                   <LoadingIndicator loaderClassName="text-white" />
                 </Link>
               </div>

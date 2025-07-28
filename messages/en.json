@@ -4,12 +4,14 @@
     "nav": {
       "home": "Home",
       "products": "Products",
-      "about": "About Us",
-      "contact": "Contact Us"
+      "gifts": "Gifts",
+      "about": "About"
     },
     "search": "Search perfumes...",
     "topBar": {
-      "freeShipping": "Free shipping on orders over AED 300"
+      "freeShipping": "Free shipping on orders over $100",
+      "trackOrder": "Track Order",
+      "help": "Help"
     }
   },
   "hero": {
@@ -186,7 +188,7 @@
     }
   },
   "footer": {
-    "brand": "Eleva Boutique",
+    "brand": "Gloria Naturals",
     "description": "Discover the world's finest fragrances. We curate premium perfumes from the most prestigious brands worldwide.",
     "quickLinks": {
       "title": "Quick Links",
@@ -221,7 +223,7 @@
       "disclaimer": "By subscribing, you agree to our Privacy Policy and Terms of Service."
     },
     "copyright": {
-      "rights": "All rights reserved © 2025 to Eleva Boutique.",
+      "rights": "All rights reserved © 2025 to Gloria Naturals.",
       "developed": "Designed & Developed by OrbitX Solutions"
     },
     "legal": {
@@ -261,13 +263,13 @@
         "forgotPassword": "Forgot password?",
         "signInButton": "Sign In",
         "signingIn": "Signing in...",
-        "newToEleva": "New to Eleva?",
+        "newToGloria": "New to Gloria?",
         "createAccountButton": "Create Account",
         "orDivider": "or"
       },
       "register": {
         "title": "Create Account",
-        "subtitle": "Join Eleva today",
+        "subtitle": "Join Gloria today",
         "firstName": "First Name",
         "firstNamePlaceholder": "First name",
         "lastName": "Last Name",
@@ -578,7 +580,7 @@
       "welcome": "Welcome back, {name}!",
       "editProfile": "Edit Profile",
       "security": "Security",
-      "welcomeMessage": "Welcome to ELEVA! Complete your profile and start exploring our luxury fragrance collection.",
+      "welcomeMessage": "Welcome to GLORIA! Complete your profile and start exploring our luxury fragrance collection.",
       "valuedCustomer": "Valued Customer",
       "memberSince": "Member since",
       "vipMember": "VIP Member",
@@ -783,28 +785,28 @@
   },
   "seo": {
     "title": {
-      "default": "Eleva - Premium Fragrances for Every Occasion",
-      "template": "%s | Eleva"
+      "default": "Gloria - Premium Fragrances for Every Occasion",
+      "template": "%s | Gloria"
     },
     "description": "Discover our exquisite collection of premium perfumes. Fast delivery, 14-day returns, and authentic fragrances from top brands.",
-    "keywords": "perfumes, fragrances, luxury perfumes, designer perfumes, cologne, eau de parfum, beauty, cosmetics, eleva boutique, premium fragrances, men's cologne, women's perfume, unisex fragrances, arabic perfumes, middle eastern fragrances, oud perfumes, musk fragrances, floral perfumes, woody fragrances, oriental perfumes, fresh fragrances, gift perfumes, online perfume store, authentic perfumes, original fragrances",
+    "keywords": "perfumes, fragrances, luxury perfumes, designer perfumes, cologne, eau de parfum, beauty, cosmetics, gloria naturals, premium fragrances, men's cologne, women's perfume, unisex fragrances, arabic perfumes, middle eastern fragrances, oud perfumes, musk fragrances, floral perfumes, woody fragrances, oriental perfumes, fresh fragrances, gift perfumes, online perfume store, authentic perfumes, original fragrances",
     "openGraph": {
-      "title": "Eleva - Premium Fragrances for Every Occasion",
+      "title": "Gloria - Premium Fragrances for Every Occasion",
       "description": "Discover our exquisite collection of premium perfumes. Fast delivery, 14-day returns, and authentic fragrances from top brands.",
-      "siteName": "Eleva",
+      "siteName": "Gloria",
       "locale": "en_US"
     },
     "twitter": {
-      "title": "Eleva - Premium Fragrances",
+      "title": "Gloria - Premium Fragrances",
       "description": "Discover our exquisite collection of premium perfumes",
-      "creator": "@eleva"
+      "creator": "@gloria"
     },
     "product": {
       "notFound": {
         "title": "Product Not Found",
         "description": "The requested product could not be found."
       },
-      "defaultTitle": "Eleva Product",
+      "defaultTitle": "Gloria Product",
       "defaultDescription": "Discover our premium product {name}",
       "defaultImageAlt": "Product Image",
       "keywords": {

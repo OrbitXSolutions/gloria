@@ -1,4 +1,4 @@
-const FAVORITES_STORAGE_KEY = "eleva_favorites";
+const FAVORITES_STORAGE_KEY = "gloria_favorites";
 
 export function getFavorites(): number[] {
   if (typeof window === "undefined") {

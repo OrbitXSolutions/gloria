@@ -26,7 +26,7 @@ export default function LoginPage() {
         {/* Promo Content */}
         <div className="relative z-10 flex flex-col justify-between p-12 text-white">
           <div>
-            <h1 className="text-4xl font-bold mb-2">ELEVA</h1>
+            <h1 className="text-4xl font-bold mb-2">GLORIA</h1>
             <p className="text-lg opacity-90">Luxury Fashion Redefined</p>
           </div>
 
@@ -64,7 +64,7 @@ export default function LoginPage() {
           </div>
 
           <div className="text-xs opacity-60">
-            © 2024 Eleva. All rights reserved.
+            © 2024 Gloria. All rights reserved.
           </div>
         </div>
       </div>
@@ -74,7 +74,7 @@ export default function LoginPage() {
         <div className="w-full max-w-md">
           {/* Mobile header */}
           <div className="lg:hidden text-center mb-8">
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">ELEVA</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">GLORIA</h1>
             <p className="text-gray-600">Luxury Fashion Redefined</p>
           </div>
 

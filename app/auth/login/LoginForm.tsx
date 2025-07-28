@@ -245,7 +245,7 @@ export default function LoginForm() {
         </div>
         <div className="relative flex justify-center text-sm">
           <span className="px-4 bg-white text-gray-500">
-            {t("auth.forms.login.newToEleva")}
+            {t("auth.forms.login.newToGloria")}
           </span>
         </div>
       </div>

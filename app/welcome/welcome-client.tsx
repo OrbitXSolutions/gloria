@@ -101,7 +101,7 @@ export default function WelcomeClient() {
           <div className="absolute bottom-10 left-10 z-20">
             <div className="text-white">
               <h3 className="text-2xl font-light tracking-wider">GLORIA</h3>
-              <p className="text-white/80 text-sm">Elevate Your Style</p>
+              <p className="text-white/80 text-sm">Gloriate Your Style</p>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function WelcomeClient() {
               <h1 className="text-3xl font-light tracking-wider text-gray-900">
                 GLORIA
               </h1>
-              <p className="text-gray-600 text-sm">Elevate Your Style</p>
+              <p className="text-gray-600 text-sm">Gloriate Your Style</p>
             </div>
 
             {/* Success Icon */}
