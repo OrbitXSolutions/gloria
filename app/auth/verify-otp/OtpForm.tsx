@@ -5,7 +5,7 @@ import type React from "react";
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
-import { verifyOtpAction } from "@/app/_actions/auth";
+import { verifyOtpAction, resendOtpAction } from "@/app/_actions/auth";
 import { Button } from "@/components/ui/button";
 import {
   InputOTP,
@@ -16,6 +16,7 @@ import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, ArrowLeft, RefreshCw } from "lucide-react";
 import Link from "next/link";
 import { useTranslations } from "next-intl";
+import { toast } from "sonner";
 
 export default function OtpForm() {
   const t = useTranslations();
@@ -32,6 +33,19 @@ export default function OtpForm() {
         router.push("/welcome");
         router.refresh();
       }
+    },
+  });
+
+  const { execute: executeResend, result: resendResult, isExecuting: isResending } = useAction(resendOtpAction, {
+    onSuccess: ({ data }) => {
+      if (data?.success) {
+        setTimeLeft(60);
+        setCanResend(false);
+        toast.success(t("auth.forms.verifyOtp.otpResent"));
+      }
+    },
+    onError: (error) => {
+      toast.error(error.error?.serverError || t("auth.forms.verifyOtp.resendError"));
     },
   });
 
@@ -65,10 +79,9 @@ export default function OtpForm() {
   };
 
   const handleResend = () => {
-    setTimeLeft(60);
-    setCanResend(false);
-    // Implement resend logic here
-    console.log("Resend OTP");
+    if (phone && !isResending) {
+      executeResend({ phone });
+    }
   };
 
   if (!phone) {
@@ -138,6 +151,22 @@ export default function OtpForm() {
         </Alert>
       )}
 
+      {resendResult?.data?.error && (
+        <Alert variant="destructive" className="border-red-200 bg-red-50">
+          <AlertDescription className="text-red-800">
+            {resendResult.data.error}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {resendResult?.data?.success && (
+        <Alert className="border-green-200 bg-green-50">
+          <AlertDescription className="text-green-800">
+            {resendResult.data.message}
+          </AlertDescription>
+        </Alert>
+      )}
+
       <Button
         type="submit"
         className="w-full h-12 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
@@ -160,10 +189,20 @@ export default function OtpForm() {
               type="button"
               variant="ghost"
               onClick={handleResend}
+              disabled={isResending}
               className="text-gray-900 hover:text-gray-700 font-medium p-0 h-auto"
             >
-              <RefreshCw className="w-4 h-4 mr-2" />
-              {t("auth.forms.verifyOtp.resendOtp")}
+              {isResending ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  {t("auth.forms.verifyOtp.resendingOtp")}
+                </>
+              ) : (
+                <>
+                  <RefreshCw className="w-4 h-4 mr-2" />
+                  {t("auth.forms.verifyOtp.resendOtp")}
+                </>
+              )}
             </Button>
           ) : (
             <span>

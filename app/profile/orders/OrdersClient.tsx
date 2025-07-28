@@ -24,11 +24,11 @@ import {
   Clock,
   XCircle,
 } from "lucide-react";
-import { getUserOrders } from "@/lib/common/profile-queries";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { Spinner } from "@/components/ui/spinner";
-import { useTranslations } from "next-intl";
-import { createClient } from "@/lib/supabase/client";
+import { useTranslations, useLocale } from "next-intl";
+import { formatPrice } from "@/lib/common/cart";
+import type { User } from "@supabase/supabase-js";
 
 const statusConfig = {
   draft: { label: "Draft", color: "bg-gray-100 text-gray-800", icon: Clock },
@@ -75,52 +75,35 @@ const statusConfig = {
   },
 };
 
-export function OrdersClient() {
-  const { user: authUser } = useSupabaseUser();
+interface OrdersClientProps {
+  initialOrders: any[];
+  authUser: User | null;
+}
+
+export function OrdersClient({ initialOrders, authUser }: OrdersClientProps) {
+  const { user: clientAuthUser } = useSupabaseUser();
   const t = useTranslations("profile.orders");
-  const [orders, setOrders] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const tOrderStatus = useTranslations("orderStatus");
+  const tSeo = useTranslations("seo");
+  const locale = useLocale();
+  const [orders, setOrders] = useState<any[]>(initialOrders);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [statusFilter, setStatusFilter] = useState("all");
 
-  useEffect(() => {
-    async function loadOrders() {
-      if (!authUser?.id) return;
-
-      try {
-        // Get the user ID from the database users table
-        const supabase = createClient();
-        const { data: userData } = await supabase
-          .from('users')
-          .select('id')
-          .eq('auth_id', authUser.id)
-          .single();
-
-        if (userData?.id) {
-          const ordersData = await getUserOrders(userData.id);
-          setOrders(ordersData);
-        } else {
-          console.error("User not found in database");
-        }
-      } catch (error) {
-        console.error("Error loading orders:", error);
-      } finally {
-        setLoading(false);
-      }
-    }
-
-    loadOrders();
-  }, [authUser]);
+  // Use the authUser from props, fallback to client auth user
+  const currentUser = authUser || clientAuthUser;
 
   const filteredOrders = orders.filter((order) => {
     const matchesSearch =
       order.code?.toLowerCase().includes(searchTerm.toLowerCase()) ||
       order.order_items?.some(
         (item: any) =>
-          item.product?.name_en
+          item.products?.name_en
             ?.toLowerCase()
             .includes(searchTerm.toLowerCase()) ||
-          item.product?.name_ar
+          item.products?.name_ar
             ?.toLowerCase()
             .includes(searchTerm.toLowerCase())
       );
@@ -131,7 +114,43 @@ export function OrdersClient() {
   });
 
   if (loading) {
-    return <Spinner />;
+    return (
+      <div className="p-6 flex justify-center items-center min-h-[400px]">
+        <Spinner />
+      </div>
+    );
+  }
+
+  if (!currentUser) {
+    return (
+      <div className="p-6 text-center">
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          {t("authenticationRequired")}
+        </h2>
+        <p className="text-gray-600">
+          {t("pleaseLoginToViewOrders")}
+        </p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="p-6 text-center">
+        <h2 className="text-xl font-semibold text-gray-900 mb-2">
+          {t("errorLoadingOrders")}
+        </h2>
+        <p className="text-gray-600 mb-4">
+          {error}
+        </p>
+        <Button
+          onClick={() => window.location.reload()}
+          variant="outline"
+        >
+          {t("tryAgain")}
+        </Button>
+      </div>
+    );
   }
 
   return (
@@ -172,12 +191,12 @@ export function OrdersClient() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">{t("allOrders")}</SelectItem>
-                <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="confirmed">Confirmed</SelectItem>
-                <SelectItem value="processing">Processing</SelectItem>
-                <SelectItem value="shipped">Shipped</SelectItem>
-                <SelectItem value="delivered">Delivered</SelectItem>
-                <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectItem value="pending">{tOrderStatus("pending")}</SelectItem>
+                <SelectItem value="confirmed">{tOrderStatus("confirmed")}</SelectItem>
+                <SelectItem value="processing">{tOrderStatus("processing")}</SelectItem>
+                <SelectItem value="shipped">{tOrderStatus("shipped")}</SelectItem>
+                <SelectItem value="delivered">{tOrderStatus("delivered")}</SelectItem>
+                <SelectItem value="cancelled">{tOrderStatus("cancelled")}</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -216,7 +235,7 @@ export function OrdersClient() {
                         </h3>
                         <Badge className={statusInfo.color}>
                           <StatusIcon className="h-3 w-3 mr-1" />
-                          {statusInfo.label}
+                          {tOrderStatus(`${order.status}`)}
                         </Badge>
                       </div>
 
@@ -228,19 +247,26 @@ export function OrdersClient() {
                         </div>
                         <div>
                           <span className="font-medium">{t("orderTotal")}:</span>
-                          <br />${order.total_price?.toFixed(2) || "0.00"}
+                          <br />
+                          {formatPrice(
+                            order.total_price,
+                            {
+                              code: order.order_items?.[0]?.products?.currency_code || "AED",
+                            },
+                            locale
+                          )}
                         </div>
                         <div>
-                          <span className="font-medium">Payment:</span>
+                          <span className="font-medium">{t("payment")}:</span>
                           <br />
                           {order.payment_method === "cash"
-                            ? "Cash on Delivery"
-                            : "Card Payment"}
+                            ? t("cashOnDelivery")
+                            : t("cardPayment")}
                         </div>
                       </div>
 
                       <div className="space-y-2">
-                        <p className="font-medium text-gray-900">Items:</p>
+                        <p className="font-medium text-gray-900">{t("items")}:</p>
                         {order.order_items?.map(
                           (item: any, index: number) => (
                             <div
@@ -248,10 +274,18 @@ export function OrdersClient() {
                               className="flex justify-between text-sm text-gray-600"
                             >
                               <span>
-                                {item.product?.name_en || t("seo.product.defaultTitle")} ×{" "}
+                                {item.products?.name_en || tSeo("product.defaultTitle")} ×{" "}
                                 {item.quantity}
                               </span>
-                              <span>${item.price?.toFixed(2) || "0.00"}</span>
+                              <span>
+                                {formatPrice(
+                                  item.price,
+                                  {
+                                    code: order.order_items?.[0]?.products?.currency_code || "AED",
+                                  },
+                                  locale
+                                )}
+                              </span>
                             </div>
                           )
                         )}

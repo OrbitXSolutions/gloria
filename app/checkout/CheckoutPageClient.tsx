@@ -64,6 +64,7 @@ export default function CheckoutPageClient({
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isCheckoutComplete, setIsCheckoutComplete] = useState(false);
 
   // Form data
   const [formData, setFormData] = useState({
@@ -82,7 +83,7 @@ export default function CheckoutPageClient({
 
   // Initialize form data and address selection
   useEffect(() => {
-    if (cart.items.length === 0) {
+    if (cart.items.length === 0 && !isCheckoutComplete) {
       router.push("/cart");
       return;
     }
@@ -104,6 +105,11 @@ export default function CheckoutPageClient({
       const defaultAddress = userAddresses.find((addr) => addr.is_default);
       if (defaultAddress) {
         setSelectedAddressId(defaultAddress.id);
+        // Set state code from default address
+        setFormData(prev => ({
+          ...prev,
+          stateCode: defaultAddress.state_code || ""
+        }));
       } else if (userAddresses.length === 0) {
         setShowNewAddressForm(true);
       }
@@ -126,6 +132,7 @@ export default function CheckoutPageClient({
     cart.items.length,
     router,
     formData.stateCode,
+    isCheckoutComplete,
   ]);
 
   const handleInputChange = (field: string, value: string) => {
@@ -200,6 +207,11 @@ export default function CheckoutPageClient({
       if (!formData.stateCode) return t("validation.address.emirateRequired");
     }
 
+    // Ensure state is selected for shipping calculation
+    if (!formData.stateCode) {
+      return t("validation.address.emirateRequired");
+    }
+
     if (!selectedAddressId && !showNewAddressForm && user) {
       return t("validation.address.selectOrAdd");
     }
@@ -227,6 +239,13 @@ export default function CheckoutPageClient({
     setIsLoading(true);
 
     try {
+      // Get state code from selected address if using existing address
+      let stateCode = formData.stateCode;
+      if (selectedAddressId && !showNewAddressForm) {
+        const selectedAddress = userAddresses.find(addr => addr.id === selectedAddressId);
+        stateCode = selectedAddress?.state_code || formData.stateCode;
+      }
+
       const checkoutData: CheckoutData = {
         email: formData.email,
         password: formData.password,
@@ -234,12 +253,13 @@ export default function CheckoutPageClient({
         fullName: formData.fullName,
         phone: formData.phone,
         address: formData.address,
-        stateCode: formData.stateCode,
+        stateCode: stateCode,
         notes: formData.notes,
         selectedAddressId: selectedAddressId || undefined,
         cartItems: cart.items,
       };
       let result;
+      debugger;
       if (user) {
         result = await handleAuthenticatedCheckout(checkoutData);
       } else {
@@ -247,6 +267,9 @@ export default function CheckoutPageClient({
       }
 
       if (result.success && result.orderCode) {
+        // Set checkout complete flag to prevent cart redirect
+        setIsCheckoutComplete(true);
+
         // Clear cart
         clear();
 
@@ -276,7 +299,8 @@ export default function CheckoutPageClient({
 
   // Calculate totals
   const subtotal = cart.total;
-  const shipping = 0; // Free shipping
+  const shipping = formData.stateCode ?
+    uaeStates.find(s => s.code === formData.stateCode)?.delivery_fee || 0 : 0;
   const total = subtotal + shipping;
 
   // Helper function to get primary currency for the cart
@@ -696,7 +720,15 @@ export default function CheckoutPageClient({
                 </div>
                 <div className={`flex justify-between`}>
                   <span className="text-gray-600">{t("checkout.orderSummary.shipping")}</span>
-                  <span className="font-semibold text-green-600">{t("cart.free")}</span>
+                  <span className="font-semibold text-gray-600">
+                    {!formData.stateCode
+                      ? t("checkout.orderSummary.selectState")
+                      : formatPrice(
+                        shipping,
+                        primaryCurrency,
+                        locale
+                      )}
+                  </span>
                 </div>
                 <div
                   className={`flex justify-between text-lg font-bold border-t pt-3`}

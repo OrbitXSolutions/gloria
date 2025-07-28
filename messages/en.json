@@ -323,16 +323,17 @@
         "resendOtp": "Resend code",
         "resendingOtp": "Resending code...",
         "resendIn": "Resend code in",
+        "otpResent": "Verification code sent successfully!",
+        "resendError": "Failed to resend verification code",
         "backToLogin": "Back to login"
       },
       "setPhone": {
-        "title": "Set Phone Number",
-        "subtitle": "Add your phone number for account security",
-        "phone": "Phone Number",
-        "phonePlaceholder": "Enter your phone number",
-        "setPhoneButton": "Set Phone Number",
-        "settingPhone": "Setting phone number...",
-        "skipForNow": "Skip for now"
+        "title": "Enter Phone Number",
+        "description": "Please enter your phone number to continue. We will send you a verification code (OTP).",
+        "phoneLabel": "Phone Number",
+        "sendOtpButton": "Send Verification Code",
+        "sending": "Sending...",
+        "serverError": "A server error occurred"
       }
     },
     "errors": {
@@ -706,7 +707,15 @@
       "orderTotal": "Order Total",
       "viewOrder": "View Order",
       "downloadInvoice": "Download Invoice",
-      "trackOrder": "Track Order"
+      "trackOrder": "Track Order",
+      "authenticationRequired": "Authentication Required",
+      "pleaseLoginToViewOrders": "Please log in to view your orders.",
+      "errorLoadingOrders": "Error Loading Orders",
+      "tryAgain": "Try Again",
+      "payment": "Payment",
+      "cashOnDelivery": "Cash on Delivery",
+      "cardPayment": "Card Payment",
+      "items": "Items"
     },
     "orderConfirmation": {
       "title": "Order Confirmed!",

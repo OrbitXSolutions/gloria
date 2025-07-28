@@ -82,10 +82,10 @@ export function ProfileSidebar() {
           <p className="text-sm text-gray-500">
             {user?.email ?? user?.user_metadata.email ?? ""}
           </p>
-          <Badge variant="secondary" className="mt-2">
+          {/* <Badge variant="secondary" className="mt-2">
             <Crown className="h-3 w-3 mr-1" />
             {t("vipMember")}
-          </Badge>
+          </Badge> */}
         </div>
       </div>
 
