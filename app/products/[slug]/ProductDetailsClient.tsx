@@ -719,7 +719,7 @@ export default function ProductDetailsClient({
                           className={`flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0`}
                         >
                           <span className="font-medium text-gray-700 capitalize">
-                            {key
+                            {locale === 'ar' ? key.replace('color', 'اللون').replace('size', 'الحجم') : key
                               .replace(/([A-Z])/g, ' $1')
                               .replace(/^./, str => str.toUpperCase())}
                           </span>
@@ -822,11 +822,10 @@ export default function ProductDetailsClient({
                           0
                         ) / reviews.length
                       ).toFixed(1)}{" "}
-                      out of 5 stars
+                      {t("reviews.outOf5Stars")}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Based on {reviews.length} customer{" "}
-                      {reviews.length === 1 ? t("reviews.reviews").slice(0, -1) : t("reviews.reviews")}
+                      {t("reviews.basedOn")} {reviews.length} {reviews.length === 1 ? t("reviews.customer") : t("reviews.customers")}
                     </p>
                   </div>
 
@@ -841,7 +840,7 @@ export default function ProductDetailsClient({
                         )}
                         %
                       </div>
-                      <div className="text-xs text-gray-500">Recommend</div>
+                      <div className="text-xs text-gray-500">{t("reviews.recommend")}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-secondary-600">
@@ -852,13 +851,13 @@ export default function ProductDetailsClient({
                         )}
                         %
                       </div>
-                      <div className="text-xs text-gray-500">5 Stars</div>
+                      <div className="text-xs text-gray-500">{t("reviews.fiveStars")}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-blue-600">
                         {reviews.length}
                       </div>
-                      <div className="text-xs text-gray-500">Total Reviews</div>
+                      <div className="text-xs text-gray-500">{t("reviews.totalReviews")}</div>
                     </div>
                   </div>
                 </div>
@@ -901,7 +900,7 @@ export default function ProductDetailsClient({
           {showReviewForm && (
             <div className="bg-white rounded-lg p-6 shadow-sm mb-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Write a Review
+                {t("reviews.writeReview")}
               </h3>
 
               <form className="space-y-4">
@@ -911,7 +910,7 @@ export default function ProductDetailsClient({
                       htmlFor="reviewerName"
                       className="block text-sm font-medium text-gray-700 mb-2"
                     >
-                      Full Name *
+                      {t("reviews.fullName")} *
                     </label>
                     <input
                       type="text"
@@ -926,7 +925,7 @@ export default function ProductDetailsClient({
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Rating *
+                    {t("reviews.rating")} *
                   </label>
                   <div className="flex items-center gap-2">
                     {[1, 2, 3, 4, 5].map((rating) => (
@@ -981,7 +980,7 @@ export default function ProductDetailsClient({
                     htmlFor="reviewComment"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Comment *
+                    {t("reviews.comment")} *
                   </label>
                   <textarea
                     id="reviewComment"
@@ -989,7 +988,7 @@ export default function ProductDetailsClient({
                     rows={4}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary-500 focus:border-secondary-500"
-                    placeholder="Share your experience with this product..."
+                    placeholder={t("reviews.shareExperience")}
                   />
                 </div>
 
@@ -1023,15 +1022,14 @@ export default function ProductDetailsClient({
                       );
                       setShowReviewForm(false);
                       toast.success(t("toast.reviews.submitted"), {
-                        description:
-                          "Your review will be published after admin approval.",
+                        description: t("reviews.approvalDescription"),
                       });
                     }}
                   >
-                    Submit Review
+                    {t("reviews.submitReview")}
                   </Button>
                   <p className="text-sm text-gray-500">
-                    * Your review will be published after admin approval
+                    {t("reviews.approvalNote")}
                   </p>
                 </div>
               </form>
@@ -1108,7 +1106,7 @@ export default function ProductDetailsClient({
           ) : (
             <div className="text-center py-8">
               <p className="text-gray-500">
-                No approved reviews yet. Be the first to review this product!
+                {locale == 'ar' ? 'لا يوجد مراجعات موثقة بعد. كن أول من يراجع هذا المنتج!' : 'No approved reviews yet. Be the first to review this product!'}
               </p>
             </div>
           )}

@@ -141,7 +141,22 @@
     "description": "Don't just take our word for it - hear from our satisfied customers",
     "purchased": "Purchased",
     "reviews": "reviews",
-    "anonymous": "Anonymous"
+    "anonymous": "Anonymous",
+    "writeReview": "Write a Review",
+    "fullName": "Full Name",
+    "rating": "Rating",
+    "comment": "Comment",
+    "submitReview": "Submit Review",
+    "approvalNote": "* Your review will be published after admin approval",
+    "approvalDescription": "Your review will be published after admin approval.",
+    "outOf5Stars": "out of 5 stars",
+    "basedOn": "Based on",
+    "customer": "customer",
+    "customers": "customers",
+    "recommend": "Recommend",
+    "fiveStars": "5 Stars",
+    "totalReviews": "Total Reviews",
+    "shareExperience": "Share your experience with this product..."
   },
   "contact": {
     "title": "Get in Touch",

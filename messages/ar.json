@@ -137,7 +137,22 @@
     "description": "لا تأخذ كلامنا فقط - استمع لعملائنا الراضين",
     "purchased": "تم الشراء",
     "reviews": "تقييم",
-    "anonymous": "مجهول"
+    "anonymous": "مجهول",
+    "writeReview": "اكتب تقييم",
+    "fullName": "الاسم الكامل",
+    "rating": "التقييم",
+    "comment": "التعليق",
+    "submitReview": "إرسال التقييم",
+    "approvalNote": "* سيتم نشر تقييمك بعد موافقة الإدارة",
+    "approvalDescription": "سيتم نشر تقييمك بعد موافقة الإدارة.",
+    "outOf5Stars": "من 5 نجوم",
+    "basedOn": "بناءً على",
+    "customer": "عميل",
+    "customers": "عملاء",
+    "recommend": "يوصي",
+    "fiveStars": "5 نجوم",
+    "totalReviews": "إجمالي التقييمات",
+    "shareExperience": "شارك تجربتك مع هذا المنتج..."
   },
   "contact": {
     "title": "تواصل معنا",
