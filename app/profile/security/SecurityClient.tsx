@@ -48,6 +48,7 @@ interface LoginSession {
 export function SecurityClient() {
   const { user } = useSupabaseUser();
   const t = useTranslations("toast");
+  const securityT = useTranslations("profile.security");
   const [loading, setLoading] = useState(false);
   const [showCurrentPassword, setShowCurrentPassword] = useState(false);
   const [showNewPassword, setShowNewPassword] = useState(false);
@@ -151,9 +152,9 @@ export function SecurityClient() {
     <div className="p-6 space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Security Settings</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{securityT("title")}</h1>
         <p className="text-gray-600 mt-1">
-          Manage your account security and privacy
+          {securityT("subtitle")}
         </p>
       </div>
 

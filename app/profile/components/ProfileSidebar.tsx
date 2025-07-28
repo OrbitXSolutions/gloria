@@ -7,10 +7,7 @@ import {
   User,
   Package,
   Heart,
-  Settings,
-  CreditCard,
   MapPin,
-  Bell,
   Shield,
   LogOut,
   Crown,
@@ -20,64 +17,51 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { getUserAvatarUrl } from "@/lib/constants/supabase-storage";
-
-const navigation = [
-  {
-    name: "Overview",
-    href: "/profile",
-    icon: User,
-    description: "Profile summary",
-  },
-  {
-    name: "Orders",
-    href: "/profile/orders",
-    icon: Package,
-    description: "Order history & tracking",
-  },
-  {
-    name: "Favorites",
-    href: "/profile/favorites",
-    icon: Heart,
-    description: "Saved items",
-  },
-  {
-    name: "Addresses",
-    href: "/profile/addresses",
-    icon: MapPin,
-    description: "Shipping addresses",
-  },
-  {
-    name: "Payment Methods",
-    href: "/profile/payment",
-    icon: CreditCard,
-    description: "Cards & billing",
-  },
-  {
-    name: "Notifications",
-    href: "/profile/notifications",
-    icon: Bell,
-    description: "Email & SMS preferences",
-  },
-  {
-    name: "Security",
-    href: "/profile/security",
-    icon: Shield,
-    description: "Password & privacy",
-  },
-  {
-    name: "Settings",
-    href: "/profile/settings",
-    icon: Settings,
-    description: "Account preferences",
-  },
-];
+import { useTranslations } from "next-intl";
 
 export function ProfileSidebar() {
   const pathname = usePathname();
   const { user } = useSupabaseUser();
-  const firstLetters = `${user?.user_metadata.first_name?.[0] ?? ""}${
-    user?.user_metadata.last_name?.[0] ?? ""
-  }`.toUpperCase();
+  const t = useTranslations("profile.sidebar");
+
+  const navigation = [
+    {
+      name: t("overview"),
+      href: "/profile",
+      icon: User,
+      description: t("overviewDescription"),
+    },
+    {
+      name: t("orders"),
+      href: "/profile/orders",
+      icon: Package,
+      description: t("ordersDescription"),
+    },
+    {
+      name: t("favorites"),
+      href: "/profile/favorites",
+      icon: Heart,
+      description: t("favoritesDescription"),
+    },
+    {
+      name: t("addresses"),
+      href: "/profile/addresses",
+      icon: MapPin,
+      description: t("addressesDescription"),
+    },
+
+
+    {
+      name: t("security"),
+      href: "/profile/security",
+      icon: Shield,
+      description: t("securityDescription"),
+    },
+
+  ];
+
+  const firstLetters = `${user?.user_metadata.first_name?.[0] ?? ""}${user?.user_metadata.last_name?.[0] ?? ""
+    }`.toUpperCase();
   return (
     <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
       {/* Profile Header */}
@@ -100,7 +84,7 @@ export function ProfileSidebar() {
           </p>
           <Badge variant="secondary" className="mt-2">
             <Crown className="h-3 w-3 mr-1" />
-            VIP Member
+            {t("vipMember")}
           </Badge>
         </div>
       </div>
@@ -151,7 +135,7 @@ export function ProfileSidebar() {
           className="w-full justify-start text-red-600 hover:text-red-700 hover:bg-red-50"
         >
           <LogOut className="mr-3 h-5 w-5" />
-          Sign Out
+          {t("signOut")}
         </Button>
       </div>
     </div>

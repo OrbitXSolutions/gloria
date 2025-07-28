@@ -33,6 +33,7 @@ import {
   getFirstImageUrl,
 } from "@/lib/constants/supabase-storage";
 import Image from "next/image";
+import { PhoneInput } from "@/components/ui/phone-input";
 
 type UserProfile = Database["public"]["Tables"]["users"]["Row"];
 type Order = OrderWithItems;
@@ -152,7 +153,7 @@ export default function CheckoutPageClient({
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || "Checkout failed");
+      throw new Error(errorData.error || t("toast.checkout.checkoutFailed"));
     }
 
     return await response.json();
@@ -169,7 +170,7 @@ export default function CheckoutPageClient({
 
     if (!response.ok) {
       const errorData = await response.json();
-      throw new Error(errorData.error || "Checkout failed");
+      throw new Error(errorData.error || t("toast.checkout.checkoutFailed"));
     }
 
     return await response.json();
@@ -178,33 +179,33 @@ export default function CheckoutPageClient({
   const validateForm = (): string | null => {
     if (!user) {
       // Guest checkout validation
-      if (!formData.email) return "Email is required";
+      if (!formData.email) return t("validation.email.required");
       if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email))
-        return "Please enter a valid email address";
-      if (!formData.password) return "Password is required";
-      if (!formData.confirmPassword) return "Please confirm your password";
+        return t("validation.email.invalid");
+      if (!formData.password) return t("validation.password.required");
+      if (!formData.confirmPassword) return t("validation.password.confirmRequired");
       if (formData.password !== formData.confirmPassword)
-        return "Passwords do not match";
+        return t("validation.password.mismatch");
       if (formData.password.length < 6)
-        return "Password must be at least 6 characters";
+        return t("validation.password.tooShort");
     }
 
     if (showNewAddressForm || !selectedAddressId) {
       // Address validation
-      if (!formData.fullName.trim()) return "Full name is required";
-      if (!formData.phone.trim()) return "Phone number is required";
+      if (!formData.fullName.trim()) return t("validation.address.fullNameRequired");
+      if (!formData.phone.trim()) return t("validation.address.phoneRequired");
       if (!/^[+]?[0-9\s\-$$$$]{7,15}$/.test(formData.phone.replace(/\s/g, "")))
-        return "Please enter a valid phone number";
-      if (!formData.address.trim()) return "Address is required";
-      if (!formData.stateCode) return "Emirate is required";
+        return t("validation.address.phoneInvalid");
+      if (!formData.address.trim()) return t("validation.address.addressRequired");
+      if (!formData.stateCode) return t("validation.address.emirateRequired");
     }
 
     if (!selectedAddressId && !showNewAddressForm && user) {
-      return "Please select an address or add a new one";
+      return t("validation.address.selectOrAdd");
     }
 
     if (cart.items.length === 0) {
-      return "Your cart is empty";
+      return t("validation.cart.empty");
     }
 
     return null;
@@ -557,14 +558,11 @@ export default function CheckoutPageClient({
                         >
                           {t("checkout.deliveryAddress.phone")}
                         </label>
-                        <Input
+                        <PhoneInput
                           id="phone"
                           value={formData.phone}
-                          onChange={(e) =>
-                            handleInputChange("phone", e.target.value)
-                          }
+                          onChange={(value) => handleInputChange("phone", value)}
                           placeholder={t("checkout.deliveryAddress.phonePlaceholder")}
-                          required
                         />
                       </div>
                     </div>
@@ -658,7 +656,7 @@ export default function CheckoutPageClient({
                       <div className="w-16 h-16 flex-shrink-0">
                         <Image
                           src={primaryImage || "/placeholder.svg"}
-                          alt={productName || "Product"}
+                          alt={productName || t("seo.product.defaultTitle")}
                           width={64}
                           height={64}
                           className="w-full h-full object-cover rounded-lg"

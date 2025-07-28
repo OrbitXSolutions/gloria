@@ -186,12 +186,11 @@ function calculateOrderTotals(cartItems: CartItem[], deliveryFee = 0) {
     (sum, item) => sum + (item.product.price || 0) * item.quantity,
     0
   );
-  const tax = subtotal * 0.05; // 5% VAT in UAE
-  const total = subtotal + tax + deliveryFee;
+  const total = subtotal + deliveryFee;
 
   return {
     subtotal,
-    tax,
+    tax: 0, // No tax, only delivery fees
     deliveryFee,
     total,
   };

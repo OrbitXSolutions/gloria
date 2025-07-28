@@ -21,6 +21,7 @@ import {
   UserSetPhoneSchema,
 } from "@/lib/schemas/set-phone-schema";
 import { Button } from "../ui/button";
+import { PhoneInput } from "../ui/phone-input";
 
 // const setphoneFields: SetPhoneFieldData[] = [
 //   {
@@ -79,12 +80,12 @@ export default function SetPhoneForm() {
               <FormItem className="space-y-2">
                 <FormLabel htmlFor={field.name}>{"رقم الهاتف"}</FormLabel>
                 <FormControl>
-                  <Input
+                  <PhoneInput
                     id={field.name}
-                    type="tel"
                     placeholder="+201234567890"
                     disabled={action.isPending}
-                    {...field}
+                    value={field.value}
+                    onChange={field.onChange}
                   />
                 </FormControl>
                 <FormMessage />

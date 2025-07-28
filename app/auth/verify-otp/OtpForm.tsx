@@ -15,8 +15,10 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Loader2, ArrowLeft, RefreshCw } from "lucide-react";
 import Link from "next/link";
+import { useTranslations } from "next-intl";
 
 export default function OtpForm() {
+  const t = useTranslations();
   const [otp, setOtp] = useState("");
   const [timeLeft, setTimeLeft] = useState(60);
   const [canResend, setCanResend] = useState(false);
@@ -78,7 +80,7 @@ export default function OtpForm() {
       <div className="space-y-6">
         <div className="text-center">
           <p className="text-sm text-gray-600 mb-6">
-            Code sent to{" "}
+            {t("auth.forms.verifyOtp.otpSent")}{" "}
             <span className="font-medium text-gray-900">{phone}</span>
           </p>
 
@@ -144,10 +146,10 @@ export default function OtpForm() {
         {isExecuting ? (
           <>
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Verifying...
+            {t("auth.forms.verifyOtp.verifying")}
           </>
         ) : (
-          "Verify Code"
+          t("auth.forms.verifyOtp.verifyButton")
         )}
       </Button>
 
@@ -161,11 +163,11 @@ export default function OtpForm() {
               className="text-gray-900 hover:text-gray-700 font-medium p-0 h-auto"
             >
               <RefreshCw className="w-4 h-4 mr-2" />
-              Resend Code
+              {t("auth.forms.verifyOtp.resendOtp")}
             </Button>
           ) : (
             <span>
-              Resend code in{" "}
+              {t("auth.forms.verifyOtp.resendIn")}{" "}
               <span className="font-medium text-gray-900">{timeLeft}s</span>
             </span>
           )}
@@ -176,7 +178,7 @@ export default function OtpForm() {
           className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to registration
+          {t("auth.forms.verifyOtp.backToLogin")}
         </Link>
       </div>
     </form>

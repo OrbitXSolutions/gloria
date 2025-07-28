@@ -100,7 +100,11 @@
     },
     "details": "Product Details",
     "quantity": "Quantity",
-    "available": "available"
+    "available": "available",
+    "attributes": {
+      "color": "Color",
+      "size": "Size"
+    }
   },
   "features": {
     "title": "Why Choose Us",
@@ -136,7 +140,8 @@
     "title": "What Our Customers Say",
     "description": "Don't just take our word for it - hear from our satisfied customers",
     "purchased": "Purchased",
-    "reviews": "reviews"
+    "reviews": "reviews",
+    "anonymous": "Anonymous"
   },
   "contact": {
     "title": "Get in Touch",
@@ -212,11 +217,190 @@
   "auth": {
     "login": "Login",
     "loginRequired": "Login Required",
-    "loginToAddFavorites": "Please login to add items to your favorites"
+    "loginToAddFavorites": "Please login to add items to your favorites",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "register": "Register",
+    "createAccount": "Create Account",
+    "forgotPassword": "Forgot Password",
+    "resetPassword": "Reset Password",
+    "confirmEmail": "Confirm Email",
+    "confirmPhone": "Confirm Phone",
+    "verifyOtp": "Verify OTP",
+    "setPhone": "Set Phone Number",
+    "forms": {
+      "login": {
+        "title": "Welcome Back",
+        "subtitle": "Sign in to your account",
+        "description": "Step into a world where luxury meets innovation. Your exclusive collection awaits.",
+        "features": {
+          "exclusiveCollections": "Exclusive Designer Collections",
+          "personalizedExperience": "Personalized Shopping Experience",
+          "priorityAccess": "Priority Access to New Arrivals"
+        },
+        "emailOrPhone": "Email or Phone Number",
+        "emailOrPhonePlaceholder": "Enter your email or phone",
+        "password": "Password",
+        "passwordPlaceholder": "Enter your password",
+        "rememberMe": "Remember me",
+        "forgotPassword": "Forgot password?",
+        "signInButton": "Sign In",
+        "signingIn": "Signing in...",
+        "newToEleva": "New to Eleva?",
+        "createAccountButton": "Create Account",
+        "orDivider": "or"
+      },
+      "register": {
+        "title": "Create Account",
+        "subtitle": "Join Eleva today",
+        "firstName": "First Name",
+        "firstNamePlaceholder": "First name",
+        "lastName": "Last Name",
+        "lastNamePlaceholder": "Last name",
+        "email": "Email Address",
+        "emailPlaceholder": "Enter your email",
+        "phone": "Phone Number",
+        "phonePlaceholder": "Enter your phone number",
+        "password": "Password",
+        "passwordPlaceholder": "Create a password",
+        "confirmPassword": "Confirm Password",
+        "confirmPasswordPlaceholder": "Confirm your password",
+        "createAccountButton": "Create Account",
+        "creatingAccount": "Creating account...",
+        "termsAgreement": "By clicking \"Create Account,\" you agree to our",
+        "termsOfService": "Terms of Service",
+        "and": "and",
+        "privacyPolicy": "Privacy Policy",
+        "alreadyHaveAccount": "Already have an account?",
+        "signInButton": "Sign In"
+      },
+      "forgotPassword": {
+        "title": "Forgot Password",
+        "subtitle": "Enter your email or phone to reset your password",
+        "emailOrPhone": "Email or Phone Number",
+        "emailOrPhonePlaceholder": "Enter your email or phone number",
+        "sendResetInstructions": "Send Reset Instructions",
+        "sendingInstructions": "Sending instructions...",
+        "backToSignIn": "Back to sign in"
+      },
+      "resetPassword": {
+        "title": "Reset Password",
+        "subtitle": "Enter your new password",
+        "newPassword": "New Password",
+        "newPasswordPlaceholder": "Enter your new password",
+        "confirmPassword": "Confirm Password",
+        "confirmPasswordPlaceholder": "Confirm your new password",
+        "resetPasswordButton": "Reset Password",
+        "resettingPassword": "Resetting password...",
+        "redirecting": "Redirecting to login..."
+      },
+      "confirmEmail": {
+        "title": "Confirm Your Email",
+        "subtitle": "We've sent a confirmation link to your email",
+        "emailSent": "Confirmation email sent to",
+        "checkEmail": "Please check your email and click the confirmation link",
+        "resendEmail": "Resend confirmation email",
+        "resendingEmail": "Resending email...",
+        "backToLogin": "Back to login"
+      },
+      "confirmPhone": {
+        "title": "Confirm Your Phone",
+        "subtitle": "We've sent a confirmation SMS to your phone",
+        "phoneSent": "Confirmation SMS sent to",
+        "checkSms": "Please check your SMS and click the confirmation link",
+        "resendSms": "Resend confirmation SMS",
+        "resendingSms": "Resending SMS...",
+        "backToLogin": "Back to login"
+      },
+      "verifyOtp": {
+        "title": "Verify Your Phone",
+        "subtitle": "Enter the verification code sent to your phone",
+        "otpSent": "Verification code sent to",
+        "enterOtp": "Enter the 6-digit code",
+        "otpPlaceholder": "Enter verification code",
+        "verifyButton": "Verify",
+        "verifying": "Verifying...",
+        "resendOtp": "Resend code",
+        "resendingOtp": "Resending code...",
+        "resendIn": "Resend code in",
+        "backToLogin": "Back to login"
+      },
+      "setPhone": {
+        "title": "Set Phone Number",
+        "subtitle": "Add your phone number for account security",
+        "phone": "Phone Number",
+        "phonePlaceholder": "Enter your phone number",
+        "setPhoneButton": "Set Phone Number",
+        "settingPhone": "Setting phone number...",
+        "skipForNow": "Skip for now"
+      }
+    },
+    "errors": {
+      "emailNotConfirmed": "Email not confirmed",
+      "phoneNotConfirmed": "Phone not confirmed",
+      "invalidCredentials": "Invalid email/phone or password",
+      "userNotFound": "User not found",
+      "emailAlreadyExists": "Email already exists",
+      "phoneAlreadyExists": "Phone number already exists",
+      "weakPassword": "Password is too weak",
+      "tooManyRequests": "Too many requests. Please try again later",
+      "networkError": "Network error. Please check your connection",
+      "otpExpired": "Verification code has expired",
+      "otpInvalid": "Invalid verification code",
+      "otpTooManyAttempts": "Too many attempts. Please try again later"
+    },
+    "success": {
+      "loginSuccess": "Successfully signed in",
+      "registerSuccess": "Account created successfully",
+      "passwordResetSent": "Password reset instructions sent",
+      "passwordResetSuccess": "Password reset successfully",
+      "emailConfirmed": "Email confirmed successfully",
+      "phoneConfirmed": "Phone confirmed successfully",
+      "otpVerified": "Phone verified successfully",
+      "phoneSet": "Phone number set successfully"
+    },
+    "passwordStrength": {
+      "label": "Password strength",
+      "veryWeak": "Very Weak",
+      "weak": "Weak",
+      "fair": "Fair",
+      "good": "Good",
+      "strong": "Strong",
+      "match": "Passwords match",
+      "noMatch": "Passwords don't match",
+      "requirements": "Password requirements",
+      "minLength": "At least 8 characters",
+      "uppercase": "One uppercase letter",
+      "lowercase": "One lowercase letter",
+      "number": "One number"
+    }
   },
   "favorites": {
     "added": "Added to favorites",
     "removed": "Removed from favorites"
+  },
+  "validation": {
+    "email": {
+      "required": "Email is required",
+      "invalid": "Please enter a valid email address"
+    },
+    "password": {
+      "required": "Password is required",
+      "confirmRequired": "Please confirm your password",
+      "mismatch": "Passwords do not match",
+      "tooShort": "Password must be at least 6 characters"
+    },
+    "address": {
+      "fullNameRequired": "Full name is required",
+      "phoneRequired": "Phone number is required",
+      "phoneInvalid": "Please enter a valid phone number",
+      "addressRequired": "Address is required",
+      "emirateRequired": "Emirate is required",
+      "selectOrAdd": "Please select an address or add a new one"
+    },
+    "cart": {
+      "empty": "Your cart is empty"
+    }
   },
   "toast": {
     "profile": {
@@ -251,7 +435,8 @@
     },
     "cart": {
       "empty": "Your cart is empty",
-      "checkoutFailed": "Failed to proceed to checkout. Please try again."
+      "checkoutFailed": "Failed to proceed to checkout. Please try again.",
+      "viewCart": "View Cart"
     },
     "checkout": {
       "orderNotFound": "Order not found",
@@ -278,9 +463,6 @@
     },
     "share": {
       "linkCopied": "Link copied to clipboard"
-    },
-    "cart": {
-      "viewCart": "View Cart"
     }
   },
   "cart": {
@@ -374,6 +556,207 @@
   "common": {
     "back": "Back"
   },
+  "profile": {
+    "overview": {
+      "title": "Profile Overview",
+      "welcome": "Welcome back, {name}!",
+      "editProfile": "Edit Profile",
+      "security": "Security",
+      "welcomeMessage": "Welcome to ELEVA! Complete your profile and start exploring our luxury fragrance collection.",
+      "valuedCustomer": "Valued Customer",
+      "memberSince": "Member since",
+      "vipMember": "VIP Member",
+      "highestTier": "You've reached the highest tier!",
+      "spendMore": "Spend ${amount} more to reach {level} status",
+      "tryAgain": "Try Again",
+      "loginRequired": "Please log in to view your profile",
+      "loadError": "Unable to load profile. Please try again.",
+      "loadDataError": "Unable to load profile data. Please try refreshing the page.",
+      "stats": {
+        "totalOrders": "Total Orders",
+        "totalFavorites": "Total Favorites",
+        "totalSpent": "Total Spent",
+        "recentOrders": "Recent Orders",
+        "recentFavorites": "Recent Favorites",
+        "viewAllOrders": "View All Orders",
+        "viewAllFavorites": "View All Favorites",
+        "orderItems": "Order items",
+        "moreItems": "+{count} more",
+        "noOrders": "No orders yet",
+        "noFavorites": "No favorites yet",
+        "startShopping": "Start shopping to see your orders here",
+        "addFavorites": "Add items to your favorites to see them here"
+      },
+      "vipBenefits": {
+        "title": "Your VIP Benefits",
+        "prioritySupport": {
+          "title": "Priority Support",
+          "description": "24/7 dedicated customer service"
+        },
+        "freeShipping": {
+          "title": "Free Shipping",
+          "description": "On all orders, no minimum"
+        },
+        "exclusiveAccess": {
+          "title": "Exclusive Access",
+          "description": "Early access to new collections"
+        }
+      }
+    },
+    "sidebar": {
+      "overview": "Overview",
+      "overviewDescription": "Profile summary",
+      "orders": "Orders",
+      "ordersDescription": "Order history & tracking",
+      "favorites": "Favorites",
+      "favoritesDescription": "Saved items",
+      "addresses": "Addresses",
+      "addressesDescription": "Shipping addresses",
+      "paymentMethods": "Payment Methods",
+      "paymentMethodsDescription": "Cards & billing",
+      "notifications": "Notifications",
+      "notificationsDescription": "Email & SMS preferences",
+      "security": "Security",
+      "securityDescription": "Password & privacy",
+      "settings": "Settings",
+      "settingsDescription": "Account preferences",
+      "signOut": "Sign Out",
+      "signIn": "Sign In",
+      "profileMenu": "Profile Menu"
+    },
+    "settings": {
+      "title": "Account Settings",
+      "subtitle": "Manage your account preferences and settings",
+      "profileInformation": "Profile Information",
+      "changePhoto": "Change Photo",
+      "photoDescription": "JPG, GIF or PNG. 1MB max.",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "emailAddress": "Email Address",
+      "phoneNumber": "Phone Number",
+      "saveChanges": "Save Changes",
+      "notifications": {
+        "title": "Notifications",
+        "subtitle": "Manage your notification preferences",
+        "emailNotifications": "Email Notifications",
+        "emailDescription": "Receive order updates and promotions via email",
+        "smsNotifications": "SMS Notifications",
+        "smsDescription": "Receive order updates via SMS",
+        "marketingEmails": "Marketing Emails",
+        "marketingDescription": "Receive promotional emails and offers"
+      },
+      "languageRegion": {
+        "title": "Language & Region",
+        "language": "Language",
+        "timezone": "Timezone",
+        "saveSettings": "Save Settings"
+      }
+    },
+    "security": {
+      "title": "Security Settings",
+      "subtitle": "Manage your account security and privacy",
+      "changePassword": {
+        "title": "Change Password",
+        "subtitle": "Update your account password",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmPassword": "Confirm New Password",
+        "updatePassword": "Update Password",
+        "updatingPassword": "Updating password..."
+      },
+      "twoFactorAuth": {
+        "title": "Two-Factor Authentication",
+        "subtitle": "Add an extra layer of security to your account",
+        "enabled": "Two-factor authentication is enabled",
+        "disabled": "Two-factor authentication is disabled",
+        "enable": "Enable",
+        "disable": "Disable"
+      },
+      "loginAlerts": {
+        "title": "Login Alerts",
+        "subtitle": "Get notified of new login attempts",
+        "enabled": "Login alerts are enabled",
+        "disabled": "Login alerts are disabled"
+      },
+      "activeSessions": {
+        "title": "Active Sessions",
+        "subtitle": "Manage your active login sessions",
+        "device": "Device",
+        "location": "Location",
+        "lastActive": "Last Active",
+        "current": "Current",
+        "activeNow": "Active now",
+        "terminateSession": "Terminate Session",
+        "terminateAllSessions": "Terminate All Other Sessions",
+        "terminatingSession": "Terminating session..."
+      }
+    },
+    "orders": {
+      "title": "My Orders",
+      "subtitle": "Track your orders and view order history",
+      "searchOrders": "Search orders...",
+      "filterByStatus": "Filter by status",
+      "allOrders": "All Orders",
+      "noOrders": "No orders found",
+      "noOrdersDescription": "You haven't placed any orders yet.",
+      "startShopping": "Start Shopping",
+      "orderNumber": "Order #{number}",
+      "orderDate": "Order Date",
+      "orderStatus": "Order Status",
+      "orderTotal": "Order Total",
+      "viewOrder": "View Order",
+      "downloadInvoice": "Download Invoice",
+      "trackOrder": "Track Order"
+    },
+    "orderConfirmation": {
+      "title": "Order Confirmed!",
+      "subtitle": "Thank you for your purchase",
+      "breadcrumb": "Order Confirmation",
+      "continueShopping": "Continue Shopping",
+      "orderInformation": "Order Information",
+      "orderNumber": "Order Number",
+      "orderDate": "Order Date",
+      "status": "Status",
+      "totalAmount": "Total Amount",
+      "deliveryAddress": "Delivery Address",
+      "notes": "Notes",
+      "orderItems": "Order Items",
+      "quantity": "Quantity",
+      "each": "each",
+      "orderSummary": "Order Summary",
+      "subtotal": "Subtotal",
+      "shipping": "Shipping",
+      "free": "Free",
+      "total": "Total",
+      "whatsNext": "What's Next?",
+      "emailConfirmation": "You'll receive an email confirmation shortly",
+      "shipmentNotification": "We'll notify you when your order ships",
+      "trackOrderStatus": "Track your order status anytime"
+    },
+    "favorites": {
+      "title": "My Favorites",
+      "subtitle": "Your saved items and wishlist",
+      "searchFavorites": "Search favorites...",
+      "noFavorites": "No favorites yet",
+      "noFavoritesDescription": "You haven't added any items to your favorites yet.",
+      "startShopping": "Start Shopping",
+      "removeFromFavorites": "Remove from Favorites",
+      "addToCart": "Add to Cart",
+      "moveToCart": "Move to Cart"
+    },
+    "addresses": {
+      "title": "My Addresses",
+      "subtitle": "Manage your shipping addresses",
+      "addNewAddress": "Add New Address",
+      "defaultAddress": "Default Address",
+      "setAsDefault": "Set as Default",
+      "editAddress": "Edit Address",
+      "deleteAddress": "Delete Address",
+      "noAddresses": "No addresses saved",
+      "noAddressesDescription": "You haven't added any shipping addresses yet.",
+      "addFirstAddress": "Add Your First Address"
+    }
+  },
   "seo": {
     "title": {
       "default": "Eleva - Premium Fragrances for Every Occasion",
@@ -406,5 +789,17 @@
         "luxury": "luxury"
       }
     }
+  },
+  "orderStatus": {
+    "draft": "Draft",
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "failed": "Failed",
+    "refunded": "Refunded",
+    "returned": "Returned"
   }
 }
