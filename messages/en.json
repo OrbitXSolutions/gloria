@@ -232,6 +232,12 @@
       "login": {
         "title": "Welcome Back",
         "subtitle": "Sign in to your account",
+        "description": "Step into a world where luxury meets innovation. Your exclusive collection awaits.",
+        "features": {
+          "exclusiveCollections": "Exclusive Designer Collections",
+          "personalizedExperience": "Personalized Shopping Experience",
+          "priorityAccess": "Priority Access to New Arrivals"
+        },
         "emailOrPhone": "Email or Phone Number",
         "emailOrPhonePlaceholder": "Enter your email or phone",
         "password": "Password",
@@ -783,5 +789,17 @@
         "luxury": "luxury"
       }
     }
+  },
+  "orderStatus": {
+    "draft": "Draft",
+    "pending": "Pending",
+    "confirmed": "Confirmed",
+    "processing": "Processing",
+    "shipped": "Shipped",
+    "delivered": "Delivered",
+    "cancelled": "Cancelled",
+    "failed": "Failed",
+    "refunded": "Refunded",
+    "returned": "Returned"
   }
 }

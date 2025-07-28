@@ -21,7 +21,9 @@ interface OrderConfirmationClientProps {
 export default function OrderConfirmationClient({
   order,
 }: OrderConfirmationClientProps) {
-  const t = useTranslations();
+  const t = useTranslations("profile");
+  const tHeader = useTranslations("header");
+  const tOrderStatus = useTranslations("orderStatus");
   const locale = useLocale();
   const getProductName = (product: any) => {
     return locale === "ar"
@@ -55,7 +57,7 @@ export default function OrderConfirmationClient({
         <div className="container mx-auto px-4 py-6">
           <div className={`flex items-center gap-2 text-sm text-gray-600 mb-4`}>
             <Link href="/" className="hover:text-gray-900">
-              {t("header.nav.home")}
+              {tHeader("nav.home")}
             </Link>
             <span>/</span>
             <span className="text-gray-900">{t("orderConfirmation.breadcrumb")}</span>
@@ -120,8 +122,7 @@ export default function OrderConfirmationClient({
                 <div>
                   <h3 className="font-semibold text-gray-900 mb-2">{t("orderConfirmation.status")}</h3>
                   <Badge className={getStatusColor(order.status)}>
-                    {order.status.charAt(0).toUpperCase() +
-                      order.status.slice(1)}
+                    {tOrderStatus(`${order.status}`)}
                   </Badge>
                 </div>
                 <div>
@@ -254,7 +255,16 @@ export default function OrderConfirmationClient({
                 </div>
                 <div className={`flex justify-between `}>
                   <span className="text-gray-600">{t("orderConfirmation.shipping")}</span>
-                  <span className="font-semibold text-green-600">{t("orderConfirmation.free")}</span>
+                  <span className="font-semibold">
+                    {/* {JSON.stringify(order)} */}
+                    {formatPrice(
+                      order.shipping || 0,
+                      {
+                        code: order.order_items[0]?.product?.currency_code ?? "AED",
+                      },
+                      locale
+                    )}
+                  </span>
                 </div>
 
                 <div
@@ -287,16 +297,17 @@ export default function OrderConfirmationClient({
 
               {/* Actions */}
               <div className="space-y-3">
-                <Link href="/profile/orders">
-                  <Button variant="outline" className="w-full">
+
+                <Button asChild variant="outline" className="w-full">
+                  <Link href="/profile/orders">
                     {t("orders.title")}
-                  </Button>
-                </Link>
-                <Link href="/products">
-                  <Button className="w-full bg-secondary-600 hover:bg-secondary-700">
+                  </Link>
+                </Button>
+                <Button asChild variant="outline" className="w-full bg-secondary-600 hover:bg-secondary-700 text-white">
+                  <Link href="/products">
                     {t("orderConfirmation.continueShopping")}
-                  </Button>
-                </Link>
+                  </Link>
+                </Button>
               </div>
             </div>
           </div>

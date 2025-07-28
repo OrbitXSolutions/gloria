@@ -228,6 +228,12 @@
       "login": {
         "title": "مرحباً بعودتك",
         "subtitle": "سجل دخولك إلى حسابك",
+        "description": "خطو إلى عالم حيث يلتقي الفخامة بالابتكار. مجموعتك الحصرية تنتظرك.",
+        "features": {
+          "exclusiveCollections": "مجموعات المصممين الحصرية",
+          "personalizedExperience": "تجربة تسوق مخصصة",
+          "priorityAccess": "وصول أولوية للمنتجات الجديدة"
+        },
         "emailOrPhone": "البريد الإلكتروني أو رقم الهاتف",
         "emailOrPhonePlaceholder": "أدخل بريدك الإلكتروني أو رقم هاتفك",
         "password": "كلمة المرور",
@@ -779,5 +785,17 @@
         "luxury": "فاخر"
       }
     }
+  },
+  "orderStatus": {
+    "draft": "مسودة",
+    "pending": "قيد المعالجة",
+    "confirmed": "تم التأكيد",
+    "processing": "جاري المعالجة",
+    "shipped": "تم الشحن",
+    "delivered": "تم التسليم",
+    "cancelled": "تم الإلغاء",
+    "failed": "فشل",
+    "refunded": "مسترجع",
+    "returned": "مسترجع"
   }
 }

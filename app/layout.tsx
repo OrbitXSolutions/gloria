@@ -3,7 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme-provider";
 import AppHeader from "@/components/organisms/layout/app-header.component";
-import { getLocale, getTranslations } from "next-intl/server";
+import { getLocale, getTranslations, getMessages } from "next-intl/server";
 import { RootWrapper } from "@/components/_core/wrappers/root-wrapper";
 import { Footer } from "react-day-picker";
 import AppFooter from "@/components/organisms/layout/app-footer";
@@ -92,6 +92,7 @@ interface Props {
 
 export default async function RootLayout({ children, searchParams }: Props) {
   const locale = await getLocale();
+  const messages = await getMessages();
   const dir = locale === "ar" ? "rtl" : "ltr";
   return (
     <html lang={locale} dir={dir}>
@@ -100,7 +101,7 @@ export default async function RootLayout({ children, searchParams }: Props) {
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <RootWrapper>
+        <RootWrapper messages={messages}>
           <AppHeader />
           <main>{children}</main>
           <AppFooter />
