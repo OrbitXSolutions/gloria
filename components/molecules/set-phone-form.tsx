@@ -35,6 +35,7 @@ import { PhoneInput } from "../ui/phone-input";
 
 export default function SetPhoneForm() {
   const t = useTranslations("toast");
+  const formT = useTranslations("auth.forms.setPhone");
   const {
     form,
     action,
@@ -66,7 +67,7 @@ export default function SetPhoneForm() {
             <p className="text-sm text-destructive text-center">
               {typeof action.result?.serverError === "string"
                 ? action.result.serverError
-                : "حدث خطأ في الخادم"}
+                : formT("serverError")}
             </p>
           </div>
         )}
@@ -78,7 +79,7 @@ export default function SetPhoneForm() {
             control={form.control}
             render={({ field }) => (
               <FormItem className="space-y-2">
-                <FormLabel htmlFor={field.name}>{"رقم الهاتف"}</FormLabel>
+                <FormLabel htmlFor={field.name}>{formT("phoneLabel")}</FormLabel>
                 <FormControl>
                   <PhoneInput
                     id={field.name}
@@ -102,11 +103,11 @@ export default function SetPhoneForm() {
         >
           {action.isPending ? (
             <>
-              جاري التسجيل...
+              {formT("sending")}
               <Spinner size="small" />
             </>
           ) : (
-            "إرسال رمز التحقق"
+            formT("sendOtpButton")
           )}
         </Button>
       </form>

@@ -195,7 +195,6 @@ export async function completeCheckout(
           address: validatedData.address,
           state_code: validatedData.stateCode,
           notes: validatedData.notes,
-          state: validatedData.stateCode,
           is_default: !validatedData.selectedAddressId, // First address is default
         })
         .select("id")
@@ -255,7 +254,7 @@ export async function completeCheckout(
         *,
         order_items (
           *,
-          product (
+          products (
             id,
             name_en,
             sku,
@@ -263,14 +262,14 @@ export async function completeCheckout(
             currency_code
           )
         ),
-        user (
+        users (
           id,
           first_name,
           last_name,
           email,
           phone
         ),
-        address (
+        addresses (
           id,
           full_name,
           phone,
@@ -319,11 +318,24 @@ export async function completeCheckout(
 
 // Redirect to checkout
 export async function redirectToCheckout(cartItems: CartItem[]) {
-  const result = await createDraftOrder(cartItems);
+  const supabase = await createSsrClient();
 
-  if (result.success && result.orderCode) {
-    redirect(`/checkout/${result.orderCode}`);
+  // Check if user is authenticated
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
+
+  if (authUser) {
+    // Authenticated user - redirect directly to checkout without draft
+    redirect('/checkout');
   } else {
-    return { success: false, error: result.error };
+    // Anonymous user - create draft order and redirect with code
+    const result = await createDraftOrder(cartItems);
+
+    if (result.success && result.orderCode) {
+      redirect(`/checkout/${result.orderCode}`);
+    } else {
+      return { success: false, error: result.error };
+    }
   }
 }

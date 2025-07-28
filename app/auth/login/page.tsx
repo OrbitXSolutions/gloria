@@ -54,7 +54,7 @@ export default function LoginPage() {
             </div>
           </div>
 
-          <div className="text-xs opacity-60">{t("common.copyright.rights")}</div>
+          {/* <div className="text-xs opacity-60">{t("common.copyright.rights")}</div> */}
         </div>
       </div>
 

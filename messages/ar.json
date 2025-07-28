@@ -137,7 +137,22 @@
     "description": "لا تأخذ كلامنا فقط - استمع لعملائنا الراضين",
     "purchased": "تم الشراء",
     "reviews": "تقييم",
-    "anonymous": "مجهول"
+    "anonymous": "مجهول",
+    "writeReview": "اكتب تقييم",
+    "fullName": "الاسم الكامل",
+    "rating": "التقييم",
+    "comment": "التعليق",
+    "submitReview": "إرسال التقييم",
+    "approvalNote": "* سيتم نشر تقييمك بعد موافقة الإدارة",
+    "approvalDescription": "سيتم نشر تقييمك بعد موافقة الإدارة.",
+    "outOf5Stars": "من 5 نجوم",
+    "basedOn": "بناءً على",
+    "customer": "عميل",
+    "customers": "عملاء",
+    "recommend": "يوصي",
+    "fiveStars": "5 نجوم",
+    "totalReviews": "إجمالي التقييمات",
+    "shareExperience": "شارك تجربتك مع هذا المنتج..."
   },
   "contact": {
     "title": "تواصل معنا",
@@ -319,16 +334,17 @@
         "resendOtp": "إعادة إرسال الرمز",
         "resendingOtp": "جاري إعادة الإرسال...",
         "resendIn": "إعادة إرسال الرمز خلال",
+        "otpResent": "تم إرسال رمز التحقق بنجاح!",
+        "resendError": "فشل في إعادة إرسال رمز التحقق",
         "backToLogin": "العودة لتسجيل الدخول"
       },
       "setPhone": {
-        "title": "تعيين رقم الهاتف",
-        "subtitle": "أضف رقم هاتفك لأمان الحساب",
-        "phone": "رقم الهاتف",
-        "phonePlaceholder": "أدخل رقم هاتفك",
-        "setPhoneButton": "تعيين رقم الهاتف",
-        "settingPhone": "جاري تعيين رقم الهاتف...",
-        "skipForNow": "تخطي الآن"
+        "title": "إدخال رقم الهاتف",
+        "description": "الرجاء إدخال رقم الهاتف الخاص بك للمتابعة. سوف نرسل لك رمز تحقق (OTP).",
+        "phoneLabel": "رقم الهاتف",
+        "sendOtpButton": "إرسال رمز التحقق",
+        "sending": "جاري الإرسال...",
+        "serverError": "حدث خطأ في الخادم"
       }
     },
     "errors": {
@@ -702,7 +718,15 @@
       "orderTotal": "إجمالي الطلب",
       "viewOrder": "عرض الطلب",
       "downloadInvoice": "تحميل الفاتورة",
-      "trackOrder": "تتبع الطلب"
+      "trackOrder": "تتبع الطلب",
+      "authenticationRequired": "مطلوب تسجيل الدخول",
+      "pleaseLoginToViewOrders": "يرجى تسجيل الدخول لعرض طلباتك.",
+      "errorLoadingOrders": "خطأ في تحميل الطلبات",
+      "tryAgain": "حاول مرة أخرى",
+      "payment": "الدفع",
+      "cashOnDelivery": "الدفع عند الاستلام",
+      "cardPayment": "الدفع بالبطاقة",
+      "items": "العناصر"
     },
     "orderConfirmation": {
       "title": "تم تأكيد الطلب!",

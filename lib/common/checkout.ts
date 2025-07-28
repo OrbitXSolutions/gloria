@@ -204,10 +204,17 @@ export async function processAuthenticatedCheckout(
   const supabase = await createSsrClient();
 
   try {
-    // Get user's internal ID
+    // Get user's internal ID and details
     const user = await getOrCreateUser(authUserId);
     const userInternalId = user?.id;
     if (!userInternalId) throw new Error("User not found");
+
+    // Get user details for email
+    const { data: userDetails } = await supabase
+      .from("users")
+      .select("email")
+      .eq("id", userInternalId)
+      .single();
 
     let addressId = checkoutData.selectedAddressId;
 
@@ -248,8 +255,10 @@ export async function processAuthenticatedCheckout(
         code: orderCode,
         user_id: userInternalId,
         address_id: addressId,
-        status: "pending",
+        status: "confirmed", // Direct to confirmed for authenticated users
         total_price: totals.total,
+        subtotal: totals.subtotal,
+        shipping: deliveryFee,
         payment_method: "cash", // Default to cash on delivery
         user_note: checkoutData.notes,
       })
@@ -276,6 +285,74 @@ export async function processAuthenticatedCheckout(
     if (itemsError) {
       console.error("Error creating order items:", itemsError);
       throw new Error("Failed to create order items");
+    }
+
+    // Get the complete order with items for email notification
+    const { data: completeOrder, error: orderFetchError } = await supabase
+      .from("orders")
+      .select(`
+        *,
+        order_items (
+          *,
+          products (
+            id,
+            name_en,
+            sku,
+            price,
+            currency_code
+          )
+        ),
+        users (
+          id,
+          first_name,
+          last_name,
+          email,
+          phone
+        ),
+        addresses (
+          id,
+          full_name,
+          phone,
+          address,
+          state_code
+        )
+      `)
+      .eq("code", orderCode)
+      .single();
+
+    if (orderFetchError) {
+      console.error("Error fetching complete order:", orderFetchError);
+      // Don't fail the checkout if we can't send emails
+    } else if (completeOrder) {
+      // Send notification emails
+      const customerName = checkoutData.fullName;
+      const customerEmail = userDetails?.email || '';
+      const customerPhone = checkoutData.phone || '';
+
+      // Only send emails if we have valid email
+      if (customerEmail) {
+        try {
+          // Import the email function dynamically to avoid circular dependencies
+          const { sendCheckoutNotificationEmails } = await import("@/app/_actions/send-checkout-emails");
+          await sendCheckoutNotificationEmails({
+            order: completeOrder as any, // Type assertion for now
+            customerName,
+            customerEmail,
+            customerPhone,
+          });
+        } catch (emailError) {
+          console.error("Error sending checkout notification emails:", emailError);
+          // Don't fail the checkout if email sending fails
+        }
+      }
+    }
+
+    // Revalidate orders page
+    try {
+      const { revalidatePath } = await import("next/cache");
+      revalidatePath("/orders");
+    } catch (error) {
+      console.error("Error revalidating orders page:", error);
     }
 
     return {
