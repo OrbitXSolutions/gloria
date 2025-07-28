@@ -14,8 +14,14 @@ export async function GET(request: Request) {
 
   if (code) {
     const supabase = await createSsrClient();
-    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    const { data: useSession, error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      const { data: user, error: userError } = await supabase.auth.getUser();
+      if (!user || userError) {
+        await supabase.auth.setSession(useSession.session);
+      }
+
+
       const forwardedHost = request.headers.get("x-forwarded-host"); // original origin before load balancer
       const isLocalEnv = process.env.NODE_ENV === "development";
       if (isLocalEnv) {
@@ -27,6 +33,7 @@ export async function GET(request: Request) {
         return NextResponse.redirect(`${origin}${next}`);
       }
     }
+
   }
 
   // return the user to an error page with instructions

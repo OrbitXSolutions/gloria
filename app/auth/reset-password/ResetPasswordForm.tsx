@@ -11,8 +11,10 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Eye, EyeOff, Loader2, CheckCircle } from "lucide-react"
+import { useTranslations } from "next-intl"
 
 export default function ResetPasswordForm() {
+  const t = useTranslations();
   const [showPassword, setShowPassword] = useState(false)
   const [showConfirmPassword, setShowConfirmPassword] = useState(false)
   const [formData, setFormData] = useState({
@@ -54,7 +56,13 @@ export default function ResetPasswordForm() {
   }
 
   const passwordStrength = getPasswordStrength(formData.password)
-  const strengthLabels = ["Very Weak", "Weak", "Fair", "Good", "Strong"]
+  const strengthLabels = [
+    t("auth.passwordStrength.veryWeak"),
+    t("auth.passwordStrength.weak"),
+    t("auth.passwordStrength.fair"),
+    t("auth.passwordStrength.good"),
+    t("auth.passwordStrength.strong")
+  ]
   const strengthColors = ["bg-red-500", "bg-orange-500", "bg-yellow-500", "bg-blue-500", "bg-green-500"]
 
   return (
@@ -62,7 +70,7 @@ export default function ResetPasswordForm() {
       <div className="space-y-5">
         <div className="space-y-2">
           <Label htmlFor="password" className="text-sm font-medium text-gray-700">
-            New Password
+            {t("auth.forms.resetPassword.newPassword")}
           </Label>
           <div className="relative">
             <Input
@@ -72,7 +80,7 @@ export default function ResetPasswordForm() {
               required
               value={formData.password}
               onChange={handleInputChange}
-              placeholder="Enter your new password"
+              placeholder={t("auth.forms.resetPassword.newPasswordPlaceholder")}
               className="pr-10 h-12 border-gray-200 focus:border-gray-900 focus:ring-gray-900 rounded-lg"
             />
             <button
@@ -98,7 +106,7 @@ export default function ResetPasswordForm() {
                 ))}
               </div>
               <p className="text-xs text-gray-600">
-                Password strength: {strengthLabels[passwordStrength - 1] || "Very Weak"}
+                {t("auth.passwordStrength.label")}: {strengthLabels[passwordStrength - 1] || t("auth.passwordStrength.veryWeak")}
               </p>
             </div>
           )}
@@ -106,7 +114,7 @@ export default function ResetPasswordForm() {
 
         <div className="space-y-2">
           <Label htmlFor="confirmPassword" className="text-sm font-medium text-gray-700">
-            Confirm New Password
+            {t("auth.forms.resetPassword.confirmPassword")}
           </Label>
           <div className="relative">
             <Input
@@ -116,7 +124,7 @@ export default function ResetPasswordForm() {
               required
               value={formData.confirmPassword}
               onChange={handleInputChange}
-              placeholder="Confirm your new password"
+              placeholder={t("auth.forms.resetPassword.confirmPasswordPlaceholder")}
               className="pr-10 h-12 border-gray-200 focus:border-gray-900 focus:ring-gray-900 rounded-lg"
             />
             <button
@@ -138,12 +146,12 @@ export default function ResetPasswordForm() {
               {formData.password === formData.confirmPassword ? (
                 <>
                   <CheckCircle className="h-4 w-4 text-green-500" />
-                  <span className="text-xs text-green-600">Passwords match</span>
+                  <span className="text-xs text-green-600">{t("auth.passwordStrength.match")}</span>
                 </>
               ) : (
                 <>
                   <div className="h-4 w-4 rounded-full border-2 border-red-500" />
-                  <span className="text-xs text-red-600">Passwords don't match</span>
+                  <span className="text-xs text-red-600">{t("auth.passwordStrength.noMatch")}</span>
                 </>
               )}
             </div>
@@ -160,7 +168,7 @@ export default function ResetPasswordForm() {
       {result?.data?.success && (
         <Alert className="border-green-200 bg-green-50">
           <CheckCircle className="h-4 w-4 text-green-600" />
-          <AlertDescription className="text-green-800">{result.data.message} Redirecting to login...</AlertDescription>
+          <AlertDescription className="text-green-800">{result.data.message} {t("auth.forms.resetPassword.redirecting")}</AlertDescription>
         </Alert>
       )}
 
@@ -172,20 +180,20 @@ export default function ResetPasswordForm() {
         {isExecuting ? (
           <>
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-            Updating password...
+            {t("auth.forms.resetPassword.resettingPassword")}
           </>
         ) : (
-          "Update Password"
+          t("auth.forms.resetPassword.resetPasswordButton")
         )}
       </Button>
 
       <div className="text-center text-xs text-gray-500 space-y-1">
-        <p>Password requirements:</p>
+        <p>{t("auth.passwordStrength.requirements")}:</p>
         <ul className="space-y-1">
-          <li className={formData.password.length >= 8 ? "text-green-600" : ""}>• At least 8 characters</li>
-          <li className={/[A-Z]/.test(formData.password) ? "text-green-600" : ""}>• One uppercase letter</li>
-          <li className={/[a-z]/.test(formData.password) ? "text-green-600" : ""}>• One lowercase letter</li>
-          <li className={/[0-9]/.test(formData.password) ? "text-green-600" : ""}>• One number</li>
+          <li className={formData.password.length >= 8 ? "text-green-600" : ""}>• {t("auth.passwordStrength.minLength")}</li>
+          <li className={/[A-Z]/.test(formData.password) ? "text-green-600" : ""}>• {t("auth.passwordStrength.uppercase")}</li>
+          <li className={/[a-z]/.test(formData.password) ? "text-green-600" : ""}>• {t("auth.passwordStrength.lowercase")}</li>
+          <li className={/[0-9]/.test(formData.password) ? "text-green-600" : ""}>• {t("auth.passwordStrength.number")}</li>
         </ul>
       </div>
     </form>

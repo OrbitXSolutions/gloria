@@ -144,7 +144,7 @@ export default function ProductDetailsClient({
     if (!isInStock) return;
 
     addItem(selectedVariant, quantity);
-    toast.success(t("products.addedToCart"), {
+    toast.success(t("favorites.addedToCart"), {
       description: `${quantity}x ${getProductName()}`,
       action: {
         label: t("cart.viewCart"),
@@ -196,7 +196,7 @@ export default function ProductDetailsClient({
     } else {
       // Fallback: copy to clipboard
       navigator.clipboard.writeText(window.location.href);
-      toast.success("Link copied to clipboard");
+      toast.success(t("toast.share.linkCopied"));
     }
   };
 
@@ -296,10 +296,10 @@ export default function ProductDetailsClient({
 
     // Client-side validation (additional to server-side)
     if (!rating || rating < 1 || rating > 5) {
-      return toast.error(t("reviews.invalidRating"));
+      return toast.error(t("toast.reviews.invalidRating"));
     }
     if (!comment || comment.trim().length === 0) {
-      return toast.error(t("reviews.emptyComment"));
+      return toast.error(t("toast.reviews.emptyComment"));
     }
 
     // Call the server action to add the review
@@ -322,10 +322,27 @@ export default function ProductDetailsClient({
       //   description: t("reviews.approvalInfo"),
       // });
     } catch (error) {
-      toast.error(t("reviews.submitError"));
+      toast.error(t("toast.reviews.submitError"));
       console.error("Error submitting review:", error);
     }
   };
+
+  const getWhatsappDefaultMessage = () => {
+    const arabicMessage = `مرحبا! أنا أرغب في شراء المنتج: \n
+    اسم المنتج: ${getProductName()} \n
+    الكمية: ${quantity} \n
+    الرابط: ${window.location.href} \n
+    `
+
+    const englishMessage = `Hello! I am interested in buying the product: \n
+    Product Name: ${getProductName()} \n
+    Quantity: ${quantity} \n
+    Link: ${window.location.href} \n
+    `
+
+    return locale === 'ar' ? arabicMessage : englishMessage
+  }
+
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -356,7 +373,7 @@ export default function ProductDetailsClient({
           <ArrowLeft
             className={`h-4 w-4 ${locale == "ar" ? "ml-2 rotate-180" : "mr-2"}`}
           />
-          {t("common.back") || "Back"}
+          {t("common.back")}
         </Button>
 
         <div className={`grid lg:grid-cols-2 gap-12`}>
@@ -366,7 +383,7 @@ export default function ProductDetailsClient({
             <div className="aspect-square bg-white rounded-2xl overflow-hidden shadow-sm">
               <Image
                 src={allImages[selectedImageIndex]}
-                alt={getProductName() || "Product"}
+                alt={getProductName() || t("seo.product.defaultTitle")}
                 width={600}
                 height={600}
                 className="w-full h-full object-cover"
@@ -381,11 +398,10 @@ export default function ProductDetailsClient({
                   <button
                     key={index}
                     onClick={() => setSelectedImageIndex(index)}
-                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${
-                      selectedImageIndex === index
-                        ? "border-secondary-600"
-                        : "border-gray-200"
-                    }`}
+                    className={`w-20 h-20 rounded-lg overflow-hidden border-2 transition-colors ${selectedImageIndex === index
+                      ? "border-secondary-600"
+                      : "border-gray-200"
+                      }`}
                   >
                     <Image
                       src={image}
@@ -414,17 +430,16 @@ export default function ProductDetailsClient({
                     {[...Array(5)].map((_, i) => (
                       <Star
                         key={i}
-                        className={`h-5 w-5 ${
-                          i < Math.floor(averageRating)
-                            ? "text-yellow-400 fill-current"
-                            : "text-gray-300"
-                        }`}
+                        className={`h-5 w-5 ${i < Math.floor(averageRating)
+                          ? "text-yellow-400 fill-current"
+                          : "text-gray-300"
+                          }`}
                       />
                     ))}
                   </div>
                   <span className="text-sm text-gray-600">
                     {averageRating.toFixed(1)} ({product.rates_count || 0}{" "}
-                    {t("reviews.reviews") || "reviews"})
+                    {t("reviews.reviews")})
                   </span>
                 </div>
               )}
@@ -460,7 +475,7 @@ export default function ProductDetailsClient({
                         ((selectedVariant.old_price -
                           (selectedVariant.price || 0)) /
                           selectedVariant.old_price) *
-                          100
+                        100
                       )}
                       % OFF
                     </Badge>
@@ -474,8 +489,8 @@ export default function ProductDetailsClient({
                 <div className={`flex items-center gap-2`}>
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   <span className="text-green-600 font-medium">
-                    {t("products.inStock")} ({selectedVariant.quantity}{" "}
-                    {t("products.available") || "available"})
+                    {/* {t("products.inStock")} ({selectedVariant.quantity}{" "} */}
+                    {t("products.available")})
                   </span>
                 </div>
               ) : (
@@ -493,7 +508,7 @@ export default function ProductDetailsClient({
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    {t("products.quantity") || "Quantity"}
+                    {t("products.quantity")}
                   </label>
                   <div className={`flex items-center gap-3`}>
                     <Button
@@ -532,6 +547,19 @@ export default function ProductDetailsClient({
                     {t("products.addToCart")}
                   </Button>
                   <Button
+                    className="flex-1 bg-primary-600 hover:bg-primary-700"
+                    size="lg"
+                    onClick={() => {
+                      window.location.href = `/checkout-now/${selectedVariant.slug || selectedVariant.id}`
+                    }}
+                    disabled={!isInStock}
+                  >
+                    <span className="mr-2">
+                      <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" /></svg>
+                    </span>
+                    {t('products.buyNow')}
+                  </Button>
+                  <Button
                     variant="outline"
                     size="lg"
                     onClick={handleToggleFavorite}
@@ -544,6 +572,19 @@ export default function ProductDetailsClient({
                   <Button variant="outline" size="lg" onClick={handleShare}>
                     <Share2 className="h-5 w-5" />
                   </Button>
+                </div>
+                <div className="mt-4 text-center">
+                  <a
+                    href={`https://wa.me/971505582551?text=${encodeURIComponent(
+                      getWhatsappDefaultMessage()
+                    )}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-2 text-green-600 hover:underline font-medium"
+                  >
+                    <svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M20.52 3.48A12 12 0 0 0 12 0C5.37 0 0 5.37 0 12c0 2.12.55 4.19 1.6 6.01L0 24l6.18-1.62A11.97 11.97 0 0 0 12 24c6.63 0 12-5.37 12-12 0-3.19-1.24-6.19-3.48-8.52zM12 22c-1.85 0-3.68-.5-5.26-1.44l-.38-.22-3.67.96.98-3.58-.25-.37A9.94 9.94 0 0 1 2 12c0-5.52 4.48-10 10-10s10 4.48 10 10-4.48 10-10 10zm5.2-7.6c-.28-.14-1.65-.81-1.9-.9-.25-.09-.43-.14-.61.14-.18.28-.7.9-.86 1.08-.16.18-.32.2-.6.07-.28-.14-1.18-.44-2.25-1.4-.83-.74-1.39-1.65-1.55-1.93-.16-.28-.02-.43.12-.57.12-.12.28-.32.42-.48.14-.16.18-.28.28-.46.09-.18.05-.34-.02-.48-.07-.14-.61-1.47-.84-2.01-.22-.53-.45-.46-.61-.47-.16-.01-.34-.01-.52-.01-.18 0-.48.07-.73.34-.25.27-.97.95-.97 2.3 0 1.35.99 2.66 1.13 2.85.14.18 1.95 2.98 4.74 4.06.66.28 1.18.45 1.58.58.66.21 1.26.18 1.73.11.53-.08 1.65-.67 1.88-1.32.23-.65.23-1.2.16-1.32-.07-.12-.25-.18-.53-.32z" /></svg>
+                    {locale === 'ar' ? 'تواصل معنا عبر واتساب' : 'Contact us on WhatsApp'}
+                  </a>
                 </div>
               </div>
             )}
@@ -573,13 +614,13 @@ export default function ProductDetailsClient({
                         if (key.toLowerCase() === "color") {
                           if (typeof value === "object" && value?.name) {
                             displayAttributes.push({
-                              key: "Color",
+                              key: t("products.attributes.color"),
                               value: value.name,
                               hex: value.hex,
                             });
                           } else {
                             displayAttributes.push({
-                              key: "Color",
+                              key: t("products.attributes.color"),
                               value: String(value),
                             });
                           }
@@ -589,7 +630,7 @@ export default function ProductDetailsClient({
                           key.toLowerCase().includes("oz")
                         ) {
                           displayAttributes.push({
-                            key: "Size",
+                            key: t("products.attributes.size"),
                             value: String(value),
                           });
                         } else {
@@ -607,11 +648,10 @@ export default function ProductDetailsClient({
                       <button
                         key={variant.id}
                         onClick={() => handleVariantSelect(variant)}
-                        className={`p-3 rounded-lg border-2 transition-all text-left ${
-                          isSelected
-                            ? "border-secondary-600 bg-secondary-50 ring-2 ring-secondary-200"
-                            : "border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50"
-                        }`}
+                        className={`p-3 rounded-lg border-2 transition-all text-left ${isSelected
+                          ? "border-secondary-600 bg-secondary-50 ring-2 ring-secondary-200"
+                          : "border-gray-200 hover:border-gray-300 bg-white hover:bg-gray-50"
+                          }`}
                       >
                         <div className="space-y-2">
                           {displayAttributes.map((attr, attrIndex) => (
@@ -623,18 +663,17 @@ export default function ProductDetailsClient({
                                 {attr.key}
                               </span>
                               <div className="flex items-center gap-1">
-                                {attr.key === "Color" && attr.hex && (
+                                {attr.key === t("products.attributes.color") && attr.hex && (
                                   <div
                                     className="w-3 h-3 rounded-full border border-gray-300"
                                     style={{ backgroundColor: attr.hex }}
                                   />
                                 )}
                                 <span
-                                  className={`text-xs font-semibold ${
-                                    isSelected
-                                      ? "text-secondary-700"
-                                      : "text-gray-900"
-                                  }`}
+                                  className={`text-xs font-semibold ${isSelected
+                                    ? "text-secondary-700"
+                                    : "text-gray-900"
+                                    }`}
                                 >
                                   {attr.value}
                                 </span>
@@ -644,11 +683,10 @@ export default function ProductDetailsClient({
                           {variant.price && (
                             <div className="pt-1 border-t border-gray-100">
                               <span
-                                className={`text-sm font-bold ${
-                                  isSelected
-                                    ? "text-secondary-700"
-                                    : "text-gray-900"
-                                }`}
+                                className={`text-sm font-bold ${isSelected
+                                  ? "text-secondary-700"
+                                  : "text-gray-900"
+                                  }`}
                               >
                                 {formatPrice(
                                   variant.price,
@@ -667,29 +705,27 @@ export default function ProductDetailsClient({
             )}
 
             {/* Product Attributes */}
-            {selectedVariant.attributes &&
-              Object.keys(selectedVariant.attributes).length > 0 && (
+            {(locale === 'ar' ? selectedVariant.attributes_ar : selectedVariant.attributes) &&
+              Object.keys((locale === 'ar' ? selectedVariant.attributes_ar : selectedVariant.attributes) || {}).length > 0 && (
                 <div>
                   <h3 className="text-lg font-semibold text-gray-900 mb-3">
-                    {t("products.details") || "Product Details"}
+                    {t('products.details') || 'Product Details'}
                   </h3>
                   <div className="bg-gray-50 rounded-lg p-4">
                     <div className="grid gap-3">
-                      {Object.entries(
-                        selectedVariant.attributes as Record<string, any>
-                      ).map(([key, value]) => (
+                      {Object.entries((locale === 'ar' ? selectedVariant.attributes_ar : selectedVariant.attributes) || {}).map(([key, value]) => (
                         <div
                           key={key}
                           className={`flex justify-between items-center py-2 border-b border-gray-200 last:border-b-0`}
                         >
                           <span className="font-medium text-gray-700 capitalize">
-                            {key
-                              .replace(/([A-Z])/g, " $1")
-                              .replace(/^./, (str) => str.toUpperCase())}
+                            {locale === 'ar' ? key.replace('color', 'اللون').replace('size', 'الحجم') : key
+                              .replace(/([A-Z])/g, ' $1')
+                              .replace(/^./, str => str.toUpperCase())}
                           </span>
                           <span className="text-gray-900 flex items-center gap-2">
-                            {key.toLowerCase() === "color" ? (
-                              typeof value === "object" && value?.hex ? (
+                            {key.toLowerCase() === 'color' ? (
+                              typeof value === 'object' && value?.hex ? (
                                 <>
                                   <div
                                     className="w-4 h-4 rounded-full border border-gray-300"
@@ -697,8 +733,7 @@ export default function ProductDetailsClient({
                                   />
                                   {value.name || value.hex}
                                 </>
-                              ) : typeof value === "string" &&
-                                value.startsWith("#") ? (
+                              ) : typeof value === 'string' && value.startsWith('#') ? (
                                 <>
                                   <div
                                     className="w-4 h-4 rounded-full border border-gray-300"
@@ -708,7 +743,7 @@ export default function ProductDetailsClient({
                                 </>
                               ) : (
                                 String(
-                                  typeof value === "object" && value?.name
+                                  typeof value === 'object' && value?.name
                                     ? value.name
                                     : value
                                 )
@@ -731,13 +766,13 @@ export default function ProductDetailsClient({
           {getProductDescription() && (
             <div>
               <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                {t("products.description") || "Description"}
+                {t("products.description")}
               </h3>
-              <p className="text-gray-600 leading-relaxed">
+              <div className="text-gray-600 leading-relaxed">
                 <ReactMarkdown remarkPlugins={[remarkGfm]}>
                   {getProductDescription() || ""}
                 </ReactMarkdown>
-              </p>
+              </div>
             </div>
           )}
         </div>
@@ -767,17 +802,16 @@ export default function ProductDetailsClient({
                       {[...Array(5)].map((_, i) => (
                         <Star
                           key={i}
-                          className={`h-7 w-7 ${
-                            i <
+                          className={`h-7 w-7 ${i <
                             Math.floor(
                               reviews.reduce(
                                 (sum, review) => sum + (review.rating || 0),
                                 0
                               ) / reviews.length
                             )
-                              ? "text-yellow-400 fill-current"
-                              : "text-gray-300"
-                          }`}
+                            ? "text-yellow-400 fill-current"
+                            : "text-gray-300"
+                            }`}
                         />
                       ))}
                     </div>
@@ -788,11 +822,10 @@ export default function ProductDetailsClient({
                           0
                         ) / reviews.length
                       ).toFixed(1)}{" "}
-                      out of 5 stars
+                      {t("reviews.outOf5Stars")}
                     </p>
                     <p className="text-sm text-gray-500">
-                      Based on {reviews.length} customer{" "}
-                      {reviews.length === 1 ? "review" : "reviews"}
+                      {t("reviews.basedOn")} {reviews.length} {reviews.length === 1 ? t("reviews.customer") : t("reviews.customers")}
                     </p>
                   </div>
 
@@ -803,28 +836,28 @@ export default function ProductDetailsClient({
                         {Math.round(
                           (reviews.filter((r) => (r.rating || 0) >= 4).length /
                             reviews.length) *
-                            100
+                          100
                         )}
                         %
                       </div>
-                      <div className="text-xs text-gray-500">Recommend</div>
+                      <div className="text-xs text-gray-500">{t("reviews.recommend")}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-secondary-600">
                         {Math.round(
                           (reviews.filter((r) => (r.rating || 0) === 5).length /
                             reviews.length) *
-                            100
+                          100
                         )}
                         %
                       </div>
-                      <div className="text-xs text-gray-500">5 Stars</div>
+                      <div className="text-xs text-gray-500">{t("reviews.fiveStars")}</div>
                     </div>
                     <div className="text-center">
                       <div className="text-2xl font-bold text-blue-600">
                         {reviews.length}
                       </div>
-                      <div className="text-xs text-gray-500">Total Reviews</div>
+                      <div className="text-xs text-gray-500">{t("reviews.totalReviews")}</div>
                     </div>
                   </div>
                 </div>
@@ -867,7 +900,7 @@ export default function ProductDetailsClient({
           {showReviewForm && (
             <div className="bg-white rounded-lg p-6 shadow-sm mb-8">
               <h3 className="text-xl font-semibold text-gray-900 mb-4">
-                Write a Review
+                {t("reviews.writeReview")}
               </h3>
 
               <form className="space-y-4">
@@ -877,7 +910,7 @@ export default function ProductDetailsClient({
                       htmlFor="reviewerName"
                       className="block text-sm font-medium text-gray-700 mb-2"
                     >
-                      Full Name *
+                      {t("reviews.fullName")} *
                     </label>
                     <input
                       type="text"
@@ -885,14 +918,14 @@ export default function ProductDetailsClient({
                       name="reviewerName"
                       required
                       className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary-500 focus:border-secondary-500"
-                      placeholder="Enter your full name"
+                      placeholder={t("contact.form.placeholders.firstName")}
                     />
                   </div>
                 )}
 
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
-                    Rating *
+                    {t("reviews.rating")} *
                   </label>
                   <div className="flex items-center gap-2">
                     {[1, 2, 3, 4, 5].map((rating) => (
@@ -947,7 +980,7 @@ export default function ProductDetailsClient({
                     htmlFor="reviewComment"
                     className="block text-sm font-medium text-gray-700 mb-2"
                   >
-                    Comment *
+                    {t("reviews.comment")} *
                   </label>
                   <textarea
                     id="reviewComment"
@@ -955,7 +988,7 @@ export default function ProductDetailsClient({
                     rows={4}
                     required
                     className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-secondary-500 focus:border-secondary-500"
-                    placeholder="Share your experience with this product..."
+                    placeholder={t("reviews.shareExperience")}
                   />
                 </div>
 
@@ -967,13 +1000,12 @@ export default function ProductDetailsClient({
                       e.preventDefault();
                       // Handle form submission
                       const reviewerName = user
-                        ? `${user.user_metadata?.first_name || ""} ${
-                            user.user_metadata?.last_name || ""
+                        ? `${user.user_metadata?.first_name || ""} ${user.user_metadata?.last_name || ""
                           }`.trim() || user.email
                         : (
-                            e.currentTarget.form
-                              ?.reviewerName as HTMLInputElement
-                          )?.value;
+                          e.currentTarget.form
+                            ?.reviewerName as HTMLInputElement
+                        )?.value;
 
                       const comment = (
                         e.currentTarget.form
@@ -989,16 +1021,15 @@ export default function ProductDetailsClient({
                         user?.user_metadata?.id
                       );
                       setShowReviewForm(false);
-                      toast.success("Review submitted successfully!", {
-                        description:
-                          "Your review will be published after admin approval.",
+                      toast.success(t("toast.reviews.submitted"), {
+                        description: t("reviews.approvalDescription"),
                       });
                     }}
                   >
-                    Submit Review
+                    {t("reviews.submitReview")}
                   </Button>
                   <p className="text-sm text-gray-500">
-                    * Your review will be published after admin approval
+                    {t("reviews.approvalNote")}
                   </p>
                 </div>
               </form>
@@ -1014,16 +1045,15 @@ export default function ProductDetailsClient({
                   // Determine reviewer name and avatar based on user_id
                   const reviewerName =
                     review.user_id && review.user
-                      ? `${review.user.first_name || ""} ${
-                          review.user.last_name || ""
+                      ? `${review.user.first_name || ""} ${review.user.last_name || ""
                         }`.trim() || review.user.email
-                      : review.name || "Anonymous";
+                      : review.name || t("reviews.anonymous");
 
                   const reviewerAvatar =
                     review.user_id && review.user?.avatar
                       ? review.user.avatar
                       : review.avatar ||
-                        "/placeholder.svg?height=50&width=50&text=User";
+                      "/placeholder.svg?height=50&width=50&text=User";
 
                   return (
                     <div
@@ -1049,11 +1079,10 @@ export default function ProductDetailsClient({
                               {[...Array(5)].map((_, i) => (
                                 <Star
                                   key={i}
-                                  className={`h-4 w-4 ${
-                                    i < (review.rating || 0)
-                                      ? "text-yellow-400 fill-current"
-                                      : "text-gray-300"
-                                  }`}
+                                  className={`h-4 w-4 ${i < (review.rating || 0)
+                                    ? "text-yellow-400 fill-current"
+                                    : "text-gray-300"
+                                    }`}
                                 />
                               ))}
                             </div>
@@ -1077,7 +1106,7 @@ export default function ProductDetailsClient({
           ) : (
             <div className="text-center py-8">
               <p className="text-gray-500">
-                No approved reviews yet. Be the first to review this product!
+                {locale == 'ar' ? 'لا يوجد مراجعات موثقة بعد. كن أول من يراجع هذا المنتج!' : 'No approved reviews yet. Be the first to review this product!'}
               </p>
             </div>
           )}

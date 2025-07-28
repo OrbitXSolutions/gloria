@@ -5,9 +5,10 @@ import { Toaster } from "sonner";
 
 interface Props {
   children: React.ReactNode;
+  messages: Record<string, any>;
 }
 
-export function RootWrapper({ children }: Props) {
+export function RootWrapper({ children, messages }: Props) {
   return (
     <ThemeProvider
       attribute="class"
@@ -15,7 +16,7 @@ export function RootWrapper({ children }: Props) {
       enableSystem
       disableTransitionOnChange
     >
-      <NextIntlClientProvider>
+      <NextIntlClientProvider messages={messages}>
         <ClientWrapper>{children}</ClientWrapper>
         <Toaster closeButton />
       </NextIntlClientProvider>

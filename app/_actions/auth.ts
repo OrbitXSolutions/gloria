@@ -169,7 +169,7 @@ export const loginAction = action
   });
 
 export const verifyOtpAction = action
-  .schema(otpSchema.extend({ phone: z.string() }))
+  .inputSchema(otpSchema.extend({ phone: z.string() }))
   .action(async ({ parsedInput }) => {
     const { token, phone } = parsedInput;
     const supabase = await createSsrClient();
@@ -178,7 +178,7 @@ export const verifyOtpAction = action
       const { data, error } = await supabase.auth.verifyOtp({
         phone,
         token,
-        type: "sms",
+        type: "phone_change",
       });
 
       if (error) {
@@ -187,24 +187,28 @@ export const verifyOtpAction = action
 
       if (data.user) {
         // Create user in public.users table
-        const { error: insertError } = await supabase
-          .from("users")
-          .upsert({
-            id: data.user.user_metadata?.user_id,
-            user_id: data.user.id,
-            email: data.user.email ?? data.user.user_metadata?.email,
-            phone: data.user.phone,
-            first_name: data.user.user_metadata?.first_name,
-            last_name: data.user.user_metadata?.last_name,
-            full_name: data.user.user_metadata?.full_name,
-            created_at: new Date().toISOString(),
-            updated_at: new Date().toISOString(),
-          })
-          .eq("user_id", data.user.id);
+        if (data.user.user_metadata?.user_id) {
 
-        if (insertError) {
-          console.error("Error creating user:", insertError);
+          const { error: insertError } = await supabase
+            .from("users")
+            .upsert({
+              id: data.user.user_metadata?.user_id,
+              user_id: data.user.id,
+              email: data.user.email ?? data.user.user_metadata?.email,
+              phone: data.user.phone,
+              first_name: data.user.user_metadata?.first_name,
+              last_name: data.user.user_metadata?.last_name,
+              full_name: data.user.user_metadata?.full_name,
+              created_at: new Date().toISOString(),
+              updated_at: new Date().toISOString(),
+            })
+            .eq("user_id", data.user.id);
+
+          if (insertError) {
+            console.error("Error creating user:", insertError);
+          }
         }
+
         if (data.session) supabase.auth.setSession(data.session);
 
         return {
@@ -218,6 +222,38 @@ export const verifyOtpAction = action
     } catch (error) {
       console.error("OTP verification error:", error);
       return { error: "An unexpected error occurred during verification" };
+    }
+  });
+
+export const resendOtpAction = action
+  .inputSchema(z.object({ phone: z.string() }))
+  .action(async ({ parsedInput }) => {
+    const { phone } = parsedInput;
+    const supabase = await createSsrClient();
+
+    try {
+      const { data, error } = await supabase.auth.signInWithOtp({
+        phone,
+      });
+
+      if (error) {
+        // Handle specific error cases
+        if (error.message.includes("rate limit")) {
+          return { error: "Too many requests. Please wait before trying again." };
+        }
+        if (error.message.includes("invalid phone")) {
+          return { error: "Invalid phone number format." };
+        }
+        return { error: error.message };
+      }
+
+      return {
+        success: true,
+        message: "OTP sent successfully!",
+      };
+    } catch (error) {
+      console.error("Resend OTP error:", error);
+      return { error: "An unexpected error occurred while sending OTP" };
     }
   });
 
@@ -379,7 +415,7 @@ export async function verifyOtp(input: UserVerifyPhone) {
   ) {
     throw new Error(
       "Invalid user data: " +
-        JSON.stringify(parsedInput.error?.issues ?? `Invalid input`)
+      JSON.stringify(parsedInput.error?.issues ?? `Invalid input`)
     );
   }
 }

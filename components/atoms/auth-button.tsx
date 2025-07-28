@@ -17,10 +17,12 @@ import Link from "next/link";
 import LoadingIndicator from "./LoadingIndicator";
 import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { Spinner } from "../ui/spinner";
+import { useTranslations } from "next-intl";
 
 export default function AuthButton() {
   const { user, loading, logout, isLoggingOut } = useSupabaseUser();
   const router = useRouter();
+  const t = useTranslations("profile.sidebar");
 
   // const { execute: signOut, isExecuting } = useAction(signOutAction, {
   //   onSuccess: (result) => {
@@ -52,26 +54,25 @@ export default function AuthButton() {
         <DropdownMenuTrigger asChild>
           <Button variant="ghost" size="sm" className="flex items-center gap-2">
             <User className="h-4 w-4" />
-            <span className="hidden md:inline">Account</span>
           </Button>
         </DropdownMenuTrigger>
         <DropdownMenuContent align="end" className="w-48">
           <DropdownMenuItem onClick={() => router.push("/profile")}>
             <Settings className="h-4 w-4 mr-2" />
-            Profile
+            {t("overview")}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/profile/favorites")}>
             <User className="h-4 w-4 mr-2" />
-            Favorites
+            {t("favorites")}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => router.push("/profile/orders")}>
             <User className="h-4 w-4 mr-2" />
-            Orders
+            {t("orders")}
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={handleSignOut} disabled={isLoggingOut}>
             <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
+            {t("signOut")}
             {isLoggingOut && <Spinner size={"small"} className="text-white" />}
           </DropdownMenuItem>
         </DropdownMenuContent>
@@ -88,7 +89,7 @@ export default function AuthButton() {
     >
       <Link href="/auth/login">
         <LogIn className="h-4 w-4" />
-        <span className="hidden md:inline">Sign In</span>
+        <span className="hidden md:inline">{t("signIn")}</span>
         <LoadingIndicator loaderClassName="text-white" />
       </Link>
     </Button>

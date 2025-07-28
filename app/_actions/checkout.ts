@@ -5,6 +5,7 @@ import { redirect } from "next/navigation";
 import { checkoutSchema, type CheckoutFormData } from "@/lib/schemas/checkout";
 import { CartItem } from "@/lib/common/cart";
 import { createSsrClient } from "@/lib/supabase/server";
+import { sendCheckoutNotificationEmails } from "./send-checkout-emails";
 
 // Create pending order from cart
 export async function createDraftOrder(cartItems: CartItem[]) {
@@ -20,8 +21,7 @@ export async function createDraftOrder(cartItems: CartItem[]) {
       (sum, item) => sum + (item.product.price || 0) * item.quantity,
       0
     );
-    const tax = subtotal * 0.05; // 5% VAT
-    const total = subtotal + tax;
+    const total = subtotal; // No tax, only delivery fees will be added during checkout
 
     // Generate order code
     const orderCode = `ORD-${Date.now()}-${Math.random()
@@ -36,6 +36,7 @@ export async function createDraftOrder(cartItems: CartItem[]) {
         code: orderCode,
         status: "draft", // Draft status until checkout is completed
         total_price: total,
+        subtotal: subtotal,
         payment_method: "cash",
       })
       .select()
@@ -199,6 +200,10 @@ export async function completeCheckout(
         .select("id")
         .single();
 
+
+
+
+
       if (addressError) {
         console.error("Error creating address:", addressError);
         return { success: false, error: "Failed to create address" };
@@ -207,7 +212,24 @@ export async function completeCheckout(
       addressId = newAddress.id;
     }
 
+    const { data: stateDeliveryFees, error: stateDeliveryFeesError } = await supabase
+      .from("states")
+      .select("delivery_fee")
+      .eq("code", validatedData.stateCode)
+      .single();
+
+    if (stateDeliveryFeesError) {
+      console.error("Error getting state delivery fees:", stateDeliveryFeesError);
+      return { success: false, error: "Failed to get state delivery fees" };
+    }
     // Update order with user and address
+    const { data: orderTotalPrice, error: orderTotalPriceError } = await supabase.from("orders").select("total_price").eq("code", orderCode).single();
+    if (orderTotalPriceError) {
+      console.error("Error getting order:", orderTotalPriceError);
+      return { success: false, error: "Failed to get order" };
+    }
+    const total = orderTotalPrice?.total_price || 0;
+    const totalWithDeliveryFee = total + (stateDeliveryFees?.delivery_fee || 0);
     const { error: updateError } = await supabase
       .from("orders")
       .update({
@@ -215,12 +237,72 @@ export async function completeCheckout(
         address_id: addressId,
         status: "confirmed",
         user_note: validatedData.notes,
+        total_price: totalWithDeliveryFee,
+        shipping: stateDeliveryFees?.delivery_fee || 0,
       })
       .eq("code", orderCode);
 
     if (updateError) {
       console.error("Error updating order:", updateError);
       return { success: false, error: "Failed to complete order" };
+    }
+
+    // Get the complete order with items for email notification
+    const { data: completeOrder, error: orderFetchError } = await supabase
+      .from("orders")
+      .select(`
+        *,
+        order_items (
+          *,
+          products (
+            id,
+            name_en,
+            sku,
+            price,
+            currency_code
+          )
+        ),
+        users (
+          id,
+          first_name,
+          last_name,
+          email,
+          phone
+        ),
+        addresses (
+          id,
+          full_name,
+          phone,
+          address,
+          state_code
+        )
+      `)
+      .eq("code", orderCode)
+      .single();
+
+    if (orderFetchError) {
+      console.error("Error fetching complete order:", orderFetchError);
+      // Don't fail the checkout if we can't send emails
+    } else if (completeOrder) {
+      // Send notification emails
+      const customerName = validatedData.fullName;
+      const customerEmail = validatedData.email || '';
+      const customerPhone = validatedData.phone || '';
+
+      // Only send emails if we have valid email
+      if (customerEmail) {
+        try {
+          await sendCheckoutNotificationEmails({
+            order: completeOrder as any, // Type assertion for now
+            customerName,
+            customerEmail,
+            customerPhone,
+          });
+        } catch (emailError) {
+          console.error("Error sending checkout notification emails:", emailError);
+          // Don't fail the checkout if email sending fails
+        }
+      }
     }
 
     revalidatePath("/orders");
@@ -236,11 +318,24 @@ export async function completeCheckout(
 
 // Redirect to checkout
 export async function redirectToCheckout(cartItems: CartItem[]) {
-  const result = await createDraftOrder(cartItems);
+  const supabase = await createSsrClient();
 
-  if (result.success && result.orderCode) {
-    redirect(`/checkout/${result.orderCode}`);
+  // Check if user is authenticated
+  const {
+    data: { user: authUser },
+  } = await supabase.auth.getUser();
+
+  if (authUser) {
+    // Authenticated user - redirect directly to checkout without draft
+    redirect('/checkout');
   } else {
-    return { success: false, error: result.error };
+    // Anonymous user - create draft order and redirect with code
+    const result = await createDraftOrder(cartItems);
+
+    if (result.success && result.orderCode) {
+      redirect(`/checkout/${result.orderCode}`);
+    } else {
+      return { success: false, error: result.error };
+    }
   }
 }
