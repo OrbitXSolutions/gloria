@@ -1,5 +1,6 @@
 import { Metadata } from "next";
 import Image from "next/image";
+import { getTranslations } from "next-intl/server";
 
 export const metadata: Metadata = {
   title: "About Us | Gloria",
@@ -38,15 +39,15 @@ export const metadata: Metadata = {
   },
 };
 
-export default function Page() {
+export default async function Page() {
+  const t = await getTranslations("about");
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="text-center mb-12">
-        <h1 className="text-5xl font-extrabold text-gray-900 mb-4">About Us</h1>
-        <p className="text-xl text-gray-600">
-          Discover our story and what makes Gloria your trusted destination for
-          premium fragrances.
-        </p>
+        <h1 className="text-5xl font-extrabold text-gray-900 mb-4">
+          {t("title")}
+        </h1>
+        <p className="text-xl text-gray-600">{t("description")}</p>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
@@ -78,10 +79,11 @@ export default function Page() {
       </div>
 
       <div className="mt-16 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Mission</h2>
+        <h2 className="text-3xl font-bold text-gray-900 mb-4">
+          {t("missionTitle")}
+        </h2>
         <p className="text-lg text-gray-600 leading-relaxed">
-          To inspire and empower individuals through the art of fragrance,
-          creating memorable experiences and lasting impressions.
+          {t("missionText")}
         </p>
       </div>
     </div>

@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import {
   Accordion,
   AccordionContent,
@@ -121,7 +122,8 @@ const faqData = [
   },
 ];
 
-export default function Page() {
+export default async function Page() {
+  const t = await getTranslations("faq");
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -129,12 +131,9 @@ export default function Page() {
         <div className="container mx-auto px-4 py-16">
           <div className="text-center max-w-3xl mx-auto">
             <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Frequently Asked Questions
+              {t("title")}
             </h1>
-            <p className="text-xl text-gray-600">
-              Find answers to common questions about our products, shipping, and
-              policies.
-            </p>
+            <p className="text-xl text-gray-600">{t("description")}</p>
           </div>
         </div>
       </div>
@@ -181,7 +180,7 @@ export default function Page() {
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
                   <MessageCircle className="h-5 w-5 text-purple-600" />
-                  Still Need Help?
+                  {t("stillNeedHelp")}
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
@@ -189,7 +188,7 @@ export default function Page() {
                   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                     <Phone className="h-4 w-4 text-purple-600" />
                     <div>
-                      <p className="text-sm font-medium">Call Us</p>
+                      <p className="text-sm font-medium">{t("callUs")}</p>
                       <p className="text-sm text-gray-600">+971 4 123 4567</p>
                     </div>
                   </div>
@@ -197,21 +196,23 @@ export default function Page() {
                   <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                     <Mail className="h-4 w-4 text-purple-600" />
                     <div>
-                      <p className="text-sm font-medium">Email Us</p>
+                      <p className="text-sm font-medium">{t("emailUs")}</p>
                       <p className="text-sm text-gray-600">
                         support@gloria.com
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
+                  {/* <div className="flex items-center gap-3 p-3 bg-gray-50 rounded-lg">
                     <Clock className="h-4 w-4 text-purple-600" />
                     <div>
-                      <p className="text-sm font-medium">Business Hours</p>
+                      <p className="text-sm font-medium">
+                        {t("businessHours")}
+                      </p>
                       <p className="text-sm text-gray-600">Sun-Thu: 9AM-8PM</p>
                       <p className="text-sm text-gray-600">Fri-Sat: 10AM-6PM</p>
                     </div>
-                  </div>
+                  </div> */}
                 </div>
 
                 <div className="pt-4 border-t">

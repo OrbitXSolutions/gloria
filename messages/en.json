@@ -95,6 +95,7 @@
       "ratingHigh": "Rating: High to Low",
       "ratingLow": "Rating: Low to High"
     },
+    "sortBy": "Sort By",
     "auth": {
       "login": "Login",
       "loginRequired": "Login Required",
@@ -827,5 +828,36 @@
     "failed": "Failed",
     "refunded": "Refunded",
     "returned": "Returned"
+  },
+  "faq": {
+    "title": "Frequently Asked Questions",
+    "description": "Find answers to common questions about our products, shipping, and policies.",
+    "stillNeedHelp": "Still Need Help?",
+    "callUs": "Call Us",
+    "emailUs": "Email Us",
+    "businessHours": "Business Hours"
+  },
+  "notFound": {
+    "title": "Page not found",
+    "description": "Sorry, we couldn’t find the page you’re looking for.",
+    "goHome": "Go back home"
+  },
+  "about": {
+    "title": "About Us",
+    "description": "Discover our story and what makes Gloria your trusted destination for premium fragrances.",
+    "missionTitle": "Our Mission",
+    "missionText": "To inspire and empower individuals through the art of fragrance, creating memorable experiences and lasting impressions."
+  },
+  "shippingPage": {
+    "title": "Shipping Information",
+    "description": "Fast, reliable delivery across the UAE with free shipping on all orders."
+  },
+  "returnsPage": {
+    "title": "Returns & Refunds",
+    "description": "We want you to love your fragrance. If you're not completely satisfied, we're here to help."
+  },
+  "sizeGuide": {
+    "title": "Fragrance Concentration Guide",
+    "description": "Understanding fragrance strengths to help you choose the perfect scent intensity for any occasion."
   }
 }

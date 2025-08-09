@@ -4,6 +4,7 @@ import React from "react";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
 import { loginAction } from "@/app/_actions/auth";
 import { Button } from "@/components/ui/button";
@@ -18,6 +19,7 @@ import { useTranslations } from "next-intl";
 
 export default function LoginForm() {
   const t = useTranslations();
+  const searchParams = useSearchParams();
   const [showPassword, setShowPassword] = useState(false);
   const [formData, setFormData] = useState({
     emailOrPhone: "",
@@ -28,7 +30,8 @@ export default function LoginForm() {
   const { execute, result, isExecuting } = useAction(loginAction, {
     onSuccess: ({ data }) => {
       if (data?.success) {
-        router.push("/");
+        const returnUrl = searchParams.get('returnUrl')
+        router.push(returnUrl || "/");
         router.refresh();
       }
     },

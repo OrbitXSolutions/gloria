@@ -1,4 +1,5 @@
 import { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Alert, AlertDescription } from "@/components/ui/alert";
@@ -26,20 +27,16 @@ export const metadata: Metadata = {
   ],
 };
 
-export default function ShippingPage() {
+export default async function ShippingPage() {
+  const t = await getTranslations('shippingPage')
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
       <div className="bg-white border-b">
         <div className="container mx-auto px-4 py-16">
           <div className="text-center max-w-3xl mx-auto">
-            <h1 className="text-4xl font-bold text-gray-900 mb-4">
-              Shipping Information
-            </h1>
-            <p className="text-xl text-gray-600">
-              Fast, reliable delivery across the UAE with free shipping on all
-              orders.
-            </p>
+            <h1 className="text-4xl font-bold text-gray-900 mb-4">{t('title')}</h1>
+            <p className="text-xl text-gray-600">{t('description')}</p>
           </div>
         </div>
       </div>
