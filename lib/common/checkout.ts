@@ -373,7 +373,7 @@ export async function processAuthenticatedCheckout(
 export async function processGuestCheckout(
   checkoutData: CheckoutData
 ): Promise<CheckoutResult> {
-  const supabase = createClient();
+  const supabase = await createSsrClient();
 
   try {
     // Validate guest data

@@ -41,6 +41,7 @@ import { toast } from "sonner";
 import type { ProductWithUserData, Database } from "@/lib/types/database.types";
 import { CheckoutFormData, checkoutSchema } from "@/lib/schemas/checkout";
 import { formatPrice } from "@/lib/common/cart";
+import type { CheckoutData } from "@/lib/common/checkout";
 import { useLocale, useTranslations } from "next-intl";
 import SafeImage from "@/components/_common/safe-image";
 import {
@@ -120,33 +121,93 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
     const shipping = checkedState?.delivery_fee ?? 0;
     const total = subtotal + shipping;
 
+    const handleAuthenticatedCheckout = async (checkoutData: CheckoutData) => {
+        const response = await fetch('/api/checkout/authenticated', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(checkoutData)
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.error || t('toast.checkout.checkoutFailed'))
+        }
+
+        return await response.json()
+    }
+
+    const handleGuestCheckout = async (checkoutData: CheckoutData) => {
+        const response = await fetch('/api/checkout/guest', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(checkoutData)
+        })
+
+        if (!response.ok) {
+            const errorData = await response.json()
+            throw new Error(errorData.error || t('toast.checkout.checkoutFailed'))
+        }
+
+        return await response.json()
+    }
+
     // Handle form submit
     const onSubmit = async (data: CheckoutFormData) => {
-        setIsLoading(true);
+        setIsLoading(true)
         try {
-            // Prepare a single cart item for the order
-            const cartItems = [
+            // Ensure stateCode is set when using an existing address
+            let stateCode = data.stateCode
+            if (data.selectedAddressId && !data.useNewAddress) {
+                const selectedAddress = userAddresses.find(a => a.id === data.selectedAddressId)
+                stateCode = selectedAddress?.state_code || data.stateCode
+            }
+
+            // Build a single-item cart for Buy Now
+            const cartItems: CheckoutData['cartItems'] = [
                 {
-                    product: product,
+                    id: Date.now(),
+                    product: product as any,
                     quantity,
-                },
-            ];
-            // TODO: Call your order creation logic for Buy Now (authenticated/guest)
-            // Example: await processBuyNowCheckout(user, data, cartItems)
-            // On success:
-            toast.success(t("toast.checkout.orderPlaced"), {
-                description: t("toast.checkout.orderConfirmed", { orderCode: "ORDER_CODE" }),
-                duration: 5000,
-            });
-            // Redirect to order confirmation (replace with actual order code)
-            router.push(`/orders/ORDER_CODE`);
+                    addedAt: new Date().toISOString()
+                }
+            ]
+
+            const checkoutData: CheckoutData = {
+                email: data.email,
+                password: data.password,
+                confirmPassword: data.confirmPassword,
+                fullName: data.fullName,
+                phone: data.phone,
+                address: data.address,
+                stateCode,
+                notes: data.notes,
+                selectedAddressId: data.selectedAddressId,
+                cartItems
+            }
+
+            const result = user
+                ? await handleAuthenticatedCheckout(checkoutData)
+                : await handleGuestCheckout(checkoutData)
+
+            if (result.success && result.orderCode) {
+                toast.success(t('toast.checkout.orderPlaced'), {
+                    description: t('toast.checkout.orderConfirmed', { orderCode: result.orderCode }),
+                    duration: 5000
+                })
+                router.push(`/orders/${result.orderCode}`)
+            } else {
+                toast.error(t('toast.checkout.checkoutFailed'), {
+                    description: result.error || t('toast.checkout.checkoutFailedDescription'),
+                    duration: 5000
+                })
+            }
         } catch (error) {
-            toast.error(t("toast.checkout.checkoutFailed"), {
-                description: t("toast.checkout.checkoutFailedDescription"),
-                duration: 5000,
-            });
+            toast.error(t('toast.checkout.checkoutFailed'), {
+                description: t('toast.checkout.checkoutFailedDescription'),
+                duration: 5000
+            })
         } finally {
-            setIsLoading(false);
+            setIsLoading(false)
         }
     };
 

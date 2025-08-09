@@ -101,7 +101,7 @@ export const generateCustomerOrderConfirmationHTML = (data: {
                   <p style="margin: 5px 0; color: #666;">Quantity: ${item.quantity}</p>
                 </div>
                 <div style="text-align: right;">
-                  <p style="margin: 0; font-weight: bold; color: #333;">${formatPrice(item.price)}</p>
+                  <p style="margin: 0; font-weight: bold; color: #333;">${formatPrice(item.price, currency)}</p>
                 </div>
               </div>
             </div>
