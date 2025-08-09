@@ -259,7 +259,6 @@ export default function CheckoutPageClient({
         cartItems: cart.items,
       };
       let result;
-      debugger;
       if (user) {
         result = await handleAuthenticatedCheckout(checkoutData);
       } else {
