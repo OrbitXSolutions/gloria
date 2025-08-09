@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { useAction } from "next-safe-action/hooks";
+import { useTranslations } from "next-intl";
 import {
   MapPin,
   Phone,
@@ -20,6 +21,7 @@ import {
 } from "@/app/_actions/send-contact-email";
 
 export default function Contact() {
+  const t = useTranslations("contact")
   const [formData, setFormData] = useState<ContactFormInput>({
     firstName: "",
     lastName: "",
@@ -77,11 +79,10 @@ export default function Contact() {
       <div className="container mx-auto px-4">
         <div className="text-center mb-12">
           <h2 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-4">
-            Get in Touch
+            {t("title")}
           </h2>
           <p className="text-gray-600 max-w-2xl mx-auto">
-            Have questions about our fragrances? We're here to help you find
-            your perfect scent.
+            {t("description")}
           </p>
         </div>
 
@@ -90,7 +91,7 @@ export default function Contact() {
           <div className="space-y-8">
             <div>
               <h3 className="text-2xl font-bold text-gray-900 mb-6">
-                Contact Information
+                {t("info.title")}
               </h3>
               <div className="space-y-6">
                 <div className="flex items-start space-x-4">
@@ -98,7 +99,7 @@ export default function Contact() {
                     <Phone className="h-6 w-6 text-secondary" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Phone</h4>
+                    <h4 className="font-semibold text-gray-900">{t("info.phone")}</h4>
                     <p className="text-gray-600">{ContactInfo.PHONE}</p>
                   </div>
                 </div>
@@ -108,7 +109,7 @@ export default function Contact() {
                     <Mail className="h-6 w-6 text-secondary" />
                   </div>
                   <div>
-                    <h4 className="font-semibold text-gray-900">Email</h4>
+                    <h4 className="font-semibold text-gray-900">{t("info.email")}</h4>
                     <p className="text-gray-600">{ContactInfo.EMAIL}</p>
                   </div>
                 </div>
@@ -119,7 +120,7 @@ export default function Contact() {
           {/* Contact Form */}
           <div className="bg-white rounded-2xl p-8 shadow-sm">
             <h3 className="text-2xl font-bold text-gray-900 mb-6">
-              Send us a Message
+              {t("form.title")}
             </h3>
 
             {/* Success Message */}
@@ -145,14 +146,14 @@ export default function Contact() {
                     htmlFor="firstName"
                     className="block text-sm font-medium text-primary mb-2"
                   >
-                    First Name *
+                    {t("form.firstName")} *
                   </label>
                   <Input
                     id="firstName"
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleInputChange}
-                    placeholder="John"
+                    placeholder={t("form.placeholders.firstName")}
                     className={
                       getFieldError("firstName") ? "border-red-500" : ""
                     }
@@ -169,14 +170,14 @@ export default function Contact() {
                     htmlFor="lastName"
                     className="block text-sm font-medium text-primary mb-2"
                   >
-                    Last Name *
+                    {t("form.lastName")} *
                   </label>
                   <Input
                     id="lastName"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
-                    placeholder="Doe"
+                    placeholder={t("form.placeholders.lastName")}
                     className={
                       getFieldError("lastName") ? "border-red-500" : ""
                     }
@@ -195,7 +196,7 @@ export default function Contact() {
                   htmlFor="email"
                   className="block text-sm font-medium text-primary mb-2"
                 >
-                  Email *
+                  {t("form.email")} *
                 </label>
                 <Input
                   id="email"
@@ -203,7 +204,7 @@ export default function Contact() {
                   type="email"
                   value={formData.email}
                   onChange={handleInputChange}
-                  placeholder="john@example.com"
+                  placeholder={t("form.placeholders.email")}
                   className={getFieldError("email") ? "border-red-500" : ""}
                   disabled={isExecuting}
                 />
@@ -219,14 +220,14 @@ export default function Contact() {
                   htmlFor="subject"
                   className="block text-sm font-medium text-primary mb-2"
                 >
-                  Subject *
+                  {t("form.subject")} *
                 </label>
                 <Input
                   id="subject"
                   name="subject"
                   value={formData.subject}
                   onChange={handleInputChange}
-                  placeholder="How can we help you?"
+                  placeholder={t("form.placeholders.subject")}
                   className={getFieldError("subject") ? "border-red-500" : ""}
                   disabled={isExecuting}
                 />
@@ -242,7 +243,7 @@ export default function Contact() {
                   htmlFor="message"
                   className="block text-sm font-medium text-primary mb-2"
                 >
-                  Message *
+                  {t("form.message")} *
                 </label>
                 <Textarea
                   id="message"
@@ -250,7 +251,7 @@ export default function Contact() {
                   rows={5}
                   value={formData.message}
                   onChange={handleInputChange}
-                  placeholder="Tell us more about your inquiry..."
+                  placeholder={t("form.placeholders.message")}
                   className={getFieldError("message") ? "border-red-500" : ""}
                   disabled={isExecuting}
                 />
@@ -273,7 +274,7 @@ export default function Contact() {
                     <span>Sending...</span>
                   </div>
                 ) : (
-                  "Send Message"
+                  t("form.send")
                 )}
               </Button>
             </form>
