@@ -157,12 +157,14 @@ export default function ProductDetailsClient({
 
   const handleToggleFavorite = () => {
     if (!user) {
+      const returnUrl = encodeURIComponent(window.location.pathname + window.location.search)
+      const intent = encodeURIComponent(`favorite:${product.id}`)
       toast.error(t("auth.loginRequired"), {
         description: t("auth.loginToAddFavorites"),
         action: {
           label: t("auth.login"),
           onClick: () => {
-            window.location.href = "/auth/login";
+            window.location.href = `/auth/login?returnUrl=${returnUrl}&intent=${intent}`
           },
         },
       });
