@@ -128,9 +128,9 @@ export default function AppHeader() {
                 <LoadingIndicator loaderClassName="text-white" />
               </Link>
               <Link
-                href="/about"
+                href="/contact"
                 className={`font-medium transition-colors flex items-center gap-2 ${
-                  isActiveLink("/about")
+                  isActiveLink("/contact")
                     ? "text-secondary-100 border-b-2 border-secondary pb-1"
                     : "hover:text-secondary-100"
                 }`}
@@ -169,7 +169,7 @@ export default function AppHeader() {
                   <ShoppingBag className="h-5 w-5" />
                   {cart.itemCount > 0 && (
                     <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-5 w-5 flex items-center justify-center">
-                      {cart.items.length}
+                      {cart.itemCount}
                     </span>
                   )}
                   <LoadingIndicator loaderClassName="text-white" />
@@ -238,9 +238,9 @@ export default function AppHeader() {
                   <LoadingIndicator loaderClassName="text-white" />
                 </Link>
                 <Link
-                  href="/about"
+                  href="/contact"
                   className={`font-medium transition-colors flex items-center gap-2 ${
-                    isActiveLink("/about")
+                    isActiveLink("/contact")
                       ? "text-secondary bg-secondary-50 px-3 py-2 rounded-lg"
                       : "hover:text-secondary/40"
                   }`}
