@@ -60,7 +60,7 @@ export default function ProductsSortControls({
 
     return (
         <div className="flex-1">
-            <h3 className="text-sm font-medium text-gray-700 mb-3">Sort By</h3>
+            <h3 className="text-sm font-medium text-gray-700 mb-3">{t('sortBy') || 'Sort By'}</h3>
             <div className="flex flex-wrap gap-2">
                 {sortOptions.map((option) => (
                     <SortButton

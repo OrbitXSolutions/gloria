@@ -27,13 +27,13 @@ export default function CartPageClient() {
   const locale = useLocale();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  const handleQuantityChange = (itemId: number, newQuantity: number) => {
+  const handleQuantityChange = (productId: number, newQuantity: number) => {
     if (newQuantity < 1) {
-      removeItem(itemId);
-    } else {
-      updateQuantity(itemId, newQuantity);
+      removeItem(productId)
+      return
     }
-  };
+    updateQuantity(productId, newQuantity)
+  }
 
   const handleCheckout = async () => {
     if (cart.items.length === 0) {
@@ -155,7 +155,7 @@ export default function CartPageClient() {
                           <Button
                             variant="ghost"
                             size="sm"
-                            onClick={() => removeItem(item.id)}
+                            onClick={() => removeItem(item.product.id)}
                             className="text-red-500 hover:text-red-700 hover:bg-red-50"
                           >
                             <Trash2 className="w-4 h-4" />
@@ -169,7 +169,7 @@ export default function CartPageClient() {
                               variant="outline"
                               size="sm"
                               onClick={() =>
-                                handleQuantityChange(item.id, item.quantity - 1)
+                                handleQuantityChange(item.product.id, item.quantity - 1)
                               }
                               disabled={item.quantity <= 1}
                             >
@@ -182,7 +182,7 @@ export default function CartPageClient() {
                               variant="outline"
                               size="sm"
                               onClick={() =>
-                                handleQuantityChange(item.id, item.quantity + 1)
+                                handleQuantityChange(item.product.id, item.quantity + 1)
                               }
                             >
                               <Plus className="w-3 h-3" />
