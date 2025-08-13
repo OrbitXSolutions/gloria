@@ -105,6 +105,7 @@ export async function completeCheckout(
         await supabase.auth.signUp({
           email: validatedData.email,
           password: validatedData.password,
+
           options: {
             data: {
               first_name: validatedData.fullName.split(" ")[0] || "",
@@ -112,6 +113,7 @@ export async function completeCheckout(
                 validatedData.fullName.split(" ").slice(1).join(" ") || "",
               phone: validatedData.phone,
             },
+            emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/confirm`,
           },
         });
 
