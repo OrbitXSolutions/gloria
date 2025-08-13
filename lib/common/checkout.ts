@@ -409,10 +409,16 @@ export async function processGuestCheckout(
           phone: checkoutData.phone,
         },
       },
-    });
+    })
+
+    if (authError) {
+      console.error('Auth error during guest sign up:', authError)
+      throw new Error(authError.message || 'Failed to sign up user')
+    }
+
     try {
       const supabaseAdmin = await createAdminClient();
-      await supabase.auth.admin.updateUserById(authData.user?.id || "", {
+      await supabaseAdmin.auth.admin.updateUserById(authData.user?.id || "", {
         phone: checkoutData.phone,
       });
     } catch (error) {
@@ -421,7 +427,7 @@ export async function processGuestCheckout(
 
     if (authError) {
       console.error("Auth error:", authError);
-      throw new Error(authError.message);
+      throw new Error((authError as any).message);
     }
 
     if (!authData.user) {

@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+export const runtime = 'nodejs'
 import { processGuestCheckout, CheckoutData } from "@/lib/common/checkout";
 
 export async function POST(request: NextRequest) {
