@@ -279,7 +279,7 @@ export default async function AppFooter() {
               <br />
               {t('copyright.developed').split('OrbitX Solutions')[0]}
               <a
-                href="https://orbitxsolutions.com"
+                href="https://orbitxsolutions.net/"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-gray-300 hover:text-white transition-colors"

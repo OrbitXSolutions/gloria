@@ -244,10 +244,18 @@ export async function processAuthenticatedCheckout(
     const totals = calculateOrderTotals(checkoutData.cartItems, deliveryFee);
 
     // Create order
-    const orderCode = `ORD-${Date.now()}-${Math.random()
-      .toString(36)
-      .substr(2, 9)
-      .toUpperCase()}`;
+    // const orderCode = `ORD-${Date.now()}-${Math.random()
+    //   .toString(36)
+    //   .substr(2, 9)
+    //   .toUpperCase()}`;
+
+    const today = new Date();
+    const datePart = today.toISOString().slice(2, 10).replace(/-/g, ""); // YYMMDD
+    const randPart = Math.random().toString(36).substr(2, 5).toUpperCase(); // 5 random chars
+
+    const orderCode = `ORD${datePart}${randPart}`;
+    console.log(orderCode);
+
 
     const { data: order, error: orderError } = await supabase
       .from("orders")

@@ -17,7 +17,7 @@ export default function LoginPage() {
         <div
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: `url('/placeholder.svg?height=1080&width=720')`,
+            backgroundImage: `url('/images/banner-login.jpg')`,
           }}
         >
           <div className="absolute inset-0 bg-black/40" />

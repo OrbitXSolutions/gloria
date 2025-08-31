@@ -1,10 +1,11 @@
 import type { Metadata } from 'next'
 import { Suspense } from 'react'
 import ProductsPageClient from './ProductsPageClient'
-import { generateProductsPageMetadata, parseProductsPageParams } from '@/lib/utils/products-page-utils'
+import { parseProductsPageParams } from '@/lib/utils/products-page-utils'
 import { queryProductsAction } from '../_actions/query-products'
 import { getCategories } from '@/lib/common/supabase-queries'
 import { Skeleton } from '@/components/ui/skeleton'
+import { getLocale } from 'next-intl/server'
 
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>
@@ -13,7 +14,36 @@ interface PageProps {
 export async function generateMetadata({
   searchParams,
 }: PageProps): Promise<Metadata> {
-  return generateProductsPageMetadata()
+  const locale = await getLocale()
+  const params = await searchParams
+  const category = typeof params.category === 'string' ? params.category : null
+  const brand = 'Eleva'
+  const readableCategory = category ? category.replace(/-/g, ' ') : (locale === 'ar' ? 'كل العطور' : 'All Perfumes')
+  const title = locale === 'ar'
+    ? `${readableCategory} عطور أونلاين | إليفا – دبي`
+    : `${readableCategory.charAt(0).toUpperCase() + readableCategory.slice(1)} Perfumes Online | ${brand} – Dubai & Worldwide`
+  const description = locale === 'ar'
+    ? 'اكتشف مجموعة العطور الفاخرة لدينا. عطور عربية ونِش أصلية مع توصيل سريع داخل الإمارات وشحن عالمي.'
+    : `Explore luxury, Arabic & niche perfumes${category ? ` in ${readableCategory}` : ''}. Authentic scents, fast UAE delivery & worldwide shipping. Buy online today.`
+  const canonical = category ? `/products?category=${encodeURIComponent(category)}` : '/products'
+  return {
+    title,
+    description,
+    alternates: {
+      canonical,
+      languages: {
+        en: canonical + (canonical.includes('?') ? '&' : '?') + 'lang=en',
+        ar: canonical + (canonical.includes('?') ? '&' : '?') + 'lang=ar'
+      }
+    },
+    openGraph: {
+      title,
+      description,
+      url: `https://eleva-boutique.net${canonical}`,
+      type: 'website'
+    },
+    twitter: { card: 'summary_large_image', title, description }
+  }
 }
 
 // Loading skeleton component

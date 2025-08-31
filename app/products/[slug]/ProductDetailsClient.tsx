@@ -16,7 +16,7 @@ import {
 import { toast } from "sonner";
 
 import Link from "next/link";
-import { formatPrice } from "@/lib/common/cart";
+import { formatPrice, formatProductPrice } from "@/lib/common/cart";
 import {
   ProductWithUserData,
   ReviewWithUser,
@@ -456,7 +456,7 @@ export default function ProductDetailsClient({
             {/* Price */}
             <div className={`flex items-center gap-4`}>
               <span className="text-3xl font-bold text-gray-900">
-                {formatPrice(
+                {formatProductPrice(
                   selectedVariant.price,
                   selectedVariant.currency,
                   locale
@@ -466,7 +466,7 @@ export default function ProductDetailsClient({
                 selectedVariant.old_price > (selectedVariant.price || 0) && (
                   <>
                     <span className="text-xl text-gray-500 line-through">
-                      {formatPrice(
+                      {formatProductPrice(
                         selectedVariant.old_price,
                         selectedVariant.currency,
                         locale
@@ -690,7 +690,7 @@ export default function ProductDetailsClient({
                                   : "text-gray-900"
                                   }`}
                               >
-                                {formatPrice(
+                                {formatProductPrice(
                                   variant.price,
                                   variant.currency,
                                   locale

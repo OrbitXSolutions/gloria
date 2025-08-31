@@ -77,67 +77,149 @@ export const generateCustomerOrderConfirmationHTML = (data: {
   } : { code: 'AED' };
 
   return `
-    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #f8f9fa; padding: 20px;">
-      <div style="background-color: #ffffff; border-radius: 8px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.1);">
-        <div style="text-align: center; margin-bottom: 30px;">
-          <h1 style="color: #333; margin: 0; font-size: 28px;">Order Confirmation</h1>
-          <p style="color: #666; margin: 10px 0 0 0;">Thank you for your order!</p>
+    <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 0 auto; background-color: #f5f7fa; padding: 20px;">
+      <div style="background-color: #ffffff; border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
+        
+        <!-- Header with Brand -->
+        <div style="text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid #e1e8ed;">
+          <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: #667eea; margin-bottom: 10px;">
+            <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">✨ Eleva Boutique</h1>
+          </div>
+          <h2 style="color: #2c3e50; margin: 10px 0 0 0; font-size: 24px; font-weight: 600;">Order Confirmation</h2>
+          <p style="color: #7f8c8d; margin: 8px 0 0 0; font-size: 16px;">Thank you for your order, ${data.customerName}!</p>
         </div>
         
-        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 25px;">
-          <h3 style="color: #333; margin-top: 0;">Order Details</h3>
-          <p><strong>Order Code:</strong> ${data.order.code}</p>
-          <p><strong>Order Date:</strong> ${new Date(data.order.created_at || '').toLocaleDateString()}</p>
-          <p><strong>Status:</strong> <span style="color: #28a745; font-weight: bold;">Confirmed</span></p>
-        </div>
-        
-        <div style="margin-bottom: 25px;">
-          <h3 style="color: #333;">Order Items</h3>
-          ${orderItems.map(item => `
-            <div style="border-bottom: 1px solid #eee; padding: 15px 0;">
-              <div style="display: flex; justify-content: space-between; align-items: center;">
-                <div>
-                  <h4 style="margin: 0; color: #333;">${item.product?.name_en || 'Product'}</h4>
-                  <p style="margin: 5px 0; color: #666;">Quantity: ${item.quantity}</p>
-                </div>
-                <div style="text-align: right;">
-                  <p style="margin: 0; font-weight: bold; color: #333;">${formatPrice(item.price, currency)}</p>
-                </div>
-              </div>
+        <!-- Order Details Card -->
+        <div style="background: linear-gradient(135deg, #f8fbff 0%, #f1f7ff 100%); padding: 25px; border-radius: 10px; margin-bottom: 30px; border-left: 5px solid #3498db;">
+          <h3 style="color: #2c3e50; margin-top: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center;">
+            <span style="background-color: #3498db; color: white; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px;">📋</span>
+            Order Details
+          </h3>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 20px;">
+            <div>
+              <p style="margin: 0; color: #7f8c8d; font-size: 14px; font-weight: 500;">Order Code</p>
+              <p style="margin: 5px 0 0 0; color: #2c3e50; font-size: 16px; font-weight: 600; font-family: 'Courier New', monospace; background-color: #ecf0f1; padding: 8px 12px; border-radius: 6px; display: inline-block;">${data.order.code}</p>
             </div>
-          `).join('')}
+            <div>
+              <p style="margin: 0; color: #7f8c8d; font-size: 14px; font-weight: 500;">Order Date</p>
+              <p style="margin: 5px 0 0 0; color: #2c3e50; font-size: 16px; font-weight: 600;">${new Date(data.order.created_at || '').toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })}</p>
+            </div>
+          </div>
+          <div style="margin-top: 20px;">
+            <p style="margin: 0; color: #7f8c8d; font-size: 14px; font-weight: 500;">Status</p>
+            <p style="margin: 5px 0 0 0;">
+              <span style="background-color: #27ae60; color: white; padding: 6px 16px; border-radius: 20px; font-size: 14px; font-weight: 600; display: inline-block;">
+                ✅ Confirmed
+              </span>
+            </p>
+          </div>
         </div>
         
-        <div style="background-color: #f8f9fa; padding: 20px; border-radius: 5px; margin-bottom: 25px;">
-          <h3 style="color: #333; margin-top: 0;">Order Summary</h3>
-                     <div style="display: flex; justify-content: space-between; margin: 10px 0;">
-             <span>Subtotal:</span>
-             <span>${formatPrice(subtotal, currency)}</span>
-           </div>
-           <div style="display: flex; justify-content: space-between; margin: 10px 0;">
-             <span>Shipping:</span>
-             <span>${formatPrice(shipping, currency)}</span>
-           </div>
-           <hr style="border: none; border-top: 1px solid #ddd; margin: 15px 0;">
-           <div style="display: flex; justify-content: space-between; margin: 10px 0; font-weight: bold; font-size: 18px;">
-             <span>Total:</span>
-             <span>${formatPrice(total, currency)}</span>
-           </div>
-        </div>
-        
-        <div style="background-color: #e7f3ff; padding: 20px; border-radius: 5px; border-left: 4px solid #007bff;">
-          <h3 style="color: #333; margin-top: 0;">What's Next?</h3>
-          <p style="margin: 0; color: #004085;">
-            We're processing your order and will send you updates on the shipping status. 
-            You can track your order using the order code: <strong>${data.order.code}</strong>
+        <!-- Payment Method Highlight -->
+        <div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); padding: 20px; border-radius: 10px; margin-bottom: 30px; border-left: 5px solid #f39c12; text-align: center;">
+          <h3 style="color: #d68910; margin: 0 0 10px 0; font-size: 18px; font-weight: 600; display: flex; align-items: center; justify-content: center;">
+            <span style="background-color: #f39c12; color: white; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px;">💰</span>
+            Payment Method
+          </h3>
+          <p style="margin: 0; color: #b7950b; font-size: 16px; font-weight: 600;">
+            🚚 Cash on Delivery (COD)
+          </p>
+          <p style="margin: 8px 0 0 0; color: #85650d; font-size: 14px;">
+            Pay when your order is delivered to your doorstep
           </p>
         </div>
         
-        <hr style="margin: 30px 0; border: none; border-top: 1px solid #dee2e6;">
-        <p style="color: #6c757d; font-size: 12px; text-align: center;">
-          Thank you for choosing Eleva Boutique!<br>
-          If you have any questions, please contact us at support@eleva-boutique.net
-        </p>
+        <!-- Order Items -->
+        <div style="margin-bottom: 30px;">
+          <h3 style="color: #2c3e50; margin-bottom: 20px; font-size: 20px; font-weight: 600; display: flex; align-items: center;">
+            <span style="background-color: #9b59b6; color: white; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px;">🛍️</span>
+            Your Items
+          </h3>
+          <div style="background-color: #fafbfc; border-radius: 10px; overflow: hidden; border: 1px solid #e1e8ed;">
+            ${orderItems.map((item, index) => `
+              <div style="padding: 20px; ${index < orderItems.length - 1 ? 'border-bottom: 1px solid #e1e8ed;' : ''}">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                  <div style="flex: 1;">
+                    <h4 style="margin: 0 0 8px 0; color: #2c3e50; font-size: 18px; font-weight: 600; line-height: 1.3;">
+                      ${item.product?.name_en || item.product?.name_ar || 'Premium Product'}
+                    </h4>
+                    <div style="display: flex; align-items: center; gap: 15px; margin-top: 8px;">
+                      <span style="background-color: #ecf0f1; color: #5d6d7e; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 500;">
+                        SKU: ${item.product?.sku || 'N/A'}
+                      </span>
+                      <span style="background-color: #e8f5e8; color: #27ae60; padding: 4px 12px; border-radius: 12px; font-size: 13px; font-weight: 600;">
+                        Qty: ${item.quantity}
+                      </span>
+                    </div>
+                  </div>
+                  <div style="text-align: right; margin-left: 20px;">
+                    <p style="margin: 0; font-size: 20px; font-weight: 700; color: #e74c3c;">
+                      ${formatPrice((item.price || 0) * (item.quantity || 1), currency)}
+                    </p>
+                    <p style="margin: 4px 0 0 0; font-size: 14px; color: #7f8c8d;">
+                      ${formatPrice(item.price || 0, currency)} each
+                    </p>
+                  </div>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+        
+        <!-- Order Summary -->
+        <div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 25px; border-radius: 10px; margin-bottom: 30px; border: 1px solid #dee2e6;">
+          <h3 style="color: #2c3e50; margin-top: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center;">
+            <span style="background-color: #17a2b8; color: white; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px;">💳</span>
+            Order Summary
+          </h3>
+          <div style="space-y: 12px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #dee2e6;">
+              <span style="color: #5d6d7e; font-size: 16px; font-weight: 500;">Subtotal</span>
+              <span style="color: #2c3e50; font-size: 16px; font-weight: 600;">${formatPrice(subtotal, currency)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #dee2e6;">
+              <span style="color: #5d6d7e; font-size: 16px; font-weight: 500;">Shipping</span>
+              <span style="color: #2c3e50; font-size: 16px; font-weight: 600;">${formatPrice(shipping, currency)}</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 0; background-color: #fff; margin: 16px -16px -16px -16px; padding-left: 16px; padding-right: 16px; border-radius: 8px;">
+              <span style="color: #2c3e50; font-size: 20px; font-weight: 700;">Total Amount</span>
+              <span style="color: #e74c3c; font-size: 24px; font-weight: 800;">${formatPrice(total, currency)}</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- What's Next Section -->
+        <div style="background: linear-gradient(135deg, #e8f5e8 0%, #d5f4e6 100%); padding: 25px; border-radius: 10px; border-left: 5px solid #27ae60; margin-bottom: 30px;">
+          <h3 style="color: #1e8449; margin-top: 0; font-size: 20px; font-weight: 600; display: flex; align-items: center;">
+            <span style="background-color: #27ae60; color: white; width: 28px; height: 28px; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center; margin-right: 12px; font-size: 14px;">🚀</span>
+            What's Next?
+          </h3>
+          <div style="color: #1e6b3a; line-height: 1.6;">
+            <p style="margin: 0 0 12px 0; font-size: 16px;">
+              <strong>📦 Order Processing:</strong> We're preparing your items with care
+            </p>
+            <p style="margin: 0 0 12px 0; font-size: 16px;">
+              <strong>🚚 Delivery Updates:</strong> Track your order with code: <code style="background-color: #c3e9d0; padding: 4px 8px; border-radius: 4px; font-weight: 600;">${data.order.code}</code>
+            </p>
+            <p style="margin: 0; font-size: 16px;">
+              <strong>💰 Payment:</strong> Have your cash ready for delivery
+            </p>
+          </div>
+        </div>
+        
+        <!-- Footer -->
+        <div style="text-align: center; padding-top: 30px; border-top: 1px solid #e1e8ed;">
+          <div style="margin-bottom: 20px;">
+            <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">Need Help?</h4>
+            <p style="color: #7f8c8d; margin: 0; font-size: 14px;">
+              Contact us at: <a href="mailto:support@eleva-boutique.net" style="color: #3498db; text-decoration: none; font-weight: 600;">support@eleva-boutique.net</a>
+            </p>
+          </div>
+          <p style="color: #95a5a6; font-size: 12px; margin: 0; line-height: 1.5;">
+            Thank you for choosing Eleva Boutique! 🌟<br>
+            This email was sent to ${data.customerEmail}
+          </p>
+        </div>
       </div>
     </div>
   `;

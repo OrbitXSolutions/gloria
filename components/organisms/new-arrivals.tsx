@@ -11,5 +11,19 @@ export default async function NewArrivals() {
 
   const products = await getNewArrivals(4, user?.user_metadata.user_id);
 
-  return <NewArrivalsClient products={products} />;
+  const itemListJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'ItemList',
+    itemListElement: products.map((p, idx) => ({
+      '@type': 'ListItem',
+      position: idx + 1,
+      url: `https://eleva-boutique.net/products/${p.slug || p.slug_ar || p.id}`,
+      name: p.name_en || p.name_ar
+    }))
+  };
+
+  return <>
+    <script type="application/ld+json" suppressHydrationWarning>{JSON.stringify(itemListJsonLd)}</script>
+    <NewArrivalsClient products={products} />
+  </>;
 }
