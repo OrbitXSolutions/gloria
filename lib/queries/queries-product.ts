@@ -70,12 +70,12 @@ export async function filterProducts(params: ProductFilterParams): Promise<Pagin
         p_min_price: minPrice ?? null,
         p_max_price: maxPrice ?? null,
         p_user_id: user?.id ?? null,
-    } as any);
+    });
 
     if (error) throw error;
 
     // The backend function returns: { data: any[]; total: number; page: number; limit: number; }
-    const rpcResult = data as FilterProductsRpcResult | null;
+    const rpcResult = data as unknown as FilterProductsRpcResult | null;
     return {
         data: rpcResult?.data ?? [],
         total: rpcResult?.total ?? 0,
