@@ -43,14 +43,9 @@ export default function NewArrivalsClient({ products }: Props) {
                 size="lg"
                 className="border-secondary text-secondary hover:bg-secondary-50"
               >
-                <Link
-                  href={{
-                    pathname: "/products",
-                    query: { sort: "newest" },
-                  }}
-                >
+                {/* Link to full products list (default sort = newest handled implicitly) */}
+                <Link href="/products" aria-label={t("viewAll") + ' - products list'}>
                   {t("viewAll")}
-                  <LoadingIndicator />
                 </Link>
               </Button>
             </div>

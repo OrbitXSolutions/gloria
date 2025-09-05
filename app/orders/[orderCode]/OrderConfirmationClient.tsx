@@ -267,6 +267,18 @@ export default function OrderConfirmationClient({
                   </span>
                 </div>
 
+                {/* Payment Method */}
+                <div className={`flex justify-between py-2 bg-yellow-50 px-3 rounded-lg border border-yellow-200`}>
+                  <div className="flex flex-col">
+                    <span className="text-gray-700 font-medium">{t("orderConfirmation.paymentMethod")}</span>
+                    <span className="text-sm text-gray-500">{t("orderConfirmation.payOnDelivery")}</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <span className="text-yellow-700 font-semibold">💰</span>
+                    <span className="text-yellow-800 font-semibold">{t("orderConfirmation.cashOnDelivery")}</span>
+                  </div>
+                </div>
+
                 <div
                   className={`flex justify-between text-lg font-bold border-t pt-3 `}
                 >

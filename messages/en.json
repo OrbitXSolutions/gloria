@@ -52,7 +52,7 @@
   "banner": {
     "limitedOffer": "Limited Time Offer",
     "title": "Summer Sale",
-    "subtitle": "Up to 40% Off",
+    "subtitle": "Up to 20% Off",
     "description": "Discover amazing deals on your favorite fragrances. Limited time only!",
     "shopSale": "Shop Sale Now",
     "viewDeals": "View All Deals"
@@ -115,7 +115,7 @@
     "items": {
       "fastDelivery": {
         "title": "Fast Delivery",
-        "description": "Free shipping on orders over $50. Express delivery available."
+        "description": "Free shipping on orders over $ 50. Express delivery available."
       },
       "returns": {
         "title": "14-Day Returns",
@@ -518,6 +518,9 @@
       "title": "Order Summary",
       "subtotal": "Subtotal",
       "shipping": "Shipping",
+      "paymentMethod": "Payment Method",
+      "cashOnDelivery": "Cash on Delivery",
+      "payOnDelivery": "Pay when your order arrives",
       "free": "Free",
       "tax": "Tax",
       "total": "Total"
@@ -562,6 +565,9 @@
       "subtotal": "Subtotal",
       "shipping": "Shipping",
       "selectState": "Select State",
+      "paymentMethod": "Payment Method",
+      "cashOnDelivery": "Cash on Delivery",
+      "payOnDelivery": "Pay when your order arrives",
       "total": "Total",
       "completeOrder": "Complete Order",
       "processing": "Processing...",
@@ -753,6 +759,9 @@
       "orderSummary": "Order Summary",
       "subtotal": "Subtotal",
       "shipping": "Shipping",
+      "paymentMethod": "Payment Method",
+      "cashOnDelivery": "Cash on Delivery",
+      "payOnDelivery": "Pay when your order arrives",
       "free": "Free",
       "total": "Total",
       "whatsNext": "What's Next?",

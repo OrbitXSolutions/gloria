@@ -77,8 +77,8 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
         resolver: zodResolver(checkoutSchema),
         defaultValues: {
             email: "",
-            password: "",
-            confirmPassword: "",
+            password: user ? undefined : "",
+            confirmPassword: user ? undefined : "",
             fullName: "",
             phone: "",
             address: "",
@@ -96,8 +96,12 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
             const lastName = user?.last_name || "";
             const fullName = `${firstName} ${lastName}`.trim();
             const phone = user?.phone || user.phone || "";
+            const email = user?.email || "";
+
+            form.setValue("email", email);
             form.setValue("fullName", fullName);
             form.setValue("phone", phone);
+
             // Select default address
             const defaultAddress = userAddresses.find((addr) => addr.is_default);
             if (defaultAddress) {
@@ -174,8 +178,8 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
 
             const checkoutData: CheckoutData = {
                 email: data.email,
-                password: data.password,
-                confirmPassword: data.confirmPassword,
+                password: user ? undefined : data.password,
+                confirmPassword: user ? undefined : data.confirmPassword,
                 fullName: data.fullName,
                 phone: data.phone,
                 address: data.address,
@@ -243,6 +247,40 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
                                     {t("common.back")} {t("header.nav.products")}
                                 </Button>
                             </Link>
+
+                            {/* Customer Information for Logged-in Users */}
+                            {user && (
+                                <Card>
+                                    <CardHeader>
+                                        <CardTitle className={`flex items-center gap-3`}>
+                                            <div className="w-8 h-8 bg-secondary-100 rounded-full flex items-center justify-center">
+                                                <User className="h-4 w-4 text-secondary-600" />
+                                            </div>
+                                            <div className="px-3">{t("checkout.account.customerInfo")}</div>
+                                        </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className="space-y-4">
+                                        <FormField
+                                            control={form.control}
+                                            name="email"
+                                            render={({ field }) => (
+                                                <FormItem>
+                                                    <FormLabel>{t("checkout.account.email")}</FormLabel>
+                                                    <FormControl>
+                                                        <Input
+                                                            placeholder={t("checkout.account.emailPlaceholder")}
+                                                            {...field}
+                                                            disabled={true}
+                                                            className="bg-gray-50"
+                                                        />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </CardContent>
+                                </Card>
+                            )}
 
                             {/* Guest User Registration */}
                             {!user && (
@@ -602,6 +640,19 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
                                                     : formatPrice(shipping, product.currency, locale)}
                                             </span>
                                         </div>
+
+                                        {/* Payment Method */}
+                                        <div className={`flex justify-between py-2 bg-yellow-50 px-3 rounded-lg border border-yellow-200`}>
+                                            <div className="flex flex-col">
+                                                <span className="text-gray-700 font-medium">{t("checkout.orderSummary.paymentMethod")}</span>
+                                                <span className="text-sm text-gray-500">{t("checkout.orderSummary.payOnDelivery")}</span>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <span className="text-yellow-700 font-semibold">💰</span>
+                                                <span className="text-yellow-800 font-semibold">{t("checkout.orderSummary.cashOnDelivery")}</span>
+                                            </div>
+                                        </div>
+
                                         <div className={`flex justify-between text-lg font-bold border-t pt-3 `}>
                                             <span>{t("checkout.orderSummary.total")}</span>
                                             <span>

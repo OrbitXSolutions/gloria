@@ -42,7 +42,9 @@ export default function CollectionSection({ className }: Props) {
                             : 'Explore bestsellers, seasonal favorites, and timeless classics designed for every moment.'}
                     </p>
                 </div>
-                {/* Features Grid */}
+
+                {/* Features Grid - HIDDEN */}
+                {/* 
                 <div className="flex justify-center gap-6 mb-8">
                     <div className="flex flex-col items-center">
                         <div className="w-16 h-16 rounded-full bg-amber-100 flex items-center justify-center shadow group-hover:bg-amber-200 transition-colors">
@@ -69,8 +71,11 @@ export default function CollectionSection({ className }: Props) {
                         </span>
                     </div>
                 </div>
+                */}
+
                 {/* CTA Section */}
-                {/* <div className="text-center">
+                {/* 
+                <div className="text-center">
                     <Button
                         size="lg"
                         className="bg-gradient-to-r from-amber-600 to-rose-600 hover:from-amber-700 hover:to-rose-700 text-white px-8 py-3 text-lg font-semibold shadow-lg hover:shadow-xl transition-all duration-300 rounded-full"
@@ -80,7 +85,8 @@ export default function CollectionSection({ className }: Props) {
                     <p className="text-xs text-muted-foreground mt-3">
                         {isAr ? 'شحن مجاني للطلبات فوق 500 ريال' : 'Free shipping on orders over $100'}
                     </p>
-                </div> */}
+                </div>
+                */}
             </div>
         </section>
     );

@@ -11,7 +11,7 @@ export default function Promo() {
   const t = useTranslations("banner");
 
   // Banner image path - you can store this in your database or use static paths
-  const bannerImagePath = "/images/mon-promo.png";
+  const bannerImagePath = "/images/banner-des.jpg";
   const bannerImageUrl = bannerImagePath;
 
   const handleBannerImageError = (error: string, src: string) => {
@@ -36,19 +36,13 @@ export default function Promo() {
                 <p className="text-lg opacity-90 max-w-md">
                   {t("description")}
                 </p>
-                <div className={`flex flex-col sm:flex-row gap-4`}>
+                <div>
                   <Button
+                    asChild
                     size="lg"
                     className="bg-white text-secondary hover:bg-gray-100"
                   >
-                    {t("shopSale")}
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="lg"
-                    className="border-secondary bg-secondary/20 text-white hover:bg-secondary hover:text-white"
-                  >
-                    {t("viewDeals")}
+                    <a href="/products">{t("shopSale")}</a>
                   </Button>
                 </div>
               </div>
@@ -63,7 +57,7 @@ export default function Promo() {
                 width={400}
                 className="bg-slate-50 h-full max-h-100 w-auto"
                 sizes="(max-width: 768px) 100vw, 50vw"
-             objectFit="contain"
+                style={{ objectFit: "contain" }}
               />
             </div>
           </div>
