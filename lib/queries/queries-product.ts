@@ -18,7 +18,6 @@ type FilterProductsRpcArgs = {
     p_max_price: string | null;
     p_user_id: string | null;
 };
-import { createSsrClient } from "@/lib/supabase/server";
 import createClient from "@/lib/supabase/client";
 import { PaginatedResponse } from "@/lib/types/query/query";
 import { ProductWithUserData } from "@/lib/types/database.types";
@@ -75,7 +74,7 @@ export async function filterProducts(params: ProductFilterParams): Promise<Pagin
     if (error) throw error;
 
     // The backend function returns: { data: any[]; total: number; page: number; limit: number; }
-    const rpcResult = data as unknown as FilterProductsRpcResult | null;
+    const rpcResult = data as FilterProductsRpcResult | null;
     return {
         data: rpcResult?.data ?? [],
         total: rpcResult?.total ?? 0,
