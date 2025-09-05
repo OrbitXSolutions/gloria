@@ -28,24 +28,26 @@ export const checkoutSchema = z
     address: z.string().min(1, "Address is required"),
     stateCode: z.string().min(1, "State is required"),
     email: z.string().email().optional(),
-    password: z.string().min(6).optional(),
-    confirmPassword: z.string().min(6).optional(),
+    password: z.string().optional(),
+    confirmPassword: z.string().optional(),
     notes: z.string().optional(),
     selectedAddressId: z.number().optional(),
     useNewAddress: z.boolean(),
   })
   .refine(
     (data) => {
-      // If guest user, require email and password
-      if (data.email && (!data.password || !data.confirmPassword)) {
-        return false;
-      }
-      if (
-        data.password &&
-        data.confirmPassword &&
-        data.password !== data.confirmPassword
-      ) {
-        return false;
+      // For guest users (when email is provided and no selectedAddressId), require password
+      if (data.email && !data.selectedAddressId) {
+        // Guest checkout requires password
+        if (!data.password || data.password.length < 6) {
+          return false;
+        }
+        if (!data.confirmPassword) {
+          return false;
+        }
+        if (data.password !== data.confirmPassword) {
+          return false;
+        }
       }
       return true;
     },

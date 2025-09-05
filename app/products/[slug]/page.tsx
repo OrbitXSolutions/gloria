@@ -143,8 +143,42 @@ export default async function Page({ params, searchParams }: PageProps) {
   if (!product) {
     notFound();
   }
+  const locale = await getLocale();
+  const name = locale === 'ar' ? (product.name_ar || product.name_en) : (product.name_en || product.name_ar);
+  const description = locale === 'ar'
+    ? (product.meta_description_ar || product.description_ar || '')
+    : (product.meta_description_en || product.description_en || '');
+  const imageList = [product.primary_image, ...(product.images || [])].filter(Boolean) as string[];
+  const price = product.price;
+  const currency = product.currency?.code || 'AED';
+  const ratingValue = product.total_rates && product.rates_count ? (product.total_rates / product.rates_count) : undefined;
 
-  return <ProductDetailsClient product={product} reviews={reviews} />;
+  const productJsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name,
+    description,
+    image: imageList.map(img => img?.startsWith('http') ? img : `https://eleva-boutique.net${img}`),
+    sku: product.sku || undefined,
+    brand: { '@type': 'Brand', name: 'Eleva' },
+    offers: price ? {
+      '@type': 'Offer',
+      priceCurrency: currency,
+      price: price,
+      availability: product.quantity && product.quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
+      url: `https://eleva-boutique.net/products/${product.slug || slug}`
+    } : undefined,
+    aggregateRating: ratingValue ? {
+      '@type': 'AggregateRating',
+      ratingValue: ratingValue.toFixed(2),
+      reviewCount: product.rates_count
+    } : undefined
+  };
+
+  return <>
+    <script type="application/ld+json" suppressHydrationWarning>{JSON.stringify(productJsonLd)}</script>
+    <ProductDetailsClient product={product} reviews={reviews} />
+  </>;
 }
 function getLocaleFromRequest(): any {
   throw new Error("Function not implemented.");

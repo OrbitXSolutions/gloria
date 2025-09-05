@@ -1,6 +1,6 @@
 "use client";
 
-import { formatPrice } from "@/lib/common/cart";
+import { formatProductPrice } from "@/lib/common/cart";
 import { useLocale } from "next-intl";
 
 interface Props {
@@ -15,11 +15,11 @@ export default function ProductPrice({ price, oldPrice, currency }: Props) {
     return (
         <div className="flex items-center space-x-2">
             <span className="text-xl font-bold text-gray-900">
-                {formatPrice(price, currency, locale)}
+                {formatProductPrice(price, currency, locale)}
             </span>
             {oldPrice && oldPrice > (price || 0) && (
                 <span className="text-sm text-gray-500 line-through">
-                    {formatPrice(oldPrice, currency, locale)}
+                    {formatProductPrice(oldPrice, currency, locale)}
                 </span>
             )}
         </div>

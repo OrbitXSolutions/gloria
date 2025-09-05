@@ -12,30 +12,32 @@ export default function Banner() {
   const t = useTranslations('banner');
 
   // Banner image path - you can store this in your database or use static paths
-  const bannerImagePath = "/images/home-promo-mobile.png";
+  const bannerImagePath = "/images/banner-home.jpg";
   const bannerImageUrl = bannerImagePath;
 
   const handleBannerImageError = (error: string, src: string) => {
     console.warn("Banner image failed to load:", { error, src });
   };
- return (
-   <section className="app-promo-section relative w-full ">
-     <Image
-       className="max-md:hidden h-full w-full"
-       src="/images/home-promo.png"
-       width={800}
-       height={400}
-       alt="Natural Skin Care Products"
-     />
-     <Image
-       className="md:hidden w-full h-full"
-       src="/images/home-promo-mobile.png"
-       width={800}
-       height={400}
-       alt="Natural Skin Care Products"
-     />
-   </section>
- );
+  return (
+    <section className="app-promo-section relative w-full ">
+      <Image
+        className="max-md:hidden h-full w-full rounded-3xl shadow-2xl animate-fadein object-cover"
+        src="/images/banner-home.jpg"
+        width={1200}
+        height={500}
+        alt="Eleva Home Banner"
+        priority
+      />
+      <Image
+        className="md:hidden w-full h-full rounded-2xl shadow-xl animate-fadein object-cover"
+        src="/images/banner-home.jpg"
+        width={800}
+        height={400}
+        alt="Eleva Home Banner"
+        priority
+      />
+    </section>
+  );
 
   return (
     <section className="py-16">

@@ -8,7 +8,7 @@ export default async function Products() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const products = await getFeaturedProducts(6, user?.user_metadata?.user_id);
+  const products = await getFeaturedProducts(8, user?.user_metadata?.user_id);
 
   return <ProductsClient products={products} />;
 }

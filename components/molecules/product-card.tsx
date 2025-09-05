@@ -14,7 +14,7 @@ import {
   getFirstImageUrl,
 } from "@/lib/constants/supabase-storage";
 import SafeImage from "../_common/safe-image";
-import { formatPrice } from "@/lib/common/cart";
+import { formatProductPrice } from "@/lib/common/cart";
 import { useCart } from "../_core/providers/cart-provider";
 import Link from "next/link";
 import Image from "next/image";
@@ -171,7 +171,7 @@ export default function ProductCard({
             alt=""
             fill
             className="bg-amber-50/20"
-            objectFit="contain"
+            style={{ objectFit: "contain" }}
           />
           {/* <SafeImage
             src={primaryImage || "/placeholder.svg"}
@@ -247,12 +247,12 @@ export default function ProductCard({
               className={`flex items-center flex-wrap justify-center space-x-2 `}
             >
               <span className="text-lg font-bold text-gray-900">
-                {formatPrice(product.price, product.currency, locale)}
+                {formatProductPrice(product.price, product.currency, locale)}
               </span>
               {product.old_price &&
                 product.old_price > (product.price || 0) && (
                   <span className="text-sm text-gray-500 line-through">
-                    {formatPrice(product.old_price, product.currency, locale)}
+                    {formatProductPrice(product.old_price, product.currency, locale)}
                   </span>
                 )}
             </div>

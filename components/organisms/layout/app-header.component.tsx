@@ -1,5 +1,6 @@
 "use client";
 
+import { useSupabaseUser } from "@/hooks/use-supabase-user";
 import { useState } from "react";
 import Link from "next/link";
 import { Search, ShoppingBag, Menu, X, Heart } from "lucide-react";
@@ -32,6 +33,7 @@ const kawoszehFont = localFont({
 // import AuthButton from "./AuthButton";
 
 export default function AppHeader() {
+  const { user } = useSupabaseUser();
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const { cart } = useCart();
 
@@ -94,6 +96,17 @@ export default function AppHeader() {
 
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex gap-8">
+              {/* Admin Dashboard Button */}
+              {user && ["mrshj1980@hotmail.com", "rowyda.rashedy@gmail.com"].includes(user.email ?? "") && (
+                <Link
+                  href="https://admin.eleva-boutique.net/admin"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="font-medium transition-colors flex items-center gap-2 hover:text-secondary-100 border-b-2 border-dashed border-secondary-300 pb-1 text-yellow-300"
+                >
+                  Dashboard
+                </Link>
+              )}
               <Link
                 href="/"
                 className={`font-medium transition-colors flex items-center gap-2 ${

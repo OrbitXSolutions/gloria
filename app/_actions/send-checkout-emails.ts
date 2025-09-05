@@ -1,7 +1,7 @@
 "use server";
 
 import { createEmailTransporter, generateCustomerOrderConfirmationHTML, generateAdminOrderNotificationHTML } from "@/lib/email";
-import { ContactInfo } from "@/lib/constants/contact-info";
+import { ADMIN_EMAILS } from "@/lib/constants/contact-info";
 import { OrderWithItems } from "@/lib/types/database.types";
 
 interface SendCheckoutEmailsParams {
@@ -46,10 +46,10 @@ export async function sendCheckoutNotificationEmails({
             }),
         };
 
-        // Send admin notification email
-        const adminMailOptions = {
+        // Send admin notification emails to all admins
+        const adminMailOptions = ADMIN_EMAILS.map(adminEmail => ({
             from: process.env.SMTP_USER,
-            to: ContactInfo.EMAIL, // Send to support email
+            to: adminEmail,
             subject: `New Order Received - ${order.code}`,
             html: generateAdminOrderNotificationHTML({
                 order,
@@ -57,31 +57,42 @@ export async function sendCheckoutNotificationEmails({
                 customerEmail,
                 customerPhone,
             }),
-        };
+        }));
 
-        // Send both emails
-        const [customerResult, adminResult] = await Promise.allSettled([
+        // Send customer email and all admin emails
+        const emailPromises = [
             transporter.sendMail(customerMailOptions),
-            transporter.sendMail(adminMailOptions),
-        ]);
+            ...adminMailOptions.map(mailOption => transporter.sendMail(mailOption))
+        ];
 
-        // Check if both emails were sent successfully
+        const emailResults = await Promise.allSettled(emailPromises);
+
+        // Check email sending results
+        const customerResult = emailResults[0];
+        const adminResults = emailResults.slice(1);
+
         const customerSuccess = customerResult.status === 'fulfilled';
-        const adminSuccess = adminResult.status === 'fulfilled';
+        const adminSuccessCount = adminResults.filter(result => result.status === 'fulfilled').length;
+        const allAdminsSuccess = adminSuccessCount === ADMIN_EMAILS.length;
 
-        if (customerSuccess && adminSuccess) {
+        if (customerSuccess && allAdminsSuccess) {
             return {
                 success: true,
-                message: "Checkout notification emails sent successfully",
+                message: "Checkout notification emails sent successfully to customer and all admins",
             };
         } else {
-            console.error("Email sending results:", { customerResult, adminResult });
+            console.error("Email sending results:", {
+                customerResult,
+                adminResults,
+                adminSuccessCount,
+                totalAdmins: ADMIN_EMAILS.length
+            });
             return {
                 success: false,
                 error: "Some emails failed to send",
                 details: {
                     customerEmail: customerSuccess ? 'sent' : 'failed',
-                    adminEmail: adminSuccess ? 'sent' : 'failed',
+                    adminEmails: `${adminSuccessCount}/${ADMIN_EMAILS.length} sent`,
                 },
             };
         }

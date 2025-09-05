@@ -5,3 +5,9 @@ export enum ContactInfo {
   WHATSAPP = "https://wa.me/971507425671",
   PHONE = "+971 50 742 5671",
 }
+
+export const ADMIN_EMAILS = [
+  "support@eleva-boutique.net",
+  "rowyda.rashedy@gmail.com",
+  "mrshj1980@hotmail.com",
+] as const;
