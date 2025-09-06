@@ -1,5 +1,5 @@
 
-import { getNewArrivals } from "@/lib/common/supabase-queries";
+import { filterProductsServer } from "@/lib/queries/queries-product";
 import { createSsrClient } from "@/lib/supabase/server";
 import NewArrivalsClient from "../molecules/new-arrivals-client";
 
@@ -9,7 +9,16 @@ export default async function NewArrivals() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const products = await getNewArrivals(4, user?.user_metadata.user_id);
+  // Use the filter_products RPC function for consistency
+  const result = await filterProductsServer({
+    page: 1,
+    pageSize: 4,
+    sortBy: "created_at",
+    sortOrder: false, // false = descending (newest first)
+    showDeleted: false,
+  });
+
+  const products = result.data;
 
   const itemListJsonLd = {
     '@context': 'https://schema.org',
@@ -17,7 +26,7 @@ export default async function NewArrivals() {
     itemListElement: products.map((p, idx) => ({
       '@type': 'ListItem',
       position: idx + 1,
-      url: `https://eleva-boutique.net/products/${p.slug || p.slug_ar || p.id}`,
+      url: `https://www.glorianaturals.ae/products/${p.slug || p.slug_ar || p.id}`,
       name: p.name_en || p.name_ar
     }))
   };

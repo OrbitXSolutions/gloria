@@ -10,6 +10,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
     Form,
     FormControl,
@@ -35,6 +36,8 @@ import {
     Lock,
     Eye,
     EyeOff,
+    AlertCircle,
+    X,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -69,6 +72,7 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
     const router = useRouter();
     const [quantity, setQuantity] = useState(1);
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const [showPassword, setShowPassword] = useState(false);
     const [showConfirmPassword, setShowConfirmPassword] = useState(false);
     const [checkedState, setCheckedState] = useState<State | undefined>(uaeStates[0]);
@@ -158,6 +162,7 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
     // Handle form submit
     const onSubmit = async (data: CheckoutFormData) => {
         setIsLoading(true)
+        setError(null) // Clear previous errors
         try {
             // Ensure stateCode is set when using an existing address
             let stateCode = data.stateCode
@@ -200,14 +205,18 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
                 })
                 router.push(`/orders/${result.orderCode}`)
             } else {
+                const errorMessage = result.error || t('toast.checkout.checkoutFailedDescription')
+                setError(errorMessage)
                 toast.error(t('toast.checkout.checkoutFailed'), {
-                    description: result.error || t('toast.checkout.checkoutFailedDescription'),
+                    description: errorMessage,
                     duration: 5000
                 })
             }
-        } catch (error) {
+        } catch (error: any) {
+            const errorMessage = error.message || t('toast.checkout.checkoutFailedDescription')
+            setError(errorMessage)
             toast.error(t('toast.checkout.checkoutFailed'), {
-                description: t('toast.checkout.checkoutFailedDescription'),
+                description: errorMessage,
                 duration: 5000
             })
         } finally {
@@ -232,6 +241,24 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
             </div>
 
             <div className="container mx-auto px-4 py-8">
+                {/* Error Alert at the top */}
+                {error && (
+                    <Alert variant="destructive" className="mb-6">
+                        <AlertCircle className="h-4 w-4" />
+                        <AlertDescription className="flex items-center justify-between">
+                            <span>{error}</span>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => setError(null)}
+                                className="h-auto p-1 hover:bg-transparent"
+                            >
+                                <X className="h-4 w-4" />
+                            </Button>
+                        </AlertDescription>
+                    </Alert>
+                )}
+
                 <Form {...form}>
 
                     <form
@@ -680,6 +707,24 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
                                             </div>
                                         )}
                                     </Button>
+
+                                    {/* Error Alert under checkout button */}
+                                    {error && (
+                                        <Alert variant="destructive" className="mt-4">
+                                            <AlertCircle className="h-4 w-4" />
+                                            <AlertDescription className="flex items-center justify-between">
+                                                <span className="text-sm">{error}</span>
+                                                <Button
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    onClick={() => setError(null)}
+                                                    className="h-auto p-1 hover:bg-transparent"
+                                                >
+                                                    <X className="h-4 w-4" />
+                                                </Button>
+                                            </AlertDescription>
+                                        </Alert>
+                                    )}
 
                                     {/* Security Notice */}
                                     <div className={`flex items-center gap-2 text-xs text-gray-500`}>

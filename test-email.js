@@ -2,24 +2,24 @@ const nodemailer = require('nodemailer');
 
 // Test email configuration
 const testEmail = async () => {
-    try {
-        // Create email transporter (you'll need to set these environment variables)
-        const transporter = nodemailer.createTransport({
-            host: process.env.SMTP_HOST || 'smtp.gmail.com',
-            port: parseInt(process.env.SMTP_PORT || '587'),
-            secure: false,
-            auth: {
-                user: process.env.SMTP_USER,
-                pass: process.env.SMTP_PASSWORD,
-            },
-            tls: {
-                ciphers: 'SSLv3',
-                rejectUnauthorized: false,
-            },
-        });
+  try {
+    // Create email transporter (you'll need to set these environment variables)
+    const transporter = nodemailer.createTransport({
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT || '587'),
+      secure: false,
+      auth: {
+        user: process.env.SMTP_USER,
+        pass: process.env.SMTP_PASSWORD,
+      },
+      tls: {
+        ciphers: 'SSLv3',
+        rejectUnauthorized: false,
+      },
+    });
 
-        // Test email HTML content
-        const testEmailHTML = `
+    // Test email HTML content
+    const testEmailHTML = `
       <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 0 auto; background-color: #f5f7fa; padding: 20px;">
         <div style="background-color: #ffffff; border-radius: 12px; padding: 40px; box-shadow: 0 4px 20px rgba(0,0,0,0.08);">
           
@@ -153,7 +153,7 @@ const testEmail = async () => {
             <div style="margin-bottom: 20px;">
               <h4 style="color: #2c3e50; margin: 0 0 10px 0; font-size: 18px; font-weight: 600;">Need Help?</h4>
               <p style="color: #7f8c8d; margin: 0; font-size: 14px;">
-                Contact us at: <a href="mailto:support@eleva-boutique.net" style="color: #3498db; text-decoration: none; font-weight: 600;">support@eleva-boutique.net</a>
+                Contact us at: <a href="mailto:support@glorianaturals.ae" style="color: #3498db; text-decoration: none; font-weight: 600;">support@glorianaturals.ae</a>
               </p>
             </div>
             <p style="color: #95a5a6; font-size: 12px; margin: 0; line-height: 1.5;">
@@ -165,30 +165,30 @@ const testEmail = async () => {
       </div>
     `;
 
-        // Email options
-        const mailOptions = {
-            from: process.env.SMTP_USER,
-            to: 'rowyda15@gmail.com',
-            subject: '✨ Eleva Boutique - Enhanced Order Confirmation Email Test',
-            html: testEmailHTML,
-        };
+    // Email options
+    const mailOptions = {
+      from: process.env.SMTP_USER,
+      to: 'rowyda15@gmail.com',
+      subject: '✨ Eleva Boutique - Enhanced Order Confirmation Email Test',
+      html: testEmailHTML,
+    };
 
-        // Send email
-        console.log('Sending test email to rowyda15@gmail.com...');
-        const result = await transporter.sendMail(mailOptions);
+    // Send email
+    console.log('Sending test email to rowyda15@gmail.com...');
+    const result = await transporter.sendMail(mailOptions);
 
-        console.log('✅ Test email sent successfully!');
-        console.log('Message ID:', result.messageId);
-        console.log('Email sent to: rowyda15@gmail.com');
+    console.log('✅ Test email sent successfully!');
+    console.log('Message ID:', result.messageId);
+    console.log('Email sent to: rowyda15@gmail.com');
 
-    } catch (error) {
-        console.error('❌ Error sending test email:', error);
-        console.log('\n📝 Make sure you have set the following environment variables:');
-        console.log('- SMTP_HOST (e.g., smtp.gmail.com)');
-        console.log('- SMTP_USER (your email)');
-        console.log('- SMTP_PASSWORD (your app password)');
-        console.log('- SMTP_PORT (e.g., 587)');
-    }
+  } catch (error) {
+    console.error('❌ Error sending test email:', error);
+    console.log('\n📝 Make sure you have set the following environment variables:');
+    console.log('- SMTP_HOST (e.g., smtp.gmail.com)');
+    console.log('- SMTP_USER (your email)');
+    console.log('- SMTP_PASSWORD (your app password)');
+    console.log('- SMTP_PORT (e.g., 587)');
+  }
 };
 
 // Run the test

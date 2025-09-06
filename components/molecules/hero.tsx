@@ -11,8 +11,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 export default function Hero() {
   const t = useTranslations("hero");
   const isMobile = useIsMobile();
-  // You can store the hero image path in your database or use a static path
-  // const heroImagePath = "/images/hero.jpg"; // Replace with your actual image path
+
   const heroImagePath = isMobile
     ? "/images/hero-mobile.png"
     : "/images/home-cover.png";
@@ -23,16 +22,16 @@ export default function Hero() {
   };
 
   return (
-    <>
+    <div className="w-full">
       <Image
         src={heroImageUrl}
-        className="h-full w-full"
+        className="h-full w-full object-cover"
         priority
         width={5816}
         height={1536}
         alt=""
       />
-    </>
+    </div>
   );
   return (
     <section className="relative bg-gradient-to-r from-pink-50 to-secondary-50 overflow-hidden">

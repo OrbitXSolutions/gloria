@@ -7,10 +7,11 @@ import { useProductsPage } from "@/hooks/use-products-page";
 import ProductsFiltersPanel from "@/components/organisms/products-filters-panel";
 import ProductsDisplay from "@/components/organisms/products-display";
 import CollectionSection from "@/components/molecules/collection-section";
+import Features from "@/components/molecules/features";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { AlertCircle } from "lucide-react";
 
-interface Props extends ProductsPageProps {}
+interface Props extends ProductsPageProps { }
 
 export default function ProductsPageClient({
   initialProducts,
@@ -101,6 +102,9 @@ export default function ProductsPageClient({
           onClearFilters={clearFilters}
         />
       </div>
+
+      {/* Features Section */}
+      <Features />
     </div>
   );
 }

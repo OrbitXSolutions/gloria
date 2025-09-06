@@ -7,7 +7,7 @@ export enum ContactInfo {
 }
 
 export const ADMIN_EMAILS = [
-  "support@eleva-boutique.net",
+  "support@glorianaturals.ae",
   "rowyda.rashedy@gmail.com",
   "mrshj1980@hotmail.com",
 ] as const;

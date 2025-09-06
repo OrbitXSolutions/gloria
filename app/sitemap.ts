@@ -3,7 +3,7 @@ import { createSsrClient } from '@/lib/supabase/server'
 import { Tables } from '@/lib/types/database.types'
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-    const base = 'https://eleva-boutique.net'
+    const base = 'https://www.glorianaturals.ae'
     const supabase = await createSsrClient()
     const { data: products } = await supabase
         .from('products')

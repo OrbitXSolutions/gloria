@@ -158,7 +158,7 @@ export default async function Page({ params, searchParams }: PageProps) {
     '@type': 'Product',
     name,
     description,
-    image: imageList.map(img => img?.startsWith('http') ? img : `https://eleva-boutique.net${img}`),
+    image: imageList.map(img => img?.startsWith('http') ? img : `https://www.glorianaturals.ae${img}`),
     sku: product.sku || undefined,
     brand: { '@type': 'Brand', name: 'Eleva' },
     offers: price ? {
@@ -166,7 +166,7 @@ export default async function Page({ params, searchParams }: PageProps) {
       priceCurrency: currency,
       price: price,
       availability: product.quantity && product.quantity > 0 ? 'https://schema.org/InStock' : 'https://schema.org/OutOfStock',
-      url: `https://eleva-boutique.net/products/${product.slug || slug}`
+      url: `https://www.glorianaturals.ae/products/${product.slug || slug}`
     } : undefined,
     aggregateRating: ratingValue ? {
       '@type': 'AggregateRating',

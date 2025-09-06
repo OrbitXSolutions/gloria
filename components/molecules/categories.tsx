@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-
+import { useEffect, useRef, useState } from "react";
 import {
   Sparkles,
   Crown,
@@ -34,11 +34,42 @@ export default function Categories({
 }) {
   const t = useTranslations("categories");
   const locale = useLocale();
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setIsVisible(true);
+        }
+      },
+      {
+        threshold: 0.1,
+        rootMargin: "0px 0px -100px 0px",
+      }
+    );
+
+    if (sectionRef.current) {
+      observer.observe(sectionRef.current);
+    }
+
+    return () => {
+      if (sectionRef.current) {
+        observer.unobserve(sectionRef.current);
+      }
+    };
+  }, []);
 
   return (
-    <section className="py-12 bg-white">
+    <section ref={sectionRef} className="py-12 bg-white">
       <div className="container mx-auto px-4">
-        <div className="text-center mb-12">
+        <div
+          className={`text-center mb-12 transform transition-all duration-1000 ${isVisible
+              ? "translate-y-0 opacity-100"
+              : "translate-y-8 opacity-0"
+            }`}
+        >
           <h2 className="text-3xl lg:text-4xl font-bold text-primary-600 mb-4">
             {t("title")}
           </h2>
@@ -46,7 +77,7 @@ export default function Categories({
         </div>
 
         <div className="flex justify-between max-md:max-w-[320px] gap-6 container mx-auto  lg:px-30 flex-wrap">
-          {categories?.map((category) => {
+          {categories?.map((category, index) => {
             return (
               <Link
                 key={category.slug}
@@ -56,11 +87,17 @@ export default function Categories({
                     category: locale == "en" ? category.slug : category.slug_ar,
                   },
                 }}
-                className="group flex flex-col  items-center text-center hover:transform hover:scale-105 transition-all duration-300"
+                className={`group flex flex-col  items-center text-center hover:transform hover:scale-105 transition-all duration-300 ${isVisible
+                    ? "translate-y-0 opacity-100"
+                    : "translate-y-8 opacity-0"
+                  }`}
+                style={{
+                  transitionDelay: isVisible ? `${index * 100}ms` : "0ms",
+                }}
               >
-                <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mb-4 group-hover:from-secondary-200 group-hover:to-secondary-200 transition-all duration-300">
+                <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mb-4 group-hover:from-secondary-200 group-hover:to-secondary-200 transition-all duration-300 group-hover:shadow-lg">
                   <CategoryIcon
-                    className="h-16 w-16 text-primary rounded-full"
+                    className="h-16 w-16 text-primary rounded-full transform group-hover:rotate-3 transition-transform duration-300"
                     name={category.slug}
                     image={category.image}
                   />

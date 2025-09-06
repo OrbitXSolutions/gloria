@@ -1,6 +1,7 @@
 import { Metadata } from "next";
 import Image from "next/image";
 import { getTranslations } from "next-intl/server";
+import Features from "@/components/molecules/features";
 
 export const metadata: Metadata = {
   title: "About Us | Gloria",
@@ -42,50 +43,54 @@ export const metadata: Metadata = {
 export default async function Page() {
   const t = await getTranslations("about");
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="text-center mb-12">
-        <h1 className="text-5xl font-extrabold text-gray-900 mb-4">
-          {t("title")}
-        </h1>
-        <p className="text-xl text-gray-600">{t("description")}</p>
+    <>
+      <div className="container mx-auto px-4 py-8">
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-extrabold text-gray-900 mb-4">
+            {t("title")}
+          </h1>
+          <p className="text-xl text-gray-600">{t("description")}</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+          <div>
+            <Image
+              src="/images/about-banner.jpg"
+              alt="About Gloria"
+              width={500}
+              height={500}
+              className="rounded-lg shadow-lg"
+            />
+          </div>
+          <div>
+            <p className="text-lg text-gray-700 leading-relaxed mb-6">
+              At Gloria, we are dedicated to bringing you the finest fragrances
+              from around the world. Our mission is to provide premium perfumes
+              that gloriate your everyday experiences and special occasions.
+            </p>
+            <p className="text-lg text-gray-700 leading-relaxed mb-6">
+              With a commitment to quality, authenticity, and customer
+              satisfaction, Gloria has become a trusted name in luxury fragrances.
+              Explore our collections and discover the perfect scent for you.
+            </p>
+            <p className="text-lg text-gray-700 leading-relaxed">
+              Thank you for choosing Gloria. We look forward to serving you and
+              helping you find your signature fragrance.
+            </p>
+          </div>
+        </div>
+
+        <div className="mt-16 text-center">
+          <h2 className="text-3xl font-bold text-gray-900 mb-4">
+            {t("missionTitle")}
+          </h2>
+          <p className="text-lg text-gray-600 leading-relaxed">
+            {t("missionText")}
+          </p>
+        </div>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-        <div>
-          <Image
-            src="/placeholder-logo.png"
-            alt="Gloria Logo"
-            width={500}
-            height={500}
-            className="rounded-lg shadow-lg"
-          />
-        </div>
-        <div>
-          <p className="text-lg text-gray-700 leading-relaxed mb-6">
-            At Gloria, we are dedicated to bringing you the finest fragrances
-            from around the world. Our mission is to provide premium perfumes
-            that gloriate your everyday experiences and special occasions.
-          </p>
-          <p className="text-lg text-gray-700 leading-relaxed mb-6">
-            With a commitment to quality, authenticity, and customer
-            satisfaction, Gloria has become a trusted name in luxury fragrances.
-            Explore our collections and discover the perfect scent for you.
-          </p>
-          <p className="text-lg text-gray-700 leading-relaxed">
-            Thank you for choosing Gloria. We look forward to serving you and
-            helping you find your signature fragrance.
-          </p>
-        </div>
-      </div>
-
-      <div className="mt-16 text-center">
-        <h2 className="text-3xl font-bold text-gray-900 mb-4">
-          {t("missionTitle")}
-        </h2>
-        <p className="text-lg text-gray-600 leading-relaxed">
-          {t("missionText")}
-        </p>
-      </div>
-    </div>
+      <Features />
+    </>
   );
 }

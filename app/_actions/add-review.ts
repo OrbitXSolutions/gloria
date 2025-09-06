@@ -24,8 +24,8 @@ export async function addReview({
 
   const reviewerName = user
     ? `${user.firstName || ""} ${user.lastName || ""}`.trim() ||
-      user.email ||
-      fullName
+    user.email ||
+    fullName
     : fullName;
 
   const { data, error } = await supabase.from("reviews").insert({

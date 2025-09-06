@@ -83,6 +83,10 @@ export async function generateMetadata(): Promise<Metadata> {
     verification: {
       google: "your-google-verification-code",
     },
+    icons: {
+      icon: "/favicon.ico",
+      shortcut: "/favicon.ico",
+    },
   };
 }
 // export const metadata: Metadata = {

@@ -17,6 +17,6 @@ export default function robots(): MetadataRoute.Robots {
                 ]
             }
         ],
-        sitemap: 'https://eleva-boutique.net/sitemap.ts'
+        sitemap: 'https://www.glorianaturals.ae/sitemap.ts'
     }
 }

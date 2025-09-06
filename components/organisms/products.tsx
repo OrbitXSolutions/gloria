@@ -1,5 +1,5 @@
 import { createSsrClient } from "@/lib/supabase/server";
-import { getFeaturedProducts } from "@/lib/common/supabase-queries";
+import { filterProductsServer } from "@/lib/queries/queries-product";
 import ProductsClient from "../molecules/products-client";
 
 export default async function Products() {
@@ -8,7 +8,14 @@ export default async function Products() {
     data: { user },
   } = await supabase.auth.getUser();
 
-  const products = await getFeaturedProducts(8, user?.user_metadata?.user_id);
+  // Use the filter_products RPC function for consistency
+  const result = await filterProductsServer({
+    page: 1,
+    pageSize: 8,
+    sortBy: "created_at",
+    sortOrder: false, // false = descending (newest first)
+    showDeleted: false,
+  });
 
-  return <ProductsClient products={products} />;
+  return <ProductsClient products={result.data} />;
 }

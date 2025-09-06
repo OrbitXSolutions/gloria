@@ -422,7 +422,7 @@ export default function ProductDetailsClient({
           <div className="space-y-6">
             {/* Title and Rating */}
             <div>
-              <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+              <h1 className="text-3xl lg:text-4xl font-bold text-primary mb-2">
                 {getProductName()}
               </h1>
 
@@ -491,8 +491,7 @@ export default function ProductDetailsClient({
                 <div className={`flex items-center gap-2`}>
                   <div className="w-3 h-3 bg-green-500 rounded-full"></div>
                   <span className="text-green-600 font-medium">
-                    {/* {t("products.inStock")} ({selectedVariant.quantity}{" "} */}
-                    {t("products.available")})
+                    {t("products.available")}
                   </span>
                 </div>
               ) : (

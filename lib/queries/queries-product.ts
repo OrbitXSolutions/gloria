@@ -19,6 +19,7 @@ type FilterProductsRpcArgs = {
     p_user_id: string | null;
 };
 import createClient from "@/lib/supabase/client";
+import { createSsrClient } from "@/lib/supabase/server";
 import { PaginatedResponse } from "@/lib/types/query/query";
 import { ProductWithUserData } from "@/lib/types/database.types";
 
@@ -36,6 +37,7 @@ export interface ProductFilterParams {
     maxPrice?: string;
 }
 
+// Client-side version (for use in client components)
 export async function filterProducts(params: ProductFilterParams): Promise<PaginatedResponse<ProductWithUserData>> {
     const {
         page = 1,
@@ -69,6 +71,54 @@ export async function filterProducts(params: ProductFilterParams): Promise<Pagin
         p_min_price: minPrice ?? null,
         p_max_price: maxPrice ?? null,
         p_user_id: user?.id ?? null,
+    });
+
+    if (error) throw error;
+
+    // The backend function returns: { data: any[]; total: number; page: number; limit: number; }
+    const rpcResult = data as FilterProductsRpcResult | null;
+    return {
+        data: rpcResult?.data ?? [],
+        total: rpcResult?.total ?? 0,
+        page: rpcResult?.page ?? page,
+        limit: rpcResult?.limit ?? pageSize,
+    };
+}
+
+// Server-side version (for use in server components)
+export async function filterProductsServer(params: ProductFilterParams): Promise<PaginatedResponse<ProductWithUserData>> {
+    const {
+        page = 1,
+        pageSize = 99,
+        sortBy = "created_at",
+        sortOrder = false,
+        showDeleted = false,
+        queryString,
+        categoryId,
+        categorySlug,
+        minPrice,
+        maxPrice,
+    } = params;
+
+    const supabase = await createSsrClient();
+
+    // Get user for personalized data
+    const {
+        data: { user },
+    } = await supabase.auth.getUser();
+
+    const { data, error } = await supabase.rpc('filter_products', {
+        p_page: page,
+        p_page_size: pageSize,
+        p_sort_by: sortBy,
+        p_sort_order: sortOrder,
+        p_show_deleted: showDeleted,
+        p_query_string: queryString ?? null,
+        p_category_id: categoryId ?? null,
+        p_category_slug: categorySlug ?? null,
+        p_min_price: minPrice ?? null,
+        p_max_price: maxPrice ?? null,
+        p_user_id: user?.user_metadata?.user_id ?? null,
     });
 
     if (error) throw error;
