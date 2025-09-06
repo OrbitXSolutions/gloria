@@ -38,9 +38,10 @@ export default function CategoryIcon({
       <Image
         src={src}
         alt={name}
-        className={cn("p-1", className)}
-        width={64}
-        height={64}
+        className={cn("p-1 object-cover", className)}
+        width={48}
+        height={48}
+        style={{ width: "48px", height: "48px" }}
       />
     );
   }

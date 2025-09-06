@@ -62,21 +62,21 @@ export default function Categories({
   }, []);
 
   return (
-    <section ref={sectionRef} className="py-12 bg-white">
+    <section ref={sectionRef} className="py-16 bg-gradient-to-br from-slate-50 via-white to-purple-50/30">
       <div className="container mx-auto px-4">
         <div
-          className={`text-center mb-12 transform transition-all duration-1000 ${isVisible
-              ? "translate-y-0 opacity-100"
-              : "translate-y-8 opacity-0"
+          className={`text-center mb-16 transform transition-all duration-1000 ${isVisible
+            ? "translate-y-0 opacity-100"
+            : "translate-y-8 opacity-0"
             }`}
         >
-          <h2 className="text-3xl lg:text-4xl font-bold text-primary-600 mb-4">
+          <h2 className="text-3xl lg:text-4xl font-bold mb-4" style={{ color: "#6e5475" }}>
             {t("title")}
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto">{t("description")}</p>
+          <p className="text-gray-600 max-w-2xl mx-auto text-lg">{t("description")}</p>
         </div>
 
-        <div className="flex justify-between max-md:max-w-[320px] gap-6 container mx-auto  lg:px-30 flex-wrap">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-8 max-w-7xl mx-auto justify-items-center">
           {categories?.map((category, index) => {
             return (
               <Link
@@ -87,23 +87,24 @@ export default function Categories({
                     category: locale == "en" ? category.slug : category.slug_ar,
                   },
                 }}
-                className={`group flex flex-col  items-center text-center hover:transform hover:scale-105 transition-all duration-300 ${isVisible
-                    ? "translate-y-0 opacity-100"
-                    : "translate-y-8 opacity-0"
+                className={`group flex flex-col items-center text-center hover:transform hover:scale-110 transition-all duration-300 w-full max-w-[120px] ${isVisible
+                  ? "translate-y-0 opacity-100"
+                  : "translate-y-8 opacity-0"
                   }`}
                 style={{
                   transitionDelay: isVisible ? `${index * 100}ms` : "0ms",
                 }}
               >
-                <div className="w-16 h-16 bg-primary-50 rounded-full flex items-center justify-center mb-4 group-hover:from-secondary-200 group-hover:to-secondary-200 transition-all duration-300 group-hover:shadow-lg">
+                <div className="relative w-20 h-20 bg-gradient-to-br from-purple-100 via-pink-50 to-purple-100 rounded-2xl flex items-center justify-center mb-4 group-hover:from-purple-200 group-hover:via-pink-100 group-hover:to-purple-200 transition-all duration-300 group-hover:shadow-xl group-hover:shadow-purple-200/50 border border-purple-100/50">
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/50 to-transparent rounded-2xl"></div>
                   <CategoryIcon
-                    className="h-16 w-16 text-primary rounded-full transform group-hover:rotate-3 transition-transform duration-300"
+                    className="h-12 w-12 text-purple-600 relative z-10 transform group-hover:rotate-6 transition-transform duration-300"
                     name={category.slug}
                     image={category.image}
                   />
                 </div>
-                <h3 className="text-sm self-start text-center font-bold text-primary-600 w-[60px]">
-                  <div className="text-center">
+                <h3 className="text-sm font-semibold text-gray-700 group-hover:text-purple-700 transition-colors duration-300 leading-tight">
+                  <div className="text-center break-words">
                     {locale == "en" ? category.name_en : category.name_ar}
                   </div>
                 </h3>
