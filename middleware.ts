@@ -114,14 +114,15 @@ async function logAPIRequest(logData: {
     // Log to Supabase
     await supabase.rpc('add_api_log', {
       p_method: logData.method,
-      p_url: logData.url,
+      p_path: logData.url,
       p_status_code: logData.statusCode,
-      p_duration_ms: logData.duration,
+      p_response_time: logData.duration,
       p_request_body: logData.requestBody,
+      p_response_body: null, // Response body not available in middleware
       p_user_agent: logData.userAgent,
       p_ip_address: logData.ip,
       p_user_id: userId,
-      p_headers: logData.headers,
+      p_error_details: null, // Could be enhanced to include error details
     });
   } catch (error) {
     console.error('Failed to log API request to Supabase:', error);

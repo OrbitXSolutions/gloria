@@ -40,14 +40,13 @@ export async function POST(request: NextRequest) {
             'Unknown';
 
         // Log to Supabase
-        await supabase.rpc('add_app_log', {
-            p_level: logData.level,
-            p_message: logData.message,
-            p_context: logData.context || null,
+        await supabase.rpc('add_client_log', {
+            p_action: `${logData.level}: ${logData.message}`,
             p_user_id: userId,
-            p_ip_address: ip,
+            p_details: logData.context || null,
             p_user_agent: userAgent,
-            p_source: logData.source || 'client',
+            p_session_id: null, // Could be enhanced to track sessions
+            p_component: logData.source || 'client',
         });
 
         return NextResponse.json({ success: true });

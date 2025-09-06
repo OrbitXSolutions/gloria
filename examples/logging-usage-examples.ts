@@ -1,5 +1,7 @@
 // Example: Update your ProductDetailsClient component to include logging
+// This is example code - uncomment and adapt as needed
 
+/*
 import { useUserActions, usePerformanceTracking, useErrorTracking } from '@/hooks/use-logging';
 import { useEffect } from 'react';
 
@@ -72,3 +74,4 @@ export default function ProductDetailsClient({ product, reviews }: ProductDetail
 
     // ... rest of component
 }
+*/
