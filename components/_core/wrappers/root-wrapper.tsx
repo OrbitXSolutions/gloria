@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/lib/theme-provider";
 import { NextIntlClientProvider } from "next-intl";
 import { ClientWrapper } from "./client-wrapper.component";
 import { LoggerProvider, LoggedErrorBoundary } from "@/components/_core/providers/logger-provider";
+import SupabaseProvider from "@/components/_core/providers/SupabaseProvider";
 import { Toaster } from "sonner";
 
 interface Props {
@@ -18,11 +19,13 @@ export function RootWrapper({ children, messages }: Props) {
       disableTransitionOnChange
     >
       <NextIntlClientProvider messages={messages}>
-        <LoggedErrorBoundary>
-          <LoggerProvider>
-            <ClientWrapper>{children}</ClientWrapper>
-          </LoggerProvider>
-        </LoggedErrorBoundary>
+        <SupabaseProvider>
+          <LoggedErrorBoundary>
+            <LoggerProvider>
+              <ClientWrapper>{children}</ClientWrapper>
+            </LoggerProvider>
+          </LoggedErrorBoundary>
+        </SupabaseProvider>
         <Toaster closeButton />
       </NextIntlClientProvider>
     </ThemeProvider>
