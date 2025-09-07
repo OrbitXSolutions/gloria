@@ -9,7 +9,7 @@
     },
     "search": "البحث عن العطور...",
     "topBar": {
-      "freeShipping": "شحن مجاني للطلبات أكثر من 100 دولار",
+      "freeShipping": "شحن مجاني للطلبات أكثر من 250 درهم",
       "trackOrder": "تتبع الطلب",
       "help": "المساعدة"
     }
@@ -96,7 +96,6 @@
       "ratingLow": "التقييم: من الأقل للأعلى"
     },
     "sortBy": "ترتيب حسب",
-    "description": "الوصف",
     "details": "تفاصيل المنتج",
     "quantity": "الكمية",
     "available": "متوفر",
@@ -387,7 +386,8 @@
       "minLength": "8 أحرف على الأقل",
       "uppercase": "حرف كبير واحد",
       "lowercase": "حرف صغير واحد",
-      "number": "رقم واحد"
+      "number": "رقم واحد",
+      "mixRecommendation": "مزيج من الأحرف والأرقام مستحسن"
     }
   },
   "favorites": {
@@ -403,7 +403,7 @@
       "required": "كلمة المرور مطلوبة",
       "confirmRequired": "يرجى تأكيد كلمة المرور",
       "mismatch": "كلمات المرور غير متطابقة",
-      "tooShort": "كلمة المرور يجب أن تكون 6 أحرف على الأقل"
+      "tooShort": "كلمة المرور يجب أن تكون 8 أحرف على الأقل"
     },
     "address": {
       "fullNameRequired": "الاسم الكامل مطلوب",
@@ -458,8 +458,12 @@
       "orderNotFoundDescription": "يرجى المحاولة مرة أخرى أو التواصل مع الدعم",
       "orderPlaced": "تم تقديم الطلب بنجاح!",
       "orderConfirmed": "تم تأكيد الطلب {orderCode}",
-      "checkoutFailed": "فشل في الدفع",
+      "checkoutFailed": "فشل في إكمال الطلب",
       "checkoutFailedDescription": "حدث خطأ غير متوقع",
+      "accountCreationFailed": "تعذر إنشاء الحساب. يرجى المحاولة مرة أخرى.",
+      "existingAccountPasswordMismatch": "الحساب موجود. كلمة المرور المدخلة غير صحيحة.",
+      "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل.",
+      "networkTimeout": "انتهت مهلة الشبكة أثناء إنشاء الحساب. حاول مرة أخرى.",
       "unexpectedError": "حدث خطأ غير متوقع",
       "unexpectedErrorDescription": "يرجى المحاولة مرة أخرى أو التواصل مع الدعم إذا استمرت المشكلة"
     },
@@ -521,11 +525,11 @@
       "tax": "الضريبة",
       "total": "المجموع"
     },
-    "checkout": "الدفع",
+    "checkout": "إكمال",
     "clear": "مسح السلة"
   },
   "checkout": {
-    "title": "الدفع",
+    "title": "إكمال الطلب",
     "backToCart": "العودة للسلة",
     "account": {
       "title": "معلومات الحساب",
@@ -534,6 +538,9 @@
       "emailPlaceholder": "أدخل بريدك الإلكتروني",
       "password": "كلمة المرور *",
       "passwordPlaceholder": "أنشئ كلمة مرور",
+      "passwordHelpLabel": "متطلبات كلمة المرور:",
+      "passwordHelpMin": "8 أحرف على الأقل",
+      "passwordHelpMix": "مزيج من الأحرف والأرقام مستحسن",
       "confirmPassword": "تأكيد كلمة المرور *",
       "confirmPasswordPlaceholder": "أكد كلمة المرور",
       "termsNotice": "بإنشاء حساب، أنت توافق على شروط الخدمة وسياسة الخصوصية."
@@ -575,6 +582,9 @@
     }
   },
   "common": {
+    "copyright": {
+      "short": "© 2024 جلوريا. جميع الحقوق محفوظة."
+    },
     "back": "رجوع"
   },
   "profile": {

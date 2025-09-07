@@ -27,7 +27,7 @@ export default function LoginPage() {
         <div className="relative z-10 flex flex-col justify-between p-12 text-white">
           <div>
             <h1 className="text-4xl font-bold mb-2">GLORIA</h1>
-            <p className="text-lg opacity-90">Luxury Fashion Redefined</p>
+            <p className="text-lg opacity-90">{t("auth.forms.login.description")}</p>
           </div>
 
           <div className="space-y-6">
@@ -36,8 +36,7 @@ export default function LoginPage() {
                 {t("auth.forms.login.title")}
               </h2>
               <p className="text-lg opacity-80 leading-relaxed">
-                Step into a world where luxury meets innovation. Your exclusive
-                collection awaits.
+                {t("auth.forms.login.description")}
               </p>
             </div>
 
@@ -45,26 +44,26 @@ export default function LoginPage() {
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-white rounded-full"></div>
                 <span className="text-sm opacity-75">
-                  Exclusive Designer Collections
+                  {t("auth.forms.login.features.exclusiveCollections")}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-white rounded-full"></div>
                 <span className="text-sm opacity-75">
-                  Personalized Shopping Experience
+                  {t("auth.forms.login.features.personalizedExperience")}
                 </span>
               </div>
               <div className="flex items-center space-x-3">
                 <div className="w-2 h-2 bg-white rounded-full"></div>
                 <span className="text-sm opacity-75">
-                  Priority Access to New Arrivals
+                  {t("auth.forms.login.features.priorityAccess")}
                 </span>
               </div>
             </div>
           </div>
 
           <div className="text-xs opacity-60">
-            © 2024 Gloria. All rights reserved.
+            {t("common.copyright.short")}
           </div>
         </div>
       </div>
@@ -75,14 +74,12 @@ export default function LoginPage() {
           {/* Mobile header */}
           <div className="lg:hidden text-center mb-8">
             <h1 className="text-3xl font-bold text-gray-900 mb-2">GLORIA</h1>
-            <p className="text-gray-600">Luxury Fashion Redefined</p>
+            <p className="text-gray-600">{t("auth.forms.login.description")}</p>
           </div>
 
           <div className="mb-8">
-            <h2 className="text-3xl font-light text-gray-900 mb-2">
-              Welcome Back
-            </h2>
-            <p className="text-gray-600">Sign in to your account to continue</p>
+            <h2 className="text-3xl font-light text-gray-900 mb-2">{t("auth.forms.login.title")}</h2>
+            <p className="text-gray-600">{t("auth.forms.login.subtitle")}</p>
           </div>
 
           <LoginForm />

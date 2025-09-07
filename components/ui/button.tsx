@@ -1,8 +1,11 @@
+"use client"
+
 import * as React from "react"
 import { Slot } from "@radix-ui/react-slot"
 import { cva, type VariantProps } from "class-variance-authority"
 
 import { cn } from "@/lib/utils"
+import { logger } from "@/lib/utils/logger"
 
 const buttonVariants = cva(
   "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-md text-sm font-medium transition-all disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg:not([class*='size-'])]:size-4 shrink-0 [&_svg]:shrink-0 outline-none focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
@@ -40,20 +43,40 @@ function Button({
   variant,
   size,
   asChild = false,
+  onClick,
+  'data-log-label': logLabel,
   ...props
-}: React.ComponentProps<"button"> &
+}: React.ComponentProps<'button'> &
   VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
+    asChild?: boolean;
+    'data-log-label'?: string;
   }) {
-  const Comp = asChild ? Slot : "button"
+  const Comp = asChild ? Slot : 'button';
+
+  const handleClick: React.MouseEventHandler<HTMLButtonElement> = (e) => {
+    try {
+      const label = logLabel || (typeof props.children === 'string' ? props.children : undefined) || 'button';
+      // Fire and forget
+      logger.buttonClick(label.toString(), {
+        variant,
+        size,
+        disabled: (props as any).disabled || false,
+      });
+    } catch (err) {
+      // swallow logging errors
+    }
+    onClick?.(e);
+  };
 
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }), 'cursor-pointer')}
+      onClick={handleClick as any}
+      data-log-label={logLabel}
       {...props}
     />
-  )
+  );
 }
 
 export { Button, buttonVariants }

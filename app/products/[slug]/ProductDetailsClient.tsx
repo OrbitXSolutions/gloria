@@ -551,7 +551,8 @@ export default function ProductDetailsClient({
                     className="flex-1 bg-primary-600 hover:bg-primary-700"
                     size="lg"
                     onClick={() => {
-                      window.location.href = `/checkout-now/${selectedVariant.slug || selectedVariant.id}`
+                      const targetSlug = locale === 'ar' && selectedVariant.slug_ar ? selectedVariant.slug_ar : (selectedVariant.slug || selectedVariant.id)
+                      window.location.href = `/checkout-now/${encodeURIComponent(targetSlug as string)}`
                     }}
                     disabled={!isInStock}
                   >

@@ -5,14 +5,14 @@ export default function ConfirmPhonePage() {
   return (
     <div className="min-h-screen flex">
       {/* Left side - Image and Promo */}
-      <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-gray-900 via-gray-800 to-black relative overflow-hidden">
-        <div className="absolute inset-0">
-          <img
-            src="/placeholder.svg?height=1080&width=1080"
-            alt="Luxury Fashion"
-            className="w-full h-full object-cover opacity-80"
-          />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+      <div className="hidden lg:flex lg:w-1/2 relative bg-gradient-to-br from-gray-900 via-gray-800 to-black overflow-hidden">
+        <div
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+          style={{
+            backgroundImage: `url('/images/banner-register.jpg')`,
+          }}
+        >
+          <div className="absolute inset-0 bg-black/50" />
         </div>
 
         <div className="relative z-10 flex flex-col justify-end p-12 text-white">

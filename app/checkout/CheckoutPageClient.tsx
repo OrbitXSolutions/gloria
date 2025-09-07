@@ -15,6 +15,9 @@ import {
   Lock,
   Eye,
   EyeOff,
+  CheckCircle2,
+  Circle,
+  AlertCircle
 } from "lucide-react";
 
 import { toast } from "sonner";
@@ -34,6 +37,7 @@ import {
 } from "@/lib/constants/supabase-storage";
 import Image from "next/image";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { logger } from "@/lib/utils/logger";
 
 type UserProfile = Database["public"]["Tables"]["users"]["Row"];
 type Order = OrderWithItems;
@@ -65,6 +69,8 @@ export default function CheckoutPageClient({
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isCheckoutComplete, setIsCheckoutComplete] = useState(false);
+  // Page level error (inline display under title)
+  const [pageError, setPageError] = useState<string | null>(null);
 
   // Form data
   const [formData, setFormData] = useState({
@@ -80,6 +86,19 @@ export default function CheckoutPageClient({
     stateCode: "",
     notes: "",
   });
+
+  // Inline form errors (guest password fields)
+  const [formErrors, setFormErrors] = useState({
+    password: "",
+    confirmPassword: "",
+  });
+
+  // Derived password requirement state (guest only)
+  const passwordValue = formData.password || '';
+  const confirmValue = formData.confirmPassword || '';
+  const lengthOk = passwordValue.length >= 8;
+  const mixOk = /[A-Za-z]/.test(passwordValue) && /[0-9]/.test(passwordValue);
+  const matchOk = passwordValue.length > 0 && confirmValue.length > 0 && passwordValue === confirmValue;
 
   // Initialize form data and address selection
   useEffect(() => {
@@ -140,6 +159,33 @@ export default function CheckoutPageClient({
       ...prev,
       [field]: value,
     }));
+
+    // Live validation for guest password / confirmPassword fields
+    if (!user) {
+      if (field === "password") {
+        setFormErrors((prev) => ({
+          ...prev,
+          password:
+            value.length > 0 && value.length < 8
+              ? t("validation.password.tooShort")
+              : "",
+          confirmPassword:
+            formData.confirmPassword && value !== formData.confirmPassword
+              ? t("validation.password.mismatch")
+              : prev.confirmPassword && value === formData.confirmPassword
+                ? ""
+                : prev.confirmPassword,
+        }));
+      } else if (field === "confirmPassword") {
+        setFormErrors((prev) => ({
+          ...prev,
+          confirmPassword:
+            value.length > 0 && value !== formData.password
+              ? t("validation.password.mismatch")
+              : "",
+        }));
+      }
+    }
   };
   const getStateName = (stateCode: string) => {
     const state = uaeStates.find((s) => s.code === stateCode);
@@ -193,7 +239,7 @@ export default function CheckoutPageClient({
       if (!formData.confirmPassword) return t("validation.password.confirmRequired");
       if (formData.password !== formData.confirmPassword)
         return t("validation.password.mismatch");
-      if (formData.password.length < 6)
+      if (formData.password.length < 8)
         return t("validation.password.tooShort");
     }
 
@@ -224,8 +270,14 @@ export default function CheckoutPageClient({
   };
 
   const handleCheckout = async () => {
+    logger.buttonClick('checkout_place_order_click', {
+      userAuthenticated: !!user,
+      cartItems: cart.items.length,
+    });
+
     const validationError = validateForm();
     if (validationError) {
+      setPageError(validationError);
       toast.error(validationError);
       return;
     }
@@ -236,7 +288,9 @@ export default function CheckoutPageClient({
       return;
     }
 
+    setPageError(null);
     setIsLoading(true);
+    logger.info('Checkout submission started', { source: 'CheckoutPageClient', userAuthenticated: !!user });
 
     try {
       // Get state code from selected address if using existing address
@@ -264,7 +318,17 @@ export default function CheckoutPageClient({
       } else {
         result = await handleGuestCheckout(checkoutData);
       }
-
+      if ((result as any).errorCode === 'EXISTING_ACCOUNT_PASSWORD_MISMATCH') {
+        const mismatchMsg = t('validation.password.mismatch') + ' - ' + t('auth.loginRequired');
+        setPageError(mismatchMsg);
+        toast.error(t('toast.checkout.checkoutFailed'), {
+          description: mismatchMsg,
+          duration: 6000,
+        });
+        logger.warn('Existing account password mismatch during checkout', { source: 'CheckoutPageClient', email: formData.email });
+        setIsLoading(false);
+        return;
+      }
       if (result.success && result.orderCode) {
         // Set checkout complete flag to prevent cart redirect
         setIsCheckoutComplete(true);
@@ -277,22 +341,30 @@ export default function CheckoutPageClient({
           duration: 5000,
         });
 
+        logger.formSubmit('checkout_form', true, { orderCode: result.orderCode, userAuthenticated: !!user });
         // Redirect to order confirmation
         router.push(`/orders/${result.orderCode}`);
       } else {
+        const errMsg = result.error || t("toast.checkout.checkoutFailedDescription");
+        setPageError(errMsg);
         toast.error(t("toast.checkout.checkoutFailed"), {
-          description: result.error || t("toast.checkout.checkoutFailedDescription"),
+          description: errMsg,
           duration: 5000,
         });
+        logger.formSubmit('checkout_form', false, { error: errMsg });
       }
     } catch (error) {
       console.error("Checkout error:", error);
+      const unexpected = t("toast.checkout.unexpectedErrorDescription");
+      setPageError(unexpected);
       toast.error(t("toast.checkout.unexpectedError"), {
-        description: t("toast.checkout.unexpectedErrorDescription"),
+        description: unexpected,
         duration: 5000,
       });
+      logger.error('Checkout unexpected error', { source: 'CheckoutPageClient', error: (error as Error)?.message });
     } finally {
       setIsLoading(false);
+      logger.info('Checkout submission finished', { source: 'CheckoutPageClient' });
     }
   };
 
@@ -332,6 +404,11 @@ export default function CheckoutPageClient({
             <span className="text-gray-900">{t("checkout.title")}</span>
           </div>
           <h1 className="text-3xl font-bold text-gray-900">{t("checkout.title")}</h1>
+          {pageError && (
+            <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              {pageError}
+            </div>
+          )}
         </div>
       </div>
 
@@ -415,6 +492,9 @@ export default function CheckoutPageClient({
                           )}
                         </Button>
                       </div>
+                      {formErrors.password && !user && (
+                        <p className="mt-2 text-[11px] text-red-600">{formErrors.password}</p>
+                      )}
                     </div>
 
                     <div>
@@ -451,7 +531,32 @@ export default function CheckoutPageClient({
                           )}
                         </Button>
                       </div>
+                      {!user && formErrors.confirmPassword && (
+                        <p className="mt-2 text-[11px] text-red-600">{formErrors.confirmPassword}</p>
+                      )}
                     </div>
+                    {/* Unified password requirements block spanning both columns */}
+                    {!user && (
+                      <div className="md:col-span-2 -mt-2 text-[11px] text-gray-600 leading-relaxed">
+                        <p className="font-medium mb-1">{t("auth.passwordStrength.requirements")}{":"}</p>
+                        <ul className="space-y-1">
+                          <li className={`flex items-center gap-2 ${lengthOk ? 'text-green-600' : 'text-gray-500'}`}>
+                            {lengthOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
+                            <span>{t("auth.passwordStrength.minLength")}</span>
+                          </li>
+                          <li className={`flex items-center gap-2 ${mixOk ? 'text-green-600' : 'text-gray-500'}`}>
+                            {mixOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
+                            <span>{t("auth.passwordStrength.mixRecommendation")}</span>
+                          </li>
+                          {confirmValue.length > 0 && (
+                            <li className={`flex items-center gap-2 ${matchOk ? 'text-green-600' : 'text-red-600'}`}>
+                              {matchOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
+                              <span>{matchOk ? t("auth.passwordStrength.match") : t("auth.passwordStrength.noMatch")}</span>
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    )}
                   </div>
 
                   <p className="text-sm text-gray-600">

@@ -35,6 +35,9 @@ import {
   Lock,
   Eye,
   EyeOff,
+  CheckCircle2,
+  Circle,
+  AlertCircle
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -54,6 +57,7 @@ import {
 import Image from "next/image";
 import { useCart } from "@/components/_core/providers/cart-provider";
 import { PhoneInput } from "@/components/ui/phone-input";
+import { logger } from "@/lib/utils/logger";
 
 type UserProfile = Database["public"]["Tables"]["users"]["Row"];
 type Order = OrderWithItems;
@@ -79,9 +83,8 @@ export default function CheckoutPageClient({
   const [isLoading, setIsLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [checkedState, setCheckedState] = useState<State | undefined>(
-    states[0]
-  );
+  const [checkedState, setCheckedState] = useState<State | undefined>(states[0]);
+  const [pageError, setPageError] = useState<string | null>(null);
 
   const form = useForm<CheckoutFormData>({
     resolver: zodResolver(checkoutSchema),
@@ -129,40 +132,63 @@ export default function CheckoutPageClient({
   };
 
   const onSubmit = async (data: CheckoutFormData) => {
+    logger.buttonClick('checkout_place_order_click_order_code', { orderCode: order.code, userAuthenticated: !!user });
+    setPageError(null);
     setIsLoading(true);
+    logger.info('Checkout (order code) submission started', { source: 'CheckoutPageClient[orderCode]', orderCode: order.code });
 
     try {
       if (!order.code) {
+        const notFoundMsg = t("toast.checkout.orderNotFoundDescription");
+        setPageError(notFoundMsg);
         toast.error(t("toast.checkout.orderNotFound"), {
-          description: t("toast.checkout.orderNotFoundDescription"),
+          description: notFoundMsg,
           duration: 5000,
         });
+        logger.warn('Order code missing during checkout', { source: 'CheckoutPageClient[orderCode]' });
         return;
       }
       const result = await completeCheckout(order.code, data);
 
+      if ((result as any).errorCode === 'EXISTING_ACCOUNT_PASSWORD_MISMATCH') {
+        const mismatchMsg = t('validation.password.mismatch') + ' / ' + t('auth.loginRequired');
+        setPageError(mismatchMsg);
+        toast.error(t('toast.checkout.checkoutFailed'), {
+          description: mismatchMsg,
+          duration: 6000,
+        });
+        logger.warn('Existing account password mismatch (order code checkout)', { source: 'CheckoutPageClient[orderCode]' });
+        return;
+      }
       if (result.success) {
         clear();
         toast.success(t("toast.checkout.orderPlaced"), {
           description: t("toast.checkout.orderConfirmed", { orderCode: result.orderCode || "" }),
           duration: 5000,
         });
-
+        logger.formSubmit('checkout_form_order_code', true, { orderCode: result.orderCode, userAuthenticated: !!user });
         router.push(`/orders/${result.orderCode}`);
       } else {
+        const errMsg = result.error || t("toast.checkout.checkoutFailedDescription");
+        setPageError(errMsg);
         toast.error(t("toast.checkout.checkoutFailed"), {
-          description: result.error || t("toast.checkout.checkoutFailedDescription"),
+          description: errMsg,
           duration: 5000,
         });
+        logger.formSubmit('checkout_form_order_code', false, { error: errMsg });
       }
     } catch (error) {
       console.error("Checkout error:", error);
+      const unexpected = t("toast.checkout.unexpectedErrorDescription");
+      setPageError(unexpected);
       toast.error(t("toast.checkout.unexpectedError"), {
-        description: t("toast.checkout.unexpectedErrorDescription"),
+        description: unexpected,
         duration: 5000,
       });
+      logger.error('Checkout unexpected error (order code)', { source: 'CheckoutPageClient[orderCode]', error: (error as Error)?.message });
     } finally {
       setIsLoading(false);
+      logger.info('Checkout (order code) submission finished', { source: 'CheckoutPageClient[orderCode]', orderCode: order.code });
     }
   };
 
@@ -202,6 +228,13 @@ export default function CheckoutPageClient({
 
   const primaryCurrency = getPrimaryCurrency();
 
+  // Derived password requirement state (guest only)
+  const passwordValue = form.watch("password") || "";
+  const confirmValue = form.watch("confirmPassword") || "";
+  const lengthOk = passwordValue.length >= 8;
+  const mixOk = /[A-Za-z]/.test(passwordValue) && /[0-9]/.test(passwordValue);
+  const matchOk = passwordValue.length > 0 && confirmValue.length > 0 && passwordValue === confirmValue;
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -221,6 +254,11 @@ export default function CheckoutPageClient({
             <span className="text-gray-900">{t("checkout.title")}</span>
           </div>
           <h1 className="text-3xl font-bold text-gray-900">{t("checkout.title")}</h1>
+          {pageError && (
+            <div className="mt-4 rounded-md border border-red-200 bg-red-50 p-4 text-sm text-red-700">
+              {pageError}
+            </div>
+          )}
         </div>
       </div>
 
@@ -339,6 +377,26 @@ export default function CheckoutPageClient({
                           </FormItem>
                         )}
                       />
+                      {/* Password requirements helper (mirrors checkout-now style) */}
+                      <div className="md:col-span-2 -mt-2 text-[11px] text-gray-600 leading-relaxed">
+                        <p className="font-medium mb-1">{t("auth.passwordStrength.requirements")}{":"}</p>
+                        <ul className="space-y-1">
+                          <li className={`flex items-center gap-2 ${lengthOk ? 'text-green-600' : 'text-gray-500'}`}>
+                            {lengthOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
+                            <span>{t("auth.passwordStrength.minLength")}</span>
+                          </li>
+                          <li className={`flex items-center gap-2 ${mixOk ? 'text-green-600' : 'text-gray-500'}`}>
+                            {mixOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
+                            <span>{t("auth.passwordStrength.mixRecommendation")}</span>
+                          </li>
+                          {confirmValue.length > 0 && (
+                            <li className={`flex items-center gap-2 ${matchOk ? 'text-green-600' : 'text-red-600'}`}>
+                              {matchOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
+                              <span>{matchOk ? t("auth.passwordStrength.match") : t("auth.passwordStrength.noMatch")}</span>
+                            </li>
+                          )}
+                        </ul>
+                      </div>
                     </div>
 
                     <p className="text-sm text-gray-600">

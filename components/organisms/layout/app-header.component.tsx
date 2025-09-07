@@ -96,7 +96,7 @@ export default function AppHeader() {
             {/* Desktop Navigation */}
             <nav className="hidden lg:flex gap-8">
               {/* Admin Dashboard Button */}
-              {user && ["mrshj1980@hotmail.com", "rowyda.rashedy@gmail.com"].includes(user.email ?? "") && (
+              {user && ["Naturalsgloria@gmail.com", "rowyda.rashedy@gmail.com"].includes(user.email ?? "") && (
                 <Link
                   href="https://admin.glorianaturals.ae/admin"
                   target="_blank"

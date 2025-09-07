@@ -9,7 +9,7 @@
     },
     "search": "Search perfumes...",
     "topBar": {
-      "freeShipping": "Free shipping on orders over $100",
+      "freeShipping": "Free shipping on orders over 250 AED",
       "trackOrder": "Track Order",
       "help": "Help"
     }
@@ -391,7 +391,8 @@
       "minLength": "At least 8 characters",
       "uppercase": "One uppercase letter",
       "lowercase": "One lowercase letter",
-      "number": "One number"
+      "number": "One number",
+      "mixRecommendation": "Mix of letters and numbers recommended"
     }
   },
   "favorites": {
@@ -407,7 +408,7 @@
       "required": "Password is required",
       "confirmRequired": "Please confirm your password",
       "mismatch": "Passwords do not match",
-      "tooShort": "Password must be at least 6 characters"
+      "tooShort": "Password must be at least 8 characters"
     },
     "address": {
       "fullNameRequired": "Full name is required",
@@ -464,6 +465,10 @@
       "orderConfirmed": "Order {orderCode} has been confirmed",
       "checkoutFailed": "Checkout failed",
       "checkoutFailedDescription": "An unexpected error occurred",
+      "accountCreationFailed": "Could not create account. Please try again.",
+      "existingAccountPasswordMismatch": "Account exists. The password you entered is incorrect.",
+      "passwordTooShort": "Password must be at least 8 characters.",
+      "networkTimeout": "Network timeout while creating account. Please try again.",
       "unexpectedError": "An unexpected error occurred",
       "unexpectedErrorDescription": "Please try again or contact support if the problem persists"
     },
@@ -525,11 +530,11 @@
       "tax": "Tax",
       "total": "Total"
     },
-    "checkout": "Checkout",
+    "checkout": "Complete",
     "clear": "Clear Cart"
   },
   "checkout": {
-    "title": "Checkout",
+    "title": "Complete Your Order",
     "backToCart": "Back to Cart",
     "account": {
       "title": "Account Information",
@@ -538,6 +543,9 @@
       "emailPlaceholder": "Enter your email",
       "password": "Password *",
       "passwordPlaceholder": "Create a password",
+      "passwordHelpLabel": "Password requirements:",
+      "passwordHelpMin": "At least 8 characters",
+      "passwordHelpMix": "Mix of letters & numbers recommended",
       "confirmPassword": "Confirm Password *",
       "confirmPasswordPlaceholder": "Confirm your password",
       "termsNotice": "By creating an account, you agree to our Terms of Service and Privacy Policy."
@@ -579,6 +587,9 @@
     }
   },
   "common": {
+    "copyright": {
+      "short": "© 2024 Gloria. All rights reserved."
+    },
     "back": "Back"
   },
   "profile": {

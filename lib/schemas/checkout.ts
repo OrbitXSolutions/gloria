@@ -3,7 +3,7 @@ import { z } from "zod";
 export const guestUserSchema = z
   .object({
     email: z.string().email("Please enter a valid email address"),
-    password: z.string().min(6, "Password must be at least 6 characters"),
+    password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
   })
   .refine((data) => data.password === data.confirmPassword, {
@@ -39,7 +39,7 @@ export const checkoutSchema = z
       // For guest users (when email is provided and no selectedAddressId), require password
       if (data.email && !data.selectedAddressId) {
         // Guest checkout requires password
-        if (!data.password || data.password.length < 6) {
+        if (!data.password || data.password.length < 8) {
           return false;
         }
         if (!data.confirmPassword) {

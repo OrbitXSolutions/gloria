@@ -48,7 +48,7 @@ export async function generateMetadata({
       ? product.meta_description_ar || product.description_ar
       : product.meta_description_en || product.description_en;
 
-  const metaBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://gloria.com";
+  const metaBaseUrl = process.env.NEXT_PUBLIC_BASE_URL || "https://glorianaturals.ae";
 
   let imageUrl = `${metaBaseUrl}/og-image.jpg`;
   if (product.meta_thumbnail) {
@@ -160,7 +160,7 @@ export default async function Page({ params, searchParams }: PageProps) {
     description,
     image: imageList.map(img => img?.startsWith('http') ? img : `https://www.glorianaturals.ae${img}`),
     sku: product.sku || undefined,
-    brand: { '@type': 'Brand', name: 'Eleva' },
+    brand: { '@type': 'Brand', name: 'Gloria Natural' },
     offers: price ? {
       '@type': 'Offer',
       priceCurrency: currency,

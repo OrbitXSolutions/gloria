@@ -1,5 +1,4 @@
 import { createClient } from '@/lib/supabase/client';
-import { createSsrClient } from '@/lib/supabase/server';
 
 export type LogLevel = 'info' | 'warn' | 'error' | 'debug';
 
@@ -14,19 +13,18 @@ interface BaseLogEntry {
 interface APILogEntry {
     method: string;
     url: string;
-    statusCode: number;
-    duration: number;
+    statusCode?: number;
+    duration?: number;
     requestBody?: any;
     responseBody?: any;
-    headers?: Record<string, string>;
-    queryParams?: Record<string, any>;
     error?: string;
+    headers?: Record<string, string>; // collected client-side but not stored currently
 }
 
 interface PerformanceLogEntry {
-    operationName: string;
-    duration: number;
-    metadata?: Record<string, any>;
+    operationName: string; // maps to metric_name
+    duration: number;      // maps to metric_value
+    metadata?: Record<string, any>; // stored in context
 }
 
 class Logger {
@@ -74,18 +72,17 @@ class Logger {
         }
 
         try {
+            // Map only to existing SQL function parameters (add_api_log)
             await this.supabase.rpc('add_api_log', {
                 p_method: entry.method,
                 p_url: entry.url,
-                p_status_code: entry.statusCode,
-                p_duration_ms: entry.duration,
+                p_status_code: entry.statusCode || null,
+                p_user_id: this.userId || null,
+                p_ip_address: null,
+                p_user_agent: this.getUserAgent(),
                 p_request_body: entry.requestBody || null,
                 p_response_body: entry.responseBody || null,
-                p_user_agent: this.getUserAgent(),
-                p_user_id: this.userId || null,
-                p_error_message: entry.error || null,
-                p_headers: entry.headers || null,
-                p_query_params: entry.queryParams || null,
+                p_duration_ms: entry.duration || null,
             });
         } catch (error) {
             console.error('Failed to log API request:', error);
@@ -105,13 +102,36 @@ class Logger {
             await this.supabase.rpc('add_app_log', {
                 p_level: entry.level,
                 p_message: entry.message,
-                p_context: entry.context || null,
                 p_user_id: this.userId || null,
-                p_user_agent: entry.userAgent || this.getUserAgent(),
+                p_category: entry.source || 'app',
                 p_source: entry.source || 'client',
+                p_context: entry.context || null,
+                p_stack_trace: entry.level === 'error' ? entry.context?.error?.stack || null : null,
             });
         } catch (error) {
             console.error('Failed to log application event:', error);
+        }
+    }
+
+    // Client log (frontend interaction & UX events)
+    async logClient(level: LogLevel, message: string, context?: Record<string, any>) {
+        if (!this.isEnabled) {
+            if (process.env.NODE_ENV === 'development') {
+                console.log(`[CLIENT ${level.toUpperCase()}]`, message, context);
+            }
+            return;
+        }
+        try {
+            await this.supabase.rpc('add_client_log', {
+                p_level: level,
+                p_message: message,
+                p_user_id: this.userId || null,
+                p_url: typeof window !== 'undefined' ? window.location.pathname : null,
+                p_context: context || null,
+                p_stack_trace: level === 'error' ? context?.error?.stack || null : null,
+            });
+        } catch (error) {
+            console.error('Failed to log client event:', error);
         }
     }
 
@@ -126,10 +146,11 @@ class Logger {
 
         try {
             await this.supabase.rpc('add_performance_log', {
-                p_operation_name: entry.operationName,
-                p_duration_ms: entry.duration,
-                p_metadata: entry.metadata || null,
+                p_metric_name: entry.operationName,
+                p_metric_value: entry.duration,
                 p_user_id: this.userId || null,
+                p_url: typeof window !== 'undefined' ? window.location.pathname : null,
+                p_context: entry.metadata || null,
             });
         } catch (error) {
             console.error('Failed to log performance:', error);
@@ -186,6 +207,24 @@ class Logger {
 
     debug(message: string, context?: Record<string, any>, source?: string) {
         return this.log({ level: 'debug', message, context, source });
+    }
+
+    // Interaction helpers
+    buttonClick(buttonName: string, extra?: Record<string, any>) {
+        return this.logClient('info', 'button_click', {
+            buttonName,
+            ...extra,
+            timestamp: new Date().toISOString(),
+        });
+    }
+
+    formSubmit(formName: string, success: boolean, extra?: Record<string, any>) {
+        return this.logClient('info', 'form_submit', {
+            formName,
+            success,
+            ...extra,
+            timestamp: new Date().toISOString(),
+        });
     }
 
     // Update user ID when auth state changes

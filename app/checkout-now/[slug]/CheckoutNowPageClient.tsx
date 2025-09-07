@@ -38,6 +38,8 @@ import {
     EyeOff,
     AlertCircle,
     X,
+    CheckCircle2,
+    Circle
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -205,24 +207,45 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
                 })
                 router.push(`/orders/${result.orderCode}`)
             } else {
-                const errorMessage = result.error || t('toast.checkout.checkoutFailedDescription')
+                const code = result.error || ''
+                let key: string | null = null
+                switch (code) {
+                    case 'EXISTING_ACCOUNT_PASSWORD_MISMATCH':
+                        key = 'toast.checkout.existingAccountPasswordMismatch'; break
+                    case 'PASSWORD_TOO_SHORT':
+                        key = 'toast.checkout.passwordTooShort'; break
+                    case 'NETWORK_TIMEOUT':
+                        key = 'toast.checkout.networkTimeout'; break
+                    case 'ACCOUNT_CREATION_FAILED':
+                        key = 'toast.checkout.accountCreationFailed'; break
+                }
+                const errorMessage = key ? t(key as any) : (result.error || t('toast.checkout.checkoutFailedDescription'))
                 setError(errorMessage)
-                toast.error(t('toast.checkout.checkoutFailed'), {
-                    description: errorMessage,
-                    duration: 5000
-                })
+                toast.error(t('toast.checkout.checkoutFailed'), { description: errorMessage, duration: 5000 })
             }
         } catch (error: any) {
-            const errorMessage = error.message || t('toast.checkout.checkoutFailedDescription')
+            const raw = error.message
+            let key: string | null = null
+            switch (raw) {
+                case 'EXISTING_ACCOUNT_PASSWORD_MISMATCH': key = 'toast.checkout.existingAccountPasswordMismatch'; break
+                case 'PASSWORD_TOO_SHORT': key = 'toast.checkout.passwordTooShort'; break
+                case 'NETWORK_TIMEOUT': key = 'toast.checkout.networkTimeout'; break
+                case 'ACCOUNT_CREATION_FAILED': key = 'toast.checkout.accountCreationFailed'; break
+            }
+            const errorMessage = key ? t(key as any) : (raw || t('toast.checkout.checkoutFailedDescription'))
             setError(errorMessage)
-            toast.error(t('toast.checkout.checkoutFailed'), {
-                description: errorMessage,
-                duration: 5000
-            })
+            toast.error(t('toast.checkout.checkoutFailed'), { description: errorMessage, duration: 5000 })
         } finally {
             setIsLoading(false)
         }
     };
+
+    // Derived password validation state for visual requirements
+    const passwordValue = form.watch('password') || '';
+    const confirmValue = form.watch('confirmPassword') || '';
+    const lengthOk = passwordValue.length >= 8;
+    const mixOk = /[A-Za-z]/.test(passwordValue) && /[0-9]/.test(passwordValue);
+    const matchOk = passwordValue.length > 0 && confirmValue.length > 0 && passwordValue === confirmValue;
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -335,7 +358,7 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
                                             )}
                                         />
 
-                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 items-start">
                                             <FormField
                                                 control={form.control}
                                                 name="password"
@@ -401,6 +424,27 @@ export default function CheckoutNowPageClient({ product, user, userAddresses, ua
                                                     </FormItem>
                                                 )}
                                             />
+
+                                            {/* Unified password requirements block */}
+                                            <div className="md:col-span-2 -mt-2 text-[11px] text-gray-600 leading-relaxed">
+                                                <p className="font-medium mb-1">{t("auth.passwordStrength.requirements")}{":"}</p>
+                                                <ul className="space-y-1">
+                                                    <li className={`flex items-center gap-2 ${lengthOk ? 'text-green-600' : 'text-gray-500'}`}>
+                                                        {lengthOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
+                                                        <span>{t("auth.passwordStrength.minLength")}</span>
+                                                    </li>
+                                                    <li className={`flex items-center gap-2 ${mixOk ? 'text-green-600' : 'text-gray-500'}`}>
+                                                        {mixOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
+                                                        <span>{t("auth.passwordStrength.mixRecommendation")}</span>
+                                                    </li>
+                                                    {confirmValue.length > 0 && (
+                                                        <li className={`flex items-center gap-2 ${matchOk ? 'text-green-600' : 'text-red-600'}`}>
+                                                            {matchOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
+                                                            <span>{matchOk ? t("auth.passwordStrength.match") : t("auth.passwordStrength.noMatch")}</span>
+                                                        </li>
+                                                    )}
+                                                </ul>
+                                            </div>
                                         </div>
 
                                         <p className="text-sm text-gray-600">

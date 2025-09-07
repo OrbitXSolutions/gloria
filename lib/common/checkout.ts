@@ -397,8 +397,8 @@ export async function processGuestCheckout(
       throw new Error("Passwords do not match");
     }
 
-    if (checkoutData.password.length < 6) {
-      throw new Error("Password must be at least 6 characters long");
+    if (checkoutData.password.length < 8) {
+      throw new Error("PASSWORD_TOO_SHORT");
     }
 
     // Parse full name
@@ -416,12 +416,33 @@ export async function processGuestCheckout(
           last_name: lastName,
           phone: checkoutData.phone,
         },
+        emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || ''}/auth/confirm`
       },
-    })
+    });
 
     if (authError) {
-      console.error('Auth error during guest sign up:', authError)
-      throw new Error(authError.message || 'Failed to sign up user')
+      console.error('Auth error during guest sign up:', authError);
+      const msg = (authError as any)?.message?.toLowerCase?.() || '';
+      const isAlreadyExists = msg.includes('already') || msg.includes('registered');
+      const isTimeout = (authError as any)?.status === 504;
+      if (isAlreadyExists) {
+        // Try sign in with provided password
+        const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
+          email: checkoutData.email,
+          password: checkoutData.password,
+        });
+        if (signInError || !signInData.user) {
+          throw new Error('EXISTING_ACCOUNT_PASSWORD_MISMATCH');
+        }
+        // Re-run process as authenticated user path for consistency
+        return await processAuthenticatedCheckout(signInData.user.id, checkoutData);
+      } else if (isTimeout) {
+        throw new Error('NETWORK_TIMEOUT');
+      } else if (!msg || msg === '{}' || msg === '[object Object]') {
+        throw new Error('ACCOUNT_CREATION_FAILED');
+      } else {
+        throw new Error('ACCOUNT_CREATION_FAILED');
+      }
     }
 
     try {
@@ -433,10 +454,7 @@ export async function processGuestCheckout(
       console.error("Error during guest checkout:", error);
     }
 
-    if (authError) {
-      console.error("Auth error:", authError);
-      throw new Error((authError as any).message);
-    }
+    // (authError already handled above)
 
     if (!authData.user) {
       throw new Error("Failed to create user account");
@@ -532,9 +550,25 @@ export async function processGuestCheckout(
     };
   } catch (error) {
     console.error("Guest checkout error:", error);
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Checkout failed",
-    };
+    if (error instanceof Error) {
+      const raw = error.message;
+      let friendly = raw;
+      switch (raw) {
+        case 'PASSWORD_TOO_SHORT':
+          friendly = 'Password must be at least 8 characters';
+          break;
+        case 'EXISTING_ACCOUNT_PASSWORD_MISMATCH':
+          friendly = 'EXISTING_ACCOUNT_PASSWORD_MISMATCH';
+          break;
+        case 'NETWORK_TIMEOUT':
+          friendly = 'NETWORK_TIMEOUT';
+          break;
+        case 'ACCOUNT_CREATION_FAILED':
+          friendly = 'ACCOUNT_CREATION_FAILED';
+          break;
+      }
+      return { success: false, error: friendly };
+    }
+    return { success: false, error: 'Checkout failed' };
   }
 }

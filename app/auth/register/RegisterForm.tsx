@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Eye, EyeOff, Loader2, User, Mail, Phone } from "lucide-react";
+import { Eye, EyeOff, Loader2, User, Mail, Phone, CheckCircle2, Circle, AlertCircle } from "lucide-react";
 import Link from "next/link";
 import LoadingIndicator from "@/components/atoms/LoadingIndicator";
 import { useTranslations } from "next-intl";
@@ -60,6 +60,13 @@ export default function RegisterForm() {
     });
   };
 
+  // Derived password validation state for visual requirements
+  const passwordValue = formData.password || "";
+  const confirmValue = formData.confirmPassword || "";
+  const lengthOk = passwordValue.length >= 8;
+  const mixOk = /[A-Za-z]/.test(passwordValue) && /[0-9]/.test(passwordValue);
+  const matchOk = passwordValue.length > 0 && confirmValue.length > 0 && passwordValue === confirmValue;
+
   return (
     <form className="space-y-6" onSubmit={handleSubmit}>
       <div className="space-y-5">
@@ -86,6 +93,13 @@ export default function RegisterForm() {
                 className="pl-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
               />
             </div>
+            {result?.validationErrors?.firstName && (
+              <div className="text-red-600 text-xs">
+                {result.validationErrors.firstName._errors?.map((error, index) => (
+                  <p key={index}>{error}</p>
+                ))}
+              </div>
+            )}
           </div>
           <div className="space-y-2">
             <Label
@@ -104,6 +118,13 @@ export default function RegisterForm() {
               placeholder={t("auth.forms.register.lastNamePlaceholder")}
               className="h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
             />
+            {result?.validationErrors?.lastName && (
+              <div className="text-red-600 text-xs">
+                {result.validationErrors.lastName._errors?.map((error, index) => (
+                  <p key={index}>{error}</p>
+                ))}
+              </div>
+            )}
           </div>
         </div>
 
@@ -126,6 +147,13 @@ export default function RegisterForm() {
               className="pl-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
             />
           </div>
+          {result?.validationErrors?.email && (
+            <div className="text-red-600 text-xs">
+              {result.validationErrors.email._errors?.map((error, index) => (
+                <p key={index}>{error}</p>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -140,6 +168,13 @@ export default function RegisterForm() {
             placeholder={t("auth.forms.register.phonePlaceholder")}
             className="h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
           />
+          {result?.validationErrors?.phone && (
+            <div className="text-red-600 text-xs">
+              {result.validationErrors.phone._errors?.map((error, index) => (
+                <p key={index}>{error}</p>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -172,6 +207,32 @@ export default function RegisterForm() {
               )}
             </button>
           </div>
+          <div className="text-[11px] text-gray-600 leading-relaxed mt-2">
+            <p className="font-medium mb-1">{t("auth.passwordStrength.requirements")}{":"}</p>
+            <ul className="space-y-1">
+              <li className={`flex items-center gap-2 ${lengthOk ? 'text-green-600' : 'text-gray-500'}`}>
+                {lengthOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
+                <span>{t("auth.passwordStrength.minLength")}</span>
+              </li>
+              <li className={`flex items-center gap-2 ${mixOk ? 'text-green-600' : 'text-gray-500'}`}>
+                {mixOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <Circle className="h-3.5 w-3.5" />}
+                <span>{t("auth.passwordStrength.mixRecommendation")}</span>
+              </li>
+              {confirmValue.length > 0 && (
+                <li className={`flex items-center gap-2 ${matchOk ? 'text-green-600' : 'text-red-600'}`}>
+                  {matchOk ? <CheckCircle2 className="h-3.5 w-3.5" /> : <AlertCircle className="h-3.5 w-3.5" />}
+                  <span>{matchOk ? t("auth.passwordStrength.match") : t("auth.passwordStrength.noMatch")}</span>
+                </li>
+              )}
+            </ul>
+          </div>
+          {result?.validationErrors?.password && (
+            <div className="text-red-600 text-xs">
+              {result.validationErrors.password._errors?.map((error, index) => (
+                <p key={index}>{error}</p>
+              ))}
+            </div>
+          )}
         </div>
 
         <div className="space-y-2">
@@ -204,6 +265,13 @@ export default function RegisterForm() {
               )}
             </button>
           </div>
+          {result?.validationErrors?.confirmPassword && (
+            <div className="text-red-600 text-xs">
+              {result.validationErrors.confirmPassword._errors?.map((error, index) => (
+                <p key={index}>{error}</p>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 
@@ -230,6 +298,14 @@ export default function RegisterForm() {
         <Alert variant="destructive" className="border-red-200 bg-red-50">
           <AlertDescription className="text-red-800">
             {result.data.error}
+          </AlertDescription>
+        </Alert>
+      )}
+
+      {result?.validationErrors && (
+        <Alert variant="destructive" className="border-red-200 bg-red-50">
+          <AlertDescription className="text-red-800">
+            Please fix the validation errors above and try again.
           </AlertDescription>
         </Alert>
       )}

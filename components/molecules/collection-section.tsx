@@ -83,7 +83,7 @@ export default function CollectionSection({ className }: Props) {
                         {isAr ? 'استكشف المجموعة' : 'Explore Collection'}
                     </Button>
                     <p className="text-xs text-muted-foreground mt-3">
-                        {isAr ? 'شحن مجاني للطلبات فوق 500 ريال' : 'Free shipping on orders over $100'}
+                        {isAr ? 'شحن مجاني للطلبات أكثر من 250 درهم' : 'Free shipping on orders over 250 AED'}
                     </p>
                 </div>
                 */}

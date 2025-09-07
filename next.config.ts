@@ -4,7 +4,18 @@ import { SupabasePaths } from "./lib/constants/supabase-storage";
 
 const nextConfig: NextConfig = {
   /* config options here */
-  allowedDevOrigins: ["127.0.0.1", "*"],
+  experimental: {
+    serverActions: {
+      allowedOrigins: [
+        "localhost:3000",
+        "localhost:3001",
+        "*.app.github.dev",
+        "*.githubpreview.dev",
+        "cautious-waddle-jq7rjr97gv435rg6-3000.app.github.dev",
+        "cautious-waddle-jq7rjr97gv435rg6-3001.app.github.dev",
+      ],
+    },
+  },
 
   eslint: {
     // Warning: This allows production builds to successfully complete even if

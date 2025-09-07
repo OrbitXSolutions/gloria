@@ -34,12 +34,45 @@ export const registerAction = action
     const { firstName, lastName, email, phone, password } = parsedInput;
     const supabase = await createSsrClient();
 
+    // Log the registration attempt
+    try {
+      await supabase.rpc('add_app_log', {
+        p_level: 'info',
+        p_message: 'User registration attempt',
+        p_user_id: null,
+        p_category: 'auth',
+        p_source: 'register_action',
+        p_context: {
+          email,
+          phone: phone?.substring(0, 5) + '***', // Partial phone for privacy
+          timestamp: new Date().toISOString()
+        },
+        p_stack_trace: null,
+      });
+    } catch (logError) {
+      console.error('Failed to log registration attempt:', logError);
+    }
+
     try {
       // Parse and format phone number
       const phoneNumber = parsePhoneNumberWithError(phone);
       const formattedPhone = phoneNumber?.format("E.164");
 
       if (!formattedPhone) {
+        // Log validation error
+        try {
+          await supabase.rpc('add_app_log', {
+            p_level: 'error',
+            p_message: 'Registration failed: Invalid phone number format',
+            p_user_id: null,
+            p_category: 'auth',
+            p_source: 'register_action',
+            p_context: { email, phone, error: 'Invalid phone number format' },
+            p_stack_trace: null,
+          });
+        } catch (logError) {
+          console.error('Failed to log phone validation error:', logError);
+        }
         return { error: "Invalid phone number format" };
       }
 
@@ -59,6 +92,25 @@ export const registerAction = action
         },
       });
       if (error) {
+        // Log registration error
+        try {
+          await supabase.rpc('add_app_log', {
+            p_level: 'error',
+            p_message: `Registration failed: ${error.message}`,
+            p_user_id: null,
+            p_category: 'auth',
+            p_source: 'register_action',
+            p_context: {
+              email,
+              phone: phone?.substring(0, 5) + '***',
+              error: error.message,
+              error_code: error.code || 'unknown'
+            },
+            p_stack_trace: null,
+          });
+        } catch (logError) {
+          console.error('Failed to log registration error:', logError);
+        }
         return { error: error.message };
       }
       try {
@@ -78,6 +130,27 @@ export const registerAction = action
         console.error("Error updating user email in admin client:", err);
         // return { error: "Failed to update user email" };
       }
+
+      // Log successful registration
+      try {
+        await supabase.rpc('add_app_log', {
+          p_level: 'info',
+          p_message: `User registered successfully`,
+          p_user_id: data.user?.id || null,
+          p_category: 'auth',
+          p_source: 'register_action',
+          p_context: {
+            email,
+            phone: phone?.substring(0, 5) + '***',
+            needs_phone_verification: !data.session,
+            user_id: data.user?.id
+          },
+          p_stack_trace: null,
+        });
+      } catch (logError) {
+        console.error('Failed to log successful registration:', logError);
+      }
+
       if (data.user && !data.session) {
         // User needs to verify phone number
         return {
@@ -104,6 +177,27 @@ export const loginAction = action
   .action(async ({ parsedInput }) => {
     const { emailOrPhone, password } = parsedInput;
     const supabase = await createSsrClient();
+
+    // Log login attempt
+    try {
+      await supabase.rpc('add_app_log', {
+        p_level: 'info',
+        p_message: 'User login attempt',
+        p_user_id: null,
+        p_category: 'auth',
+        p_source: 'login_action',
+        p_context: {
+          emailOrPhone: emailOrPhone.includes('@') ?
+            emailOrPhone.split('@')[0] + '@***' :
+            emailOrPhone.substring(0, 5) + '***',
+          method: emailOrPhone.includes('@') ? 'email' : 'phone',
+          timestamp: new Date().toISOString()
+        },
+        p_stack_trace: null,
+      });
+    } catch (logError) {
+      console.error('Failed to log login attempt:', logError);
+    }
 
     try {
       // Detect if input is email or phone
@@ -139,6 +233,27 @@ export const loginAction = action
       const { data, error } = signInData;
 
       if (error) {
+        // Log login error
+        try {
+          await supabase.rpc('add_app_log', {
+            p_level: 'error',
+            p_message: `Login failed: ${error.message}`,
+            p_user_id: null,
+            p_category: 'auth',
+            p_source: 'login_action',
+            p_context: {
+              emailOrPhone: emailOrPhone.includes('@') ?
+                emailOrPhone.split('@')[0] + '@***' :
+                emailOrPhone.substring(0, 5) + '***',
+              method: emailOrPhone.includes('@') ? 'email' : 'phone',
+              error: error.message,
+              error_code: error.code || 'unknown'
+            },
+            p_stack_trace: null,
+          });
+        } catch (logError) {
+          console.error('Failed to log login error:', logError);
+        }
         return { error: error.message };
       }
 
@@ -156,6 +271,27 @@ export const loginAction = action
 
         if (upsertError) {
           console.error("Error upserting user:", upsertError);
+        }
+
+        // Log successful login
+        try {
+          await supabase.rpc('add_app_log', {
+            p_level: 'info',
+            p_message: 'User logged in successfully',
+            p_user_id: data.user.id,
+            p_category: 'auth',
+            p_source: 'login_action',
+            p_context: {
+              emailOrPhone: emailOrPhone.includes('@') ?
+                emailOrPhone.split('@')[0] + '@***' :
+                emailOrPhone.substring(0, 5) + '***',
+              method: emailOrPhone.includes('@') ? 'email' : 'phone',
+              user_id: data.user.id
+            },
+            p_stack_trace: null,
+          });
+        } catch (logError) {
+          console.error('Failed to log successful login:', logError);
         }
 
         return { success: true, message: "Login successful!" };

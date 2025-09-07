@@ -92,8 +92,8 @@ async function logAPIRequest(logData: {
   ip: string;
   headers: Record<string, string>;
 }) {
-  // Only log in production or when explicitly enabled
-  if (process.env.NODE_ENV !== 'production' && process.env.ENABLE_LOGGING !== 'true') {
+  // Log to database when enabled
+  if (process.env.ENABLE_LOGGING !== 'true' && process.env.LOG_TO_DATABASE !== 'true') {
     console.log('[API Request]', logData);
     return;
   }

@@ -302,7 +302,8 @@ export default function ProductCard({
                   onClick={e => {
                     e.preventDefault()
                     e.stopPropagation()
-                    router.push(`/checkout-now/${getProductSlug()}`)
+                    const slug = getProductSlug()
+                    router.push(`/checkout-now/${encodeURIComponent(slug)}`)
                   }}
                 >
                   <LoadingIndicator />

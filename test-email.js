@@ -26,7 +26,7 @@ const testEmail = async () => {
           <!-- Header with Brand -->
           <div style="text-align: center; margin-bottom: 40px; padding-bottom: 20px; border-bottom: 2px solid #e1e8ed;">
             <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; color: #667eea; margin-bottom: 10px;">
-              <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">✨ Eleva Boutique</h1>
+              <h1 style="margin: 0; font-size: 32px; font-weight: 700; letter-spacing: -0.5px;">✨ Gloria Natural</h1>
             </div>
             <h2 style="color: #2c3e50; margin: 10px 0 0 0; font-size: 24px; font-weight: 600;">Order Confirmation - TEST EMAIL</h2>
             <p style="color: #7f8c8d; margin: 8px 0 0 0; font-size: 16px;">Thank you for your order, Test Customer!</p>
@@ -157,7 +157,7 @@ const testEmail = async () => {
               </p>
             </div>
             <p style="color: #95a5a6; font-size: 12px; margin: 0; line-height: 1.5;">
-              Thank you for choosing Eleva Boutique! 🌟<br>
+              Thank you for choosing Gloria Natural! 🌟<br>
               This is a test email sent to rowyda15@gmail.com
             </p>
           </div>
@@ -169,7 +169,7 @@ const testEmail = async () => {
     const mailOptions = {
       from: process.env.SMTP_USER,
       to: 'rowyda15@gmail.com',
-      subject: '✨ Eleva Boutique - Enhanced Order Confirmation Email Test',
+      subject: '✨ Gloria Natural - Enhanced Order Confirmation Email Test',
       html: testEmailHTML,
     };
 
