@@ -33,6 +33,7 @@ export interface CheckoutResult {
 // Get user's addresses
 export async function getUserAddresses(userId: number) {
   const supabase = await createSsrClient();
+  const supabaseAdmin = await createAdminClient();
 
   // First get the user's internal ID
   const { data: userData, error: userError } = await supabase
@@ -382,8 +383,35 @@ export async function processGuestCheckout(
   checkoutData: CheckoutData
 ): Promise<CheckoutResult> {
   const supabase = await createSsrClient();
+  const supabaseAdmin = await createAdminClient();
+
+  // Helper to log app events (best-effort)
+  const log = async (
+    level: 'info' | 'error',
+    message: string,
+    source: string,
+    context?: Record<string, any>
+  ) => {
+    try {
+      await supabaseAdmin.rpc('add_app_log', {
+        p_level: level,
+        p_message: message,
+        p_user_id: null,
+        p_category: 'checkout',
+        p_source: source,
+        p_context: context || null,
+        p_stack_trace: level === 'error' && context?.errorStack ? context.errorStack : null,
+      });
+    } catch (_) {
+      // silent
+    }
+  };
 
   try {
+    await log('info', 'Guest checkout attempt', 'guest_checkout', {
+      cart_items: checkoutData.cartItems?.length || 0,
+      email_present: !!checkoutData.email,
+    });
     // Validate guest data
     if (
       !checkoutData.email ||
@@ -398,7 +426,8 @@ export async function processGuestCheckout(
     }
 
     if (checkoutData.password.length < 8) {
-      throw new Error("PASSWORD_TOO_SHORT");
+      await log('error', 'Password too short', 'guest_checkout', { providedLength: checkoutData.password.length });
+      throw new Error('PASSWORD_TOO_SHORT');
     }
 
     // Parse full name
@@ -406,25 +435,46 @@ export async function processGuestCheckout(
     const firstName = nameParts[0] || "";
     const lastName = nameParts.slice(1).join(" ") || "";
 
-    // Register user with Supabase Auth
-    const { data: authData, error: authError } = await supabase.auth.signUp({
+    // First attempt a sign-in (account may already exist)
+    let authData: any = null; let authError: any = null;
+    const preSignIn = await supabase.auth.signInWithPassword({
       email: checkoutData.email,
       password: checkoutData.password,
-      options: {
-        data: {
-          first_name: firstName,
-          last_name: lastName,
-          phone: checkoutData.phone,
-        },
-        emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || ''}/auth/confirm`
-      },
     });
+    if (preSignIn.data?.user) {
+      await log('info', 'Existing account detected via pre sign-in', 'guest_checkout', { email: checkoutData.email });
+      return await processAuthenticatedCheckout(preSignIn.data.user.id, checkoutData);
+    }
+
+    // Proceed with sign-up (retry on timeout)
+    let attempts = 0;
+    const maxAttempts = 2;
+    while (attempts < maxAttempts) {
+      attempts++;
+      const { data, error } = await supabase.auth.signUp({
+        email: checkoutData.email,
+        password: checkoutData.password,
+        options: {
+          data: { first_name: firstName, last_name: lastName, phone: checkoutData.phone },
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL || ''}/auth/confirm`
+        },
+      });
+      authData = data; authError = error;
+      if (!authError) break; // success
+      const status = (authError as any)?.status;
+      const msgLower = (authError as any)?.message?.toLowerCase?.() || '';
+      const timeoutLike = status === 504 || msgLower.includes('timeout');
+      const already = msgLower.includes('already') || msgLower.includes('registered');
+      await log('error', 'Auth signUp attempt failed', 'guest_checkout', { attempt: attempts, status, message: authError.message });
+      if (already) break; // handle already existing below
+      if (!timeoutLike) break; // other errors -> break
+      if (attempts < maxAttempts) await new Promise(r => setTimeout(r, 1000));
+    }
 
     if (authError) {
-      console.error('Auth error during guest sign up:', authError);
       const msg = (authError as any)?.message?.toLowerCase?.() || '';
       const isAlreadyExists = msg.includes('already') || msg.includes('registered');
-      const isTimeout = (authError as any)?.status === 504;
+      const isTimeout = (authError as any)?.status === 504 || msg.includes('timeout');
       if (isAlreadyExists) {
         // Try sign in with provided password
         const { data: signInData, error: signInError } = await supabase.auth.signInWithPassword({
@@ -432,31 +482,39 @@ export async function processGuestCheckout(
           password: checkoutData.password,
         });
         if (signInError || !signInData.user) {
+          await log('error', 'Existing account password mismatch', 'guest_checkout', { email: checkoutData.email });
           throw new Error('EXISTING_ACCOUNT_PASSWORD_MISMATCH');
         }
-        // Re-run process as authenticated user path for consistency
+        await log('info', 'Existing account reused via sign-in', 'guest_checkout', { email: checkoutData.email });
         return await processAuthenticatedCheckout(signInData.user.id, checkoutData);
       } else if (isTimeout) {
+        // Attempt a silent sign-in just in case account was created server-side despite timeout
+        for (let i = 0; i < 3; i++) {
+          try {
+            await new Promise(r => setTimeout(r, 800));
+            const { data: maybeSignIn } = await supabase.auth.signInWithPassword({
+              email: checkoutData.email,
+              password: checkoutData.password,
+            });
+            if (maybeSignIn?.user) {
+              await log('info', 'Recovered from timeout via delayed sign-in', 'guest_checkout', { email: checkoutData.email, attempt: i + 1 });
+              return await processAuthenticatedCheckout(maybeSignIn.user.id, checkoutData);
+            }
+          } catch (_) {
+            // ignore each attempt
+          }
+        }
+        await log('error', 'Network timeout during account creation', 'guest_checkout', { email: checkoutData.email });
         throw new Error('NETWORK_TIMEOUT');
-      } else if (!msg || msg === '{}' || msg === '[object Object]') {
-        throw new Error('ACCOUNT_CREATION_FAILED');
       } else {
+        await log('error', 'Account creation failed', 'guest_checkout', { email: checkoutData.email, message: authError.message });
         throw new Error('ACCOUNT_CREATION_FAILED');
       }
+    } else {
+      await log('info', 'Account created successfully', 'guest_checkout', { email: checkoutData.email });
     }
 
-    try {
-      const supabaseAdmin = await createAdminClient();
-      await supabaseAdmin.auth.admin.updateUserById(authData.user?.id || "", {
-        phone: checkoutData.phone,
-      });
-    } catch (error) {
-      console.error("Error during guest checkout:", error);
-    }
-
-    // (authError already handled above)
-
-    if (!authData.user) {
+    if (!authData?.user) {
       throw new Error("Failed to create user account");
     }
 
@@ -543,6 +601,7 @@ export async function processGuestCheckout(
       throw new Error("Failed to create order items");
     }
 
+    await log('info', 'Guest checkout order created', 'guest_checkout', { order_id: order.id, order_code: order.code });
     return {
       success: true,
       orderId: order.id,
@@ -550,24 +609,14 @@ export async function processGuestCheckout(
     };
   } catch (error) {
     console.error("Guest checkout error:", error);
+    await log('error', 'Guest checkout failed', 'guest_checkout', {
+      error: error instanceof Error ? error.message : 'Unknown',
+      errorStack: error instanceof Error ? error.stack : undefined,
+    });
     if (error instanceof Error) {
       const raw = error.message;
-      let friendly = raw;
-      switch (raw) {
-        case 'PASSWORD_TOO_SHORT':
-          friendly = 'Password must be at least 8 characters';
-          break;
-        case 'EXISTING_ACCOUNT_PASSWORD_MISMATCH':
-          friendly = 'EXISTING_ACCOUNT_PASSWORD_MISMATCH';
-          break;
-        case 'NETWORK_TIMEOUT':
-          friendly = 'NETWORK_TIMEOUT';
-          break;
-        case 'ACCOUNT_CREATION_FAILED':
-          friendly = 'ACCOUNT_CREATION_FAILED';
-          break;
-      }
-      return { success: false, error: friendly };
+      // Pass through sentinel codes; mapping handled client-side
+      return { success: false, error: raw };
     }
     return { success: false, error: 'Checkout failed' };
   }

@@ -54,41 +54,18 @@ export const registerAction = action
     }
 
     try {
-      // Parse and format phone number
-      const phoneNumber = parsePhoneNumberWithError(phone);
-      const formattedPhone = phoneNumber?.format("E.164");
-
-      if (!formattedPhone) {
-        // Log validation error
-        try {
-          await supabase.rpc('add_app_log', {
-            p_level: 'error',
-            p_message: 'Registration failed: Invalid phone number format',
-            p_user_id: null,
-            p_category: 'auth',
-            p_source: 'register_action',
-            p_context: { email, phone, error: 'Invalid phone number format' },
-            p_stack_trace: null,
-          });
-        } catch (logError) {
-          console.error('Failed to log phone validation error:', logError);
-        }
-        return { error: "Invalid phone number format" };
-      }
-
-      // Register with Supabase using phone number
+      // Register with Supabase using EMAIL (switch from phone OTP to email confirmation)
       const { data, error } = await supabase.auth.signUp({
-        phone: formattedPhone,
+        email,
         password,
-
         options: {
           data: {
             first_name: firstName,
             last_name: lastName,
-            email: email,
             full_name: `${firstName} ${lastName}`,
+            phone: phone || null,
           },
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/confirm`,
+          emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/confirm-email`,
         },
       });
       if (error) {
@@ -113,23 +90,6 @@ export const registerAction = action
         }
         return { error: error.message };
       }
-      try {
-        const supabaseAdmin = await createAdminClient();
-        // update the email
-        if (data.user && email) {
-          const { error: updateError } =
-            await supabaseAdmin.auth.admin.updateUserById(data.user.id, {
-              email,
-            });
-
-          if (updateError) {
-            console.error("Error updating user email:", updateError);
-          }
-        }
-      } catch (err) {
-        console.error("Error updating user email in admin client:", err);
-        // return { error: "Failed to update user email" };
-      }
 
       // Log successful registration
       try {
@@ -142,7 +102,7 @@ export const registerAction = action
           p_context: {
             email,
             phone: phone?.substring(0, 5) + '***',
-            needs_phone_verification: !data.session,
+            needs_email_verification: !data.session,
             user_id: data.user?.id
           },
           p_stack_trace: null,
@@ -150,14 +110,13 @@ export const registerAction = action
       } catch (logError) {
         console.error('Failed to log successful registration:', logError);
       }
-
       if (data.user && !data.session) {
-        // User needs to verify phone number
+        // User needs to verify EMAIL
         return {
           success: true,
-          message: "Registration successful! Please verify your phone number.",
+          message: "Registration successful! Please verify your email.",
           needsVerification: true,
-          phone: formattedPhone,
+          email,
         };
       }
 
@@ -165,6 +124,7 @@ export const registerAction = action
         success: true,
         message: "Registration successful!",
         needsVerification: false,
+        email,
       };
     } catch (error) {
       console.error("Registration error:", error);
@@ -311,17 +271,40 @@ export const verifyOtpAction = action
     const supabase = await createSsrClient();
 
     try {
-      const { data, error } = await supabase.auth.verifyOtp({
-        phone,
-        token,
-        type: "phone_change",
-      });
-
-      if (error) {
-        return { error: error.message };
+      const attemptTypes: any[] = ["phone_change", "signup", "sms", "recovery"];
+      let data: any = null; let lastError: any = null;
+      for (const type of attemptTypes) {
+        const { data: d, error } = await supabase.auth.verifyOtp({
+          phone,
+          token,
+          type,
+        } as any);
+        if (!error && d?.user) { data = d; lastError = null; break; }
+        lastError = error;
+        // Stop early if error explicitly indicates expired/invalid to avoid rate issues
+        if (error && /expired|invalid/i.test(error.message)) break;
+      }
+      if (lastError && !data) {
+        const msg = /expired/i.test(lastError.message)
+          ? 'OTP_EXPIRED'
+          : /invalid/i.test(lastError.message)
+            ? 'OTP_INVALID'
+            : lastError.message;
+        try {
+          await supabase.rpc('add_app_log', {
+            p_level: 'error',
+            p_message: 'OTP verification failed',
+            p_user_id: null,
+            p_category: 'auth',
+            p_source: 'verify_otp_action',
+            p_context: { phone: phone?.slice(0, 6) + '***', error: lastError.message },
+            p_stack_trace: null,
+          });
+        } catch (_) { }
+        return { error: msg === 'OTP_EXPIRED' ? 'OTP code has expired. Please resend.' : (msg === 'OTP_INVALID' ? 'Invalid code. Please try again.' : msg) };
       }
 
-      if (data.user) {
+      if (data?.user) {
         // Create user in public.users table
         if (data.user.user_metadata?.user_id) {
 
@@ -346,6 +329,18 @@ export const verifyOtpAction = action
         }
 
         if (data.session) supabase.auth.setSession(data.session);
+
+        try {
+          await supabase.rpc('add_app_log', {
+            p_level: 'info',
+            p_message: 'OTP verified successfully',
+            p_user_id: data.user.id,
+            p_category: 'auth',
+            p_source: 'verify_otp_action',
+            p_context: { phone: phone?.slice(0, 6) + '***' },
+            p_stack_trace: null,
+          });
+        } catch (_) { }
 
         return {
           success: true,

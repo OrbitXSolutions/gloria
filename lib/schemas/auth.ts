@@ -6,9 +6,11 @@ export const registerSchema = z
     firstName: z.string().min(2, "First name must be at least 2 characters"),
     lastName: z.string().min(2, "Last name must be at least 2 characters"),
     email: z.string().email("Please enter a valid email address"),
+    // Phone now optional since we switched to email confirmation flow
     phone: z
       .string()
-      .refine(isValidPhoneNumber, "Please enter a valid phone number"),
+      .optional()
+      .refine((val) => !val || isValidPhoneNumber(val), "Please enter a valid phone number"),
     password: z.string().min(8, "Password must be at least 8 characters"),
     confirmPassword: z.string(),
   })

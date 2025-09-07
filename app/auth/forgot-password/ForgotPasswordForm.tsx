@@ -21,9 +21,7 @@ export default function ForgotPasswordForm() {
 
   const { execute, result, isExecuting } = useAction(forgotPasswordAction, {
     onSuccess: ({ data }) => {
-      if (data?.success && data.isPhoneReset && data.phone) {
-        router.push(`/auth/verify-otp?phone=${encodeURIComponent(data.phone)}&reset=true`)
-      }
+      // Phone-based reset flow removed; email flow handled inline
     },
   })
 

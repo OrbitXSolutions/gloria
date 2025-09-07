@@ -32,8 +32,8 @@ export default function RegisterForm() {
 
   const { execute, result, isExecuting } = useAction(registerAction, {
     onSuccess: ({ data }) => {
-      if (data?.success && data.needsVerification && data.phone) {
-        router.push(`/auth/verify-otp?phone=${encodeURIComponent(data.phone)}`);
+      if (data?.success && data.needsVerification && data.email) {
+        router.push(`/auth/confirm-email?email=${encodeURIComponent(data.email)}`);
       } else if (data?.success && !data.needsVerification) {
         router.push("/");
         router.refresh();
