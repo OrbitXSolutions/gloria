@@ -4,8 +4,9 @@ import type React from "react";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useAction } from "next-safe-action/hooks";
-import { registerAction } from "@/app/_actions/auth";
+// Using new client-side registration helper instead of server action
+import { registerUser } from '@/lib/auth/register';
+import SupabaseDebug from '@/components/debug/SupabaseDebug';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -30,20 +31,23 @@ export default function RegisterForm() {
   });
   const router = useRouter();
 
-  const { execute, result, isExecuting } = useAction(registerAction, {
-    onSuccess: ({ data }) => {
-      if (data?.success && data.needsVerification && data.email) {
-        router.push(`/auth/confirm-email?email=${encodeURIComponent(data.email)}`);
-      } else if (data?.success && !data.needsVerification) {
-        router.push("/");
-        router.refresh();
-      }
-    },
-  });
+  const [status, setStatus] = useState<'idle' | 'submitting'>('idle');
+  const [serverError, setServerError] = useState<string | null>(null);
+  const [successMsg, setSuccessMsg] = useState<string | null>(null);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    execute(formData);
+    (async () => {
+      setStatus('submitting');
+      setServerError(null); setSuccessMsg(null);
+      const res = await registerUser(formData as any);
+      if (!res.ok) {
+        setServerError(res.error || 'Registration failed');
+      } else {
+        setSuccessMsg('Registration successful. Check your email to verify.');
+      }
+      setStatus('idle');
+    })();
   };
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -93,13 +97,7 @@ export default function RegisterForm() {
                 className="pl-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
               />
             </div>
-            {result?.validationErrors?.firstName && (
-              <div className="text-red-600 text-xs">
-                {result.validationErrors.firstName._errors?.map((error, index) => (
-                  <p key={index}>{error}</p>
-                ))}
-              </div>
-            )}
+            {/* Server validation errors removed with client helper */}
           </div>
           <div className="space-y-2">
             <Label
@@ -118,13 +116,7 @@ export default function RegisterForm() {
               placeholder={t("auth.forms.register.lastNamePlaceholder")}
               className="h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
             />
-            {result?.validationErrors?.lastName && (
-              <div className="text-red-600 text-xs">
-                {result.validationErrors.lastName._errors?.map((error, index) => (
-                  <p key={index}>{error}</p>
-                ))}
-              </div>
-            )}
+            {/* lastName validation server block removed */}
           </div>
         </div>
 
@@ -147,13 +139,7 @@ export default function RegisterForm() {
               className="pl-10 h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
             />
           </div>
-          {result?.validationErrors?.email && (
-            <div className="text-red-600 text-xs">
-              {result.validationErrors.email._errors?.map((error, index) => (
-                <p key={index}>{error}</p>
-              ))}
-            </div>
-          )}
+          {/* email validation server block removed */}
         </div>
 
         <div className="space-y-2">
@@ -168,13 +154,7 @@ export default function RegisterForm() {
             placeholder={t("auth.forms.register.phonePlaceholder")}
             className="h-12 border-gray-200 focus:border-primary-700 focus:ring-primary-700 rounded-lg"
           />
-          {result?.validationErrors?.phone && (
-            <div className="text-red-600 text-xs">
-              {result.validationErrors.phone._errors?.map((error, index) => (
-                <p key={index}>{error}</p>
-              ))}
-            </div>
-          )}
+          {/* phone validation server block removed */}
         </div>
 
         <div className="space-y-2">
@@ -226,13 +206,7 @@ export default function RegisterForm() {
               )}
             </ul>
           </div>
-          {result?.validationErrors?.password && (
-            <div className="text-red-600 text-xs">
-              {result.validationErrors.password._errors?.map((error, index) => (
-                <p key={index}>{error}</p>
-              ))}
-            </div>
-          )}
+          {/* password validation server block removed */}
         </div>
 
         <div className="space-y-2">
@@ -265,13 +239,7 @@ export default function RegisterForm() {
               )}
             </button>
           </div>
-          {result?.validationErrors?.confirmPassword && (
-            <div className="text-red-600 text-xs">
-              {result.validationErrors.confirmPassword._errors?.map((error, index) => (
-                <p key={index}>{error}</p>
-              ))}
-            </div>
-          )}
+          {/* confirmPassword validation server block removed */}
         </div>
       </div>
 
@@ -294,26 +262,20 @@ export default function RegisterForm() {
         </label>
       </div>
 
-      {result?.data?.error && (
+      {serverError && (
         <Alert variant="destructive" className="border-red-200 bg-red-50">
           <AlertDescription className="text-red-800">
-            {result.data.error}
+            {serverError}
           </AlertDescription>
         </Alert>
       )}
 
-      {result?.validationErrors && (
-        <Alert variant="destructive" className="border-red-200 bg-red-50">
-          <AlertDescription className="text-red-800">
-            Please fix the validation errors above and try again.
-          </AlertDescription>
-        </Alert>
-      )}
+      {/* aggregate validation banner removed */}
 
-      {result?.data?.success && (
+      {successMsg && (
         <Alert className="border-green-200 bg-green-50">
           <AlertDescription className="text-green-800">
-            {result.data.message}
+            {successMsg}
           </AlertDescription>
         </Alert>
       )}
@@ -321,9 +283,9 @@ export default function RegisterForm() {
       <Button
         type="submit"
         className="w-full h-12 bg-primary-700 hover:bg-gray-800 text-white font-medium rounded-lg transition-all duration-200 transform hover:scale-[1.02]"
-        disabled={isExecuting}
+        disabled={status === 'submitting'}
       >
-        {isExecuting ? (
+        {status === 'submitting' ? (
           <>
             <Loader2 className="mr-2 h-5 w-5 animate-spin" />
             {t("auth.forms.register.creatingAccount")}
@@ -355,6 +317,11 @@ export default function RegisterForm() {
           <LoadingIndicator loaderClassName="text-primary" />
         </Link>
       </Button>
+
+      {/* Temporary debug component - remove in production */}
+      <div className="mt-8 border-t pt-4">
+        <SupabaseDebug />
+      </div>
     </form>
   );
 }

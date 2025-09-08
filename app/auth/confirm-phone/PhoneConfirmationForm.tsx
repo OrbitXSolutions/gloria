@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAction } from "next-safe-action/hooks";
-import { verifyOtpAction } from "@/app/_actions/auth";
+import { verifyOtpAction, resendOtpAction } from "@/app/_actions/auth";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
@@ -36,6 +36,15 @@ export default function PhoneConfirmationForm() {
     },
   });
 
+  // Wire resend action
+  const { execute: executeResend, result: resendResult, isExecuting: isResending } = useAction(resendOtpAction, {
+    onSuccess: ({ data }) => {
+      if (data?.success) {
+        setCountdown(60);
+      }
+    },
+  });
+
   useEffect(() => {
     const phoneParam = searchParams.get("phone");
     if (phoneParam) {
@@ -63,10 +72,19 @@ export default function PhoneConfirmationForm() {
   };
 
   const handleResendCode = () => {
-    // This would trigger a new OTP send
-    setCountdown(60); // 60 second cooldown
+    if (!phone || countdown > 0) return;
+    executeResend({ phone });
     setOtp("");
   };
+
+  // Auto-send OTP on first load if phone present
+  useEffect(() => {
+    if (phone && countdown === 0) {
+      executeResend({ phone });
+      setCountdown(60);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [phone]);
 
   const maskPhone = (phone: string) => {
     if (phone.length <= 4) return phone;
@@ -148,11 +166,16 @@ export default function PhoneConfirmationForm() {
         <p className="text-sm text-gray-600 mb-3">Didn't receive the code?</p>
         <Button
           onClick={handleResendCode}
-          disabled={countdown > 0}
+          disabled={countdown > 0 || isResending}
           variant="outline"
           className="w-full h-12 border-gray-300 text-gray-700 hover:bg-gray-50"
         >
-          {countdown > 0 ? (
+          {isResending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Sending...
+            </>
+          ) : countdown > 0 ? (
             <>
               <Clock className="mr-2 h-4 w-4" />
               Resend in {countdown}s
@@ -161,6 +184,20 @@ export default function PhoneConfirmationForm() {
             "Resend Code"
           )}
         </Button>
+        {resendResult?.data?.error && (
+          <Alert variant="destructive" className="border-red-200 bg-red-50 mt-2">
+            <AlertDescription className="text-red-800">
+              {resendResult.data.error}
+            </AlertDescription>
+          </Alert>
+        )}
+        {resendResult?.data?.success && (
+          <Alert className="border-green-200 bg-green-50 mt-2">
+            <AlertDescription className="text-green-800">
+              {resendResult.data.message}
+            </AlertDescription>
+          </Alert>
+        )}
       </div>
 
       {/* Back to login */}

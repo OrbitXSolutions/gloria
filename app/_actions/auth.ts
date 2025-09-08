@@ -9,128 +9,27 @@ import {
   resetPasswordSchema,
   emailVerificationSchema,
 } from "@/lib/schemas/auth";
-import {
-  isValidPhoneNumber,
-  parsePhoneNumberWithError,
-} from "libphonenumber-js";
+import { isValidPhoneNumber, parsePhoneNumberWithError } from "libphonenumber-js";
 import { z } from "zod";
 import createClient from "@/lib/supabase/client";
 import { createSsrClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import {
-  UserVerifyPhone,
-  UserVerifyPhoneSchema,
-} from "@/lib/schemas/confirm-phone-otp";
-import {
-  UserSetPhone,
-  UserSetPhoneSchema,
-} from "@/lib/schemas/set-phone-schema";
+import { UserVerifyPhone, UserVerifyPhoneSchema } from "@/lib/schemas/confirm-phone-otp";
+import { UserSetPhone, UserSetPhoneSchema } from "@/lib/schemas/set-phone-schema";
 
 const action = createSafeActionClient();
 
-export const registerAction = action
-  .inputSchema(registerSchema)
-  .action(async ({ parsedInput }) => {
-    const { firstName, lastName, email, phone, password } = parsedInput;
-    const supabase = await createSsrClient();
+/* =======================
+   PREVIOUS REGISTRATION CODE (COMMENTED OUT)
+   (Replaced by client-side registerUser in lib/auth/register.ts)
+// Clean email-based registration with timeout fallback
+// export const registerAction = action ... (full block removed for clarity)
+======================= */
 
-    // Log the registration attempt
-    try {
-      await supabase.rpc('add_app_log', {
-        p_level: 'info',
-        p_message: 'User registration attempt',
-        p_user_id: null,
-        p_category: 'auth',
-        p_source: 'register_action',
-        p_context: {
-          email,
-          phone: phone?.substring(0, 5) + '***', // Partial phone for privacy
-          timestamp: new Date().toISOString()
-        },
-        p_stack_trace: null,
-      });
-    } catch (logError) {
-      console.error('Failed to log registration attempt:', logError);
-    }
-
-    try {
-      // Register with Supabase using EMAIL (switch from phone OTP to email confirmation)
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            first_name: firstName,
-            last_name: lastName,
-            full_name: `${firstName} ${lastName}`,
-            phone: phone || null,
-          },
-          emailRedirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/confirm-email`,
-        },
-      });
-      if (error) {
-        // Log registration error
-        try {
-          await supabase.rpc('add_app_log', {
-            p_level: 'error',
-            p_message: `Registration failed: ${error.message}`,
-            p_user_id: null,
-            p_category: 'auth',
-            p_source: 'register_action',
-            p_context: {
-              email,
-              phone: phone?.substring(0, 5) + '***',
-              error: error.message,
-              error_code: error.code || 'unknown'
-            },
-            p_stack_trace: null,
-          });
-        } catch (logError) {
-          console.error('Failed to log registration error:', logError);
-        }
-        return { error: error.message };
-      }
-
-      // Log successful registration
-      try {
-        await supabase.rpc('add_app_log', {
-          p_level: 'info',
-          p_message: `User registered successfully`,
-          p_user_id: data.user?.id || null,
-          p_category: 'auth',
-          p_source: 'register_action',
-          p_context: {
-            email,
-            phone: phone?.substring(0, 5) + '***',
-            needs_email_verification: !data.session,
-            user_id: data.user?.id
-          },
-          p_stack_trace: null,
-        });
-      } catch (logError) {
-        console.error('Failed to log successful registration:', logError);
-      }
-      if (data.user && !data.session) {
-        // User needs to verify EMAIL
-        return {
-          success: true,
-          message: "Registration successful! Please verify your email.",
-          needsVerification: true,
-          email,
-        };
-      }
-
-      return {
-        success: true,
-        message: "Registration successful!",
-        needsVerification: false,
-        email,
-      };
-    } catch (error) {
-      console.error("Registration error:", error);
-      return { error: "An unexpected error occurred during registration" };
-    }
-  });
+// Placeholder no-op to avoid import breakage where registerAction was used.
+export const registerAction = action.inputSchema(registerSchema).action(async () => {
+  return { error: 'Deprecated: Use client registerUser()' };
+});
 
 export const loginAction = action
   .schema(loginSchema)
@@ -271,11 +170,22 @@ export const verifyOtpAction = action
     const supabase = await createSsrClient();
 
     try {
+      // Ensure phone is valid & formatted (Supabase expects E.164)
+      let formattedPhone = phone;
+      try {
+        if (!isValidPhoneNumber(phone)) {
+          return { error: 'Invalid phone number format' };
+        }
+        const parsed = parsePhoneNumberWithError(phone);
+        formattedPhone = parsed.format('E.164');
+      } catch (_) {
+        return { error: 'Invalid phone number format' };
+      }
       const attemptTypes: any[] = ["phone_change", "signup", "sms", "recovery"];
       let data: any = null; let lastError: any = null;
       for (const type of attemptTypes) {
         const { data: d, error } = await supabase.auth.verifyOtp({
-          phone,
+          phone: formattedPhone,
           token,
           type,
         } as any);
@@ -297,7 +207,7 @@ export const verifyOtpAction = action
             p_user_id: null,
             p_category: 'auth',
             p_source: 'verify_otp_action',
-            p_context: { phone: phone?.slice(0, 6) + '***', error: lastError.message },
+            p_context: { phone: formattedPhone?.slice(0, 6) + '***', error: lastError.message },
             p_stack_trace: null,
           });
         } catch (_) { }
@@ -337,7 +247,7 @@ export const verifyOtpAction = action
             p_user_id: data.user.id,
             p_category: 'auth',
             p_source: 'verify_otp_action',
-            p_context: { phone: phone?.slice(0, 6) + '***' },
+            p_context: { phone: formattedPhone?.slice(0, 6) + '***' },
             p_stack_trace: null,
           });
         } catch (_) { }
@@ -363,8 +273,20 @@ export const resendOtpAction = action
     const supabase = await createSsrClient();
 
     try {
+      // Validate & format phone to E.164
+      let formattedPhone = phone;
+      try {
+        if (!isValidPhoneNumber(phone)) {
+          return { error: 'Invalid phone number format.' };
+        }
+        const parsed = parsePhoneNumberWithError(phone);
+        formattedPhone = parsed.format('E.164');
+      } catch (_) {
+        return { error: 'Invalid phone number format.' };
+      }
+
       const { data, error } = await supabase.auth.signInWithOtp({
-        phone,
+        phone: formattedPhone,
       });
 
       if (error) {
