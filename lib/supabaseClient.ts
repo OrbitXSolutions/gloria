@@ -68,10 +68,6 @@ export function getSupabaseClient(): PublicSupabaseClient {
             timestamp: new Date().toISOString()
         });
         
-        // Test immediate connectivity
-        const testResult = cachedClient.from('health_check').select('count');
-        console.info('[Supabase][ConnectivityTest]', { query: testResult });
-        
         return cachedClient;
     } catch (error: any) {
         console.error('[Supabase][ClientCreationError]', {

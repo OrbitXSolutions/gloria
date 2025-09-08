@@ -29,6 +29,20 @@ export async function registerUser(payload: RegisterPayload): Promise<RegisterRe
     let { email } = payload;
     const { phone, password, confirmPassword } = payload;
 
+    // Environment check
+    if (typeof window === 'undefined') {
+        // Server-side, check for required env vars
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            console.error('[Register][EnvCheck] Missing Supabase environment variables on server');
+            return { ok: false, error: 'Authentication service is not properly configured. Please contact support.' };
+        }
+    } else {
+        // Client-side, warn if env vars not available (they should be)
+        if (!process.env.NEXT_PUBLIC_SUPABASE_URL || !process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY) {
+            console.warn('[Register][EnvCheck] Supabase environment variables not available on client');
+        }
+    }
+
     // Basic client-side validation
     if (!firstName || !lastName || !email || !password || !confirmPassword) {
         console.warn('[Register][Validation] Missing required fields');
@@ -47,18 +61,26 @@ export async function registerUser(payload: RegisterPayload): Promise<RegisterRe
     let supabase;
     try {
         supabase = getSupabaseClient();
-        // Test connectivity before attempting signUp
+        // Optional connectivity test - don't fail if health_check table doesn't exist
         console.info('[Register][ConnTest] Testing Supabase connectivity...');
-        const { data: healthCheck, error: healthError } = await supabase.from('health_check').select('*').limit(1);
-        if (healthError && !healthError.message.includes('relation "health_check" does not exist')) {
-            console.error('[Register][ConnTest][Failed]', healthError);
-            return { ok: false, error: 'Unable to connect to authentication service. Please try again.' };
+        try {
+            const { error: healthError } = await supabase.from('health_check').select('count').limit(1);
+            if (healthError && !healthError.message.includes('relation "health_check" does not exist')) {
+                console.warn('[Register][ConnTest][Warning]', healthError);
+                // Continue anyway - this is just a warning, not a hard failure
+            } else {
+                console.info('[Register][ConnTest] Connection OK');
+            }
+        } catch (healthCheckError: any) {
+            // Health check is optional - log but don't fail registration
+            console.warn('[Register][ConnTest][Warning] Health check failed, continuing anyway:', healthCheckError.message);
         }
-        console.info('[Register][ConnTest] Connection OK');
     } catch (e: any) {
         console.error('[Register][ClientInit][Failed]', e);
-        return { ok: false, error: e.message || 'Supabase not configured' };
-    } const origin = getOrigin();
+        return { ok: false, error: 'Authentication service configuration error. Please contact support.' };
+    } 
+    
+    const origin = getOrigin();
     // Environment-aware redirect selection.
     // Order of precedence:
     // 1. Explicit override via NEXT_PUBLIC_FORCE_LOCAL_REDIRECT
@@ -77,45 +99,109 @@ export async function registerUser(payload: RegisterPayload): Promise<RegisterRe
     })();
     console.info('[Register][Supabase.signUp] Initiating', { email, redirect: emailRedirectTo });
 
-    try {
-        const { data, error } = await supabase.auth.signUp({
-            email,
-            password,
-            options: {
-                // Include both camelCase and snake_case for downstream compatibility
-                data: {
-                    firstName,
-                    lastName,
-                    fullName: `${firstName} ${lastName}`.trim(),
-                    first_name: firstName,
-                    last_name: lastName,
-                    full_name: `${firstName} ${lastName}`.trim(),
-                    phone: phone || null,
+    // Retry mechanism for network issues
+    const maxRetries = 2;
+    let lastError: any = null;
+    
+    for (let attempt = 1; attempt <= maxRetries; attempt++) {
+        try {
+            console.info(`[Register][Attempt ${attempt}/${maxRetries}] Starting registration...`);
+            
+            const { data, error } = await supabase.auth.signUp({
+                email,
+                password,
+                options: {
+                    // Include both camelCase and snake_case for downstream compatibility
+                    data: {
+                        firstName,
+                        lastName,
+                        fullName: `${firstName} ${lastName}`.trim(),
+                        first_name: firstName,
+                        last_name: lastName,
+                        full_name: `${firstName} ${lastName}`.trim(),
+                        phone: phone || null,
+                    },
+                    emailRedirectTo,
                 },
-                emailRedirectTo,
-            },
-        });
+            });
 
-        if (error) {
-            console.error('[Register][SupabaseError]', { name: error.name, message: error.message, status: (error as any).status, stack: error.stack, redirect: emailRedirectTo });
-            return { ok: false, error: error.message || 'Registration failed.' };
-        }
-
-        // When email confirmations enabled, no session is returned.
-        const needsVerification = !data.session;
-        console.info('[Register][Success]', { userId: data.user?.id, needsVerification });
-        if (typeof window !== 'undefined') {
-            // Navigate user to verify-email screen (soft navigation)
-            const target = `/auth/verify-email?email=${encodeURIComponent(email)}`;
-            if (window.location.pathname !== target) {
-                window.location.assign(target);
+            if (error) {
+                console.error('[Register][SupabaseError]', { name: error.name, message: error.message, status: (error as any).status, stack: error.stack, redirect: emailRedirectTo });
+                
+                // Check if this is a retryable error
+                const isNetworkError = error.message?.includes('fetch failed') || 
+                                     error.message?.includes('ENOTFOUND') || 
+                                     (error as any).status === 0;
+                
+                if (isNetworkError && attempt < maxRetries) {
+                    console.warn(`[Register][Retry] Network error on attempt ${attempt}, retrying...`);
+                    lastError = error;
+                    // Wait before retry (exponential backoff)
+                    await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+                    continue;
+                }
+                
+                // Provide more specific error messages based on error type
+                let userMessage = 'Registration failed.';
+                if (error.message?.includes('fetch failed') || error.message?.includes('ENOTFOUND') || (error as any).status === 0) {
+                    userMessage = 'Unable to connect to authentication service. Please check your internet connection and try again.';
+                } else if (error.message?.includes('User already registered')) {
+                    userMessage = 'An account with this email already exists. Please try logging in instead.';
+                } else if (error.message?.includes('Invalid email')) {
+                    userMessage = 'Please enter a valid email address.';
+                } else if (error.message?.includes('Password')) {
+                    userMessage = 'Password does not meet requirements. Please try a different password.';
+                } else if (error.message) {
+                    userMessage = error.message;
+                }
+                
+                return { ok: false, error: userMessage };
             }
+
+            // Success! Break out of retry loop
+            const needsVerification = !data.session;
+            console.info('[Register][Success]', { userId: data.user?.id, needsVerification, attempt });
+            if (typeof window !== 'undefined') {
+                // Navigate user to verify-email screen (soft navigation)
+                const target = `/auth/verify-email?email=${encodeURIComponent(email)}`;
+                if (window.location.pathname !== target) {
+                    window.location.assign(target);
+                }
+            }
+            return { ok: true, email };
+            
+        } catch (err: any) {
+            console.error(`[Register][Attempt ${attempt}][Unhandled]`, { message: err?.message, name: err?.name, cause: err?.cause });
+            lastError = err;
+            
+            // Check if this is a retryable error
+            const isNetworkError = err?.message?.includes('fetch failed') || 
+                                 err?.message?.includes('ENOTFOUND') || 
+                                 err?.cause?.code === 'ENOTFOUND';
+            
+            if (isNetworkError && attempt < maxRetries) {
+                console.warn(`[Register][Retry] Network error on attempt ${attempt}, retrying...`);
+                // Wait before retry (exponential backoff)
+                await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
+                continue;
+            }
+            
+            // If not retryable or max retries reached, fall through to error handling
         }
-        return { ok: true, email };
-    } catch (err: any) {
-        console.error('[Register][Unhandled]', { message: err?.message, name: err?.name, cause: err?.cause });
-        return { ok: false, error: err?.message || 'Unexpected error.' };
     }
+    
+    // If we get here, all retries failed
+    console.error('[Register][AllRetriesFailed]', { lastError: lastError?.message });
+    
+    // Provide specific error messages for network issues
+    let userMessage = 'Unexpected error occurred.';
+    if (lastError?.message?.includes('fetch failed') || lastError?.message?.includes('ENOTFOUND') || lastError?.cause?.code === 'ENOTFOUND') {
+        userMessage = 'Unable to connect to authentication service. Please check your internet connection and try again later.';
+    } else if (lastError?.message) {
+        userMessage = lastError.message;
+    }
+    
+    return { ok: false, error: userMessage };
 }
 
 // Simple test harness utility (dev only)
