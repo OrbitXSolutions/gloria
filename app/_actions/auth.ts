@@ -182,18 +182,26 @@ export const verifyOtpAction = action
         return { error: 'Invalid phone number format' };
       }
       const attemptTypes: any[] = ["phone_change", "signup", "sms", "recovery"];
-      let data: any = null; let lastError: any = null;
+      let data: any = null;
+      let lastError: any = null;
+
       for (const type of attemptTypes) {
         const { data: d, error } = await supabase.auth.verifyOtp({
           phone: formattedPhone,
           token,
           type,
         } as any);
-        if (!error && d?.user) { data = d; lastError = null; break; }
-        lastError = error;
-        // Stop early if error explicitly indicates expired/invalid to avoid rate issues
-        if (error && /expired|invalid/i.test(error.message)) break;
+
+        if (!error && d?.user) {
+          data = d;
+          break;
+        }
+
+        if (error) {
+          lastError = error;
+        }
       }
+
       if (lastError && !data) {
         const msg = /expired/i.test(lastError.message)
           ? 'OTP_EXPIRED'
