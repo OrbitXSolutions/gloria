@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+// import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ThemeProvider } from "@/lib/theme-provider";
 import AppHeader from "@/components/organisms/layout/app-header.component";
@@ -9,15 +9,15 @@ import { Footer } from "react-day-picker";
 import AppFooter from "@/components/organisms/layout/app-footer";
 import { GoogleAnalytics } from "@next/third-parties/google";
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
+// const geistSans = Geist({
+//   variable: "--font-geist-sans",
+//   subsets: ["latin"],
+// });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
+// const geistMono = Geist_Mono({
+//   variable: "--font-geist-mono",
+//   subsets: ["latin"],
+// });
 
 export async function generateMetadata(): Promise<Metadata> {
   const locale = await getLocale();
@@ -174,7 +174,7 @@ export default async function RootLayout({ children, searchParams }: Props) {
     <html lang={locale} dir={dir}>
       <GoogleAnalytics gaId="'G-9XCF65FS7X'" />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className="antialiased"
       >
         <RootWrapper messages={messages}>
           <AppHeader />
