@@ -18,6 +18,7 @@ import { UserVerifyPhone, UserVerifyPhoneSchema } from "@/lib/schemas/confirm-ph
 import { UserSetPhone, UserSetPhoneSchema } from "@/lib/schemas/set-phone-schema";
 import { AUTH_CONFIG, getAuthRedirectUrl } from "@/lib/config/auth";
 import { validatePhoneNumber, getE164Format } from "@/lib/utils/phone";
+import { sendVerificationEmail, sendPasswordResetEmail } from "@/lib/utils/email-service";
 
 const action = createSafeActionClient();
 
@@ -396,15 +397,24 @@ export const sendEmailVerificationAction = action
     const supabase = await createSsrClient();
 
     try {
-      // const { error } = await supabase.auth.updateUser({
-      //   email,
-      // });
       const { data, error } = await supabase.auth.resend({
         type: "signup",
         email,
       });
+      
       if (error) {
         return { error: error.message };
+      }
+
+      // Send branded verification email
+      try {
+        await sendVerificationEmail({
+          recipientEmail: email,
+          expiryMinutes: AUTH_CONFIG.EMAIL.RESEND_LIMIT_PER_HOUR,
+        });
+      } catch (emailError) {
+        console.error('Failed to send branded email:', emailError);
+        // Don't fail the action if branded email fails
       }
 
       return {
