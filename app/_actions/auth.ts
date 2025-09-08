@@ -16,6 +16,9 @@ import { createSsrClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { UserVerifyPhone, UserVerifyPhoneSchema } from "@/lib/schemas/confirm-phone-otp";
 import { UserSetPhone, UserSetPhoneSchema } from "@/lib/schemas/set-phone-schema";
+import { AUTH_CONFIG, getAuthRedirectUrl } from "@/lib/config/auth";
+import { validatePhoneNumber, getE164Format } from "@/lib/utils/phone";
+import { sendVerificationEmail, sendPasswordResetEmail } from "@/lib/utils/email-service";
 
 const action = createSafeActionClient();
 
@@ -171,16 +174,12 @@ export const verifyOtpAction = action
 
     try {
       // Ensure phone is valid & formatted (Supabase expects E.164)
-      let formattedPhone = phone;
-      try {
-        if (!isValidPhoneNumber(phone)) {
-          return { error: 'Invalid phone number format' };
-        }
-        const parsed = parsePhoneNumberWithError(phone);
-        formattedPhone = parsed.format('E.164');
-      } catch (_) {
-        return { error: 'Invalid phone number format' };
+      const phoneValidation = validatePhoneNumber(phone);
+      if (!phoneValidation.isValid) {
+        return { error: phoneValidation.error || 'Invalid phone number format' };
       }
+      
+      const formattedPhone = phoneValidation.formatted!;
       const attemptTypes: any[] = ["phone_change", "signup", "sms", "recovery"];
       let data: any = null;
       let lastError: any = null;
@@ -281,17 +280,13 @@ export const resendOtpAction = action
     const supabase = await createSsrClient();
 
     try {
-      // Validate & format phone to E.164
-      let formattedPhone = phone;
-      try {
-        if (!isValidPhoneNumber(phone)) {
-          return { error: 'Invalid phone number format.' };
-        }
-        const parsed = parsePhoneNumberWithError(phone);
-        formattedPhone = parsed.format('E.164');
-      } catch (_) {
-        return { error: 'Invalid phone number format.' };
+      // Validate & format phone to E.164 using new utilities
+      const phoneValidation = validatePhoneNumber(phone);
+      if (!phoneValidation.isValid) {
+        return { error: phoneValidation.error || 'Invalid phone number format.' };
       }
+      
+      const formattedPhone = phoneValidation.formatted!;
 
       const { data, error } = await supabase.auth.signInWithOtp({
         phone: formattedPhone,
@@ -300,7 +295,7 @@ export const resendOtpAction = action
       if (error) {
         // Handle specific error cases
         if (error.message.includes("rate limit")) {
-          return { error: "Too many requests. Please wait before trying again." };
+          return { error: `Too many requests. Please wait ${AUTH_CONFIG.RATE_LIMIT.OTP_RESEND_COOLDOWN_SECONDS} seconds before trying again.` };
         }
         if (error.message.includes("invalid phone")) {
           return { error: "Invalid phone number format." };
@@ -331,7 +326,7 @@ export const forgotPasswordAction = action
         const { error } = await supabase.auth.resetPasswordForEmail(
           emailOrPhone,
           {
-            redirectTo: `${process.env.NEXT_PUBLIC_BASE_URL}/auth/reset-password`,
+            redirectTo: getAuthRedirectUrl('/auth/reset-password'),
           }
         );
 
@@ -345,16 +340,12 @@ export const forgotPasswordAction = action
         };
       } else {
         // For phone numbers, we'll send an OTP
-        if (!isValidPhoneNumber(emailOrPhone)) {
-          return { error: "Invalid phone number format" };
+        const phoneValidation = validatePhoneNumber(emailOrPhone);
+        if (!phoneValidation.isValid) {
+          return { error: phoneValidation.error || "Invalid phone number format" };
         }
 
-        const phoneNumber = parsePhoneNumberWithError(emailOrPhone);
-        const formattedPhone = phoneNumber?.format("E.164");
-
-        if (!formattedPhone) {
-          return { error: "Invalid phone number format" };
-        }
+        const formattedPhone = phoneValidation.formatted!;
 
         const { error } = await supabase.auth.signInWithOtp({
           phone: formattedPhone,
@@ -406,15 +397,24 @@ export const sendEmailVerificationAction = action
     const supabase = await createSsrClient();
 
     try {
-      // const { error } = await supabase.auth.updateUser({
-      //   email,
-      // });
       const { data, error } = await supabase.auth.resend({
         type: "signup",
         email,
       });
+      
       if (error) {
         return { error: error.message };
+      }
+
+      // Send branded verification email
+      try {
+        await sendVerificationEmail({
+          recipientEmail: email,
+          expiryMinutes: AUTH_CONFIG.EMAIL.RESEND_LIMIT_PER_HOUR,
+        });
+      } catch (emailError) {
+        console.error('Failed to send branded email:', emailError);
+        // Don't fail the action if branded email fails
       }
 
       return {
@@ -451,10 +451,17 @@ export async function setUserPhone(input: UserSetPhone) {
       "Invalid user data: " + JSON.stringify(parsedInput.error.issues)
     );
   }
+  
+  // Validate phone format using new utilities
+  const phoneValidation = validatePhoneNumber(parsedInput.data.phone);
+  if (!phoneValidation.isValid) {
+    throw new Error(`Invalid phone number: ${phoneValidation.error}`);
+  }
+  
   const supabase = await createSsrClient();
 
   const { data, error } = await supabase.auth.updateUser({
-    phone: parsedInput.data.phone,
+    phone: phoneValidation.formatted,
   });
 
   if (error) {
@@ -480,3 +487,97 @@ export async function verifyOtp(input: UserVerifyPhone) {
     );
   }
 }
+
+// Additional helper actions for enhanced functionality
+export const checkEmailAvailabilityAction = action
+  .inputSchema(z.object({ email: z.string().email() }))
+  .action(async ({ parsedInput }) => {
+    const { email } = parsedInput;
+    const supabase = await createSsrClient();
+
+    try {
+      const { data } = await supabase
+        .from('users')
+        .select('id')
+        .eq('email', email.toLowerCase())
+        .single();
+
+      return {
+        available: !data,
+        message: data ? 'Email is already registered' : 'Email is available'
+      };
+    } catch (error) {
+      console.error('Error checking email availability:', error);
+      return { error: 'Failed to check email availability' };
+    }
+  });
+
+export const updateUserProfileAction = action
+  .inputSchema(z.object({
+    firstName: z.string().min(2).optional(),
+    lastName: z.string().min(2).optional(),
+    phone: z.string().optional(),
+  }))
+  .action(async ({ parsedInput }) => {
+    const supabase = await createSsrClient();
+    
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        return { error: 'User not authenticated' };
+      }
+
+      const updateData: any = {};
+      
+      if (parsedInput.firstName !== undefined) {
+        updateData.first_name = parsedInput.firstName;
+      }
+      if (parsedInput.lastName !== undefined) {
+        updateData.last_name = parsedInput.lastName;
+      }
+      if (parsedInput.firstName && parsedInput.lastName) {
+        updateData.full_name = `${parsedInput.firstName} ${parsedInput.lastName}`.trim();
+      }
+
+      // Validate phone if provided
+      if (parsedInput.phone !== undefined) {
+        const phoneValidation = validatePhoneNumber(parsedInput.phone);
+        if (!phoneValidation.isValid) {
+          return { error: phoneValidation.error || 'Invalid phone number' };
+        }
+        updateData.phone = phoneValidation.formatted;
+      }
+
+      // Update auth user metadata
+      const { error: authError } = await supabase.auth.updateUser({
+        data: updateData
+      });
+
+      if (authError) {
+        return { error: authError.message };
+      }
+
+      // Update public users table
+      const { error: publicError } = await supabase
+        .from('users')
+        .update({
+          ...updateData,
+          updated_at: new Date().toISOString()
+        })
+        .eq('user_id', user.id);
+
+      if (publicError) {
+        console.error('Error updating public user profile:', publicError);
+        return { error: 'Failed to update profile' };
+      }
+
+      return {
+        success: true,
+        message: 'Profile updated successfully!'
+      };
+
+    } catch (error) {
+      console.error('Profile update error:', error);
+      return { error: 'An unexpected error occurred' };
+    }
+  });
