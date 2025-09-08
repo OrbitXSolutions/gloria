@@ -48,16 +48,39 @@ export function getSupabaseClient(): PublicSupabaseClient {
         throw new Error(`Invalid Supabase URL format: ${url}`);
     }
 
-    cachedClient = createClient(url, anon, {
-        auth: {
-            autoRefreshToken: true,
-            persistSession: true,
-            detectSessionInUrl: true,
-        },
-    });
+    try {
+        cachedClient = createClient(url, anon, {
+            auth: {
+                autoRefreshToken: true,
+                persistSession: true,
+                detectSessionInUrl: true,
+            },
+            global: {
+                headers: {
+                    'X-Debug-Source': 'gloria-app'
+                }
+            }
+        });
 
-    console.info('[Supabase][ClientCreated]', { success: true });
-    return cachedClient;
+        console.info('[Supabase][ClientCreated]', { 
+            success: true,
+            url: url.substring(0, 30) + '...',
+            timestamp: new Date().toISOString()
+        });
+        
+        // Test immediate connectivity
+        const testResult = cachedClient.from('health_check').select('count');
+        console.info('[Supabase][ConnectivityTest]', { query: testResult });
+        
+        return cachedClient;
+    } catch (error: any) {
+        console.error('[Supabase][ClientCreationError]', {
+            error: error.message,
+            stack: error.stack,
+            url: url.substring(0, 30) + '...'
+        });
+        throw error;
+    }
 } export function getOrigin(): string {
     if (typeof window !== 'undefined' && window.location?.origin) return window.location.origin;
     return (
