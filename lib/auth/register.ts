@@ -203,7 +203,6 @@ export async function registerUser(payload: RegisterPayload): Promise<RegisterRe
     
     return { ok: false, error: userMessage };
 }
-}
 
 // Simple test harness utility (dev only)
 export async function testRegister(fixtures: RegisterPayload[]) {
